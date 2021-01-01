@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "nodemon ./bin/www localhost 3080",
     "test": "jest",
     "build": "webpack --mode=development --devtool=inline-source-map",
     "build:prod": "webpack --mode=production",
@@ -11,6 +11,9 @@
     "deploy": "node deploy.js"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.2",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "cookie-parser": "~1.4.4",
@@ -19,11 +22,13 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
+    "nodemon": "^2.0.6",
     "source-map-loader": "^2.0.0",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3",

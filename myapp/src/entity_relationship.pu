@@ -1,0 +1,114 @@
+@startuml ER図
+
+hide empty members
+
+package "default_tables" {
+    entity "form" {
+        + INT id [PK]
+        --
+        VARCHAR code
+        VARCHER name
+        etc...
+    }
+    entity "log_form" {
+        + INT form_id [PK][FK]
+        + INT form_serial [PK]
+        --
+        VARCHAR mail_to
+        LONGTEXT form_data
+        DATETIME datetime
+        etc...
+    }
+    entity "user" {
+        + INT user_id [PK]
+        --
+        VARCHAR name
+        VARCHER icon
+    }
+}
+
+package "Contact" {
+    entity "contact_form_info" {
+        /'
+        log_formに保存されている投稿情報に
+        Contact独自の情報を付与する
+        '/
+        + INT form_id [PK][FK]
+        + INT form_serial [PK][FK]
+        --
+        ' 投稿のステータスを表す 例) 対応中
+        INT status
+        ' 最後にやりとりされた日付
+        DATETIME last_modified_datetime
+        ' 最後のやりとりが管理者によって行われたかどうか
+        INT last_modified_is_admin
+        ' 最後のやりとりのメッセージ内容
+        VARCHAR last_modified_message
+    }
+    entity "contact_form_info_people_involved" {
+        /'
+        log_formに保存されている投稿情報に
+        投稿に参加しているユーザを関連付ける
+        '/
+        + INT form_id [PK][FK]
+        + INT form_serial [PK][FK]
+        + INT user_id [PK][FK]
+    }
+    entity "contact_message" {
+        /'
+        Contact拡張アプリによってやりとりされるメッセージを管理する
+        '/
+        + INT id [PK]
+        --
+        # INT form_id [FK]
+        # INT form_serial [FK]
+        INT sender_user_id
+        INT is_admin
+        INT visibility_for_guest
+        VARCHER detail
+        DATETIME datetime
+    }
+}
+
+
+log_form
+}
+o--|| form
+log_form ||--o| contact_form_info
+contact_form_info ||-right-|{
+contact_form_info_people_involved
+contact_form_info_people_involved ||--|| user
+contact_message }o--|| log_form
+contact_message ||--|| user
+
+note as N1
+各テーブルの各カラムには、
+それぞれ各テーブル名が接頭語としてついている(図では省略)
+例: log_formの場合
+log_form_form_id, log_form_form_serial...
+end note
+
+note top of "contact_form_info"
+log_formに保存されている投稿情報にContact独自の情報を付与する
+status                 : 投稿のステータスを表す (新規: 0, 対応中: 1, 完了: 2, 保留中: 3)
+last_modified_datetime : 最後にメッセージがやりとりされた日付
+last_modified_is_admin : 最後のメッセージのやりとりが管理者によって行われたかどうか
+last_modified_message  : 最後のメッセージのやりとりの内容
+end note
+
+note bottom of "contact_form_info_people_involved"
+log_formに保存されている投稿情報に
+投稿に参加しているユーザを関連付ける
+user_id : acmsのユーザid
+end note
+
+note right of "contact_message"
+Contact拡張アプリによってやりとりされるメッセージを保存する
+sender_user_id       : メッセージ送信者のユーザID
+datetime             : メッセージが送信された日時
+is_admin             : メッセージ送信者が管理者かどうか (管理者:1, 管理者でない: 0)
+visibility_for_guest : メッセージがユーザから閲覧可能かどうか (閲覧可能:1, 閲覧可能でない: 0)
+detail               : メッセージの内容
+end note
+
+@enduml

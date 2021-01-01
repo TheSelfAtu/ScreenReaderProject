@@ -1,7 +1,9 @@
 const path = require("path");
 module.exports = {
   entry: {
-    "main": "./src/index.tsx",
+    "topicList": "./src/TopicList/index.tsx",
+    "topicDetail": "./src//TopicDetail/index.tsx",
+    "postTopic": "./src//PostTopic/index.tsx",
   },
   output: {
     path: __dirname + "/bundle",
@@ -15,12 +17,12 @@ module.exports = {
   module: {
     rules: [
       // [style-loader](/loaders/style-loader)
-    //   { test: /\.css$/, use: "style-loader" },
+      { test: /\.css$/, use: "style-loader" },
       // [css-loader](/loaders/css-loader)
-    //   {
-    //     test: /\.css$/,
-    //     use: "css-loader",
-    //   },
+      {
+        test: /\.css$/,
+        use: "css-loader",
+      },
       { exclude: /node_modules/, test: /\.tsx$/, use: "ts-loader" },
     ],
   },

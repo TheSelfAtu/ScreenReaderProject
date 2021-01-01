@@ -1,5 +1,19 @@
 version: '3'
 services:
+  # mysql
+  mysql:
+      image: mysql:5.7
+      command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+      ports:
+          - "3306:3306"
+      environment:
+          MYSQL_DATABASE: db
+          MYSQL_ROOT_USER: root
+          MYSQL_ROOT_PASSWORD: root
+      volumes:
+          - $PWD/database:/var/lib/mysql
+
+
   web:
     build:
       context: ./docker/construct_web      # Dockerfile保存場所
