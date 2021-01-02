@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postTopicRouter = require('./routes/postTopic');
+var TopicDetailRouter = require('./routes/TopicDetail');
 
 var app = express();
 
@@ -24,6 +25,7 @@ console.log(postTopicRouter,'postrouter')
 // console.log(postTopicRouter)
 app.use('/', indexRouter);
 app.use('/postTopic', postTopicRouter);
+app.use('/TopicDetail', TopicDetailRouter);
 app.use('/users', usersRouter);
 
 // 静的ファイル bundleされたjsを読み込めるようにする

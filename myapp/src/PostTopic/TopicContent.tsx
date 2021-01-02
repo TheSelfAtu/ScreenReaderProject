@@ -8,7 +8,10 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
 import { TextField } from "@material-ui/core";
 
-interface TopicContentProps {}
+interface TopicContentProps {
+  inputContent: string
+  setInputContent: (e:any)=> void
+}
 
 const inputProps = {
   step: 300,
@@ -22,7 +25,12 @@ export default function TopicContent(props: TopicContentProps) {
   placeholder="トピックの内容を記述してください"
   fullWidth 
   multiline 
-  rows="5" 
-  inputProps={inputProps} />;
+  rows="7" 
+  inputProps={inputProps} 
+  value={props.inputContent}
+  onChange={(e)=>{
+    props.setInputContent(e.target.value);
+  }}
+  />;
 
 }
