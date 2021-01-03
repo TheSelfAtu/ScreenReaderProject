@@ -28,6 +28,7 @@ export default function TopicContent(props: TopicContentProps) {
   rows="7" 
   inputProps={inputProps} 
   value={props.inputContent}
+  name="content"
   onChange={(e)=>{
     props.setInputContent(e.target.value);
   }}

@@ -19,7 +19,7 @@ export default function PostTopic(props: PostTopicProps) {
 
   return (
     <div id="post-topic-wrapper">
-      <form action="/postDetail">
+      <form action="/insert-topic-record" method="POST">
         <div id="topic-title">
           <h3>タイトル</h3>
           <TopicTitle
@@ -34,7 +34,7 @@ export default function PostTopic(props: PostTopicProps) {
             setInputContent={setInputContent}
           ></TopicContent>
         </div>
-        <Button variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary">
           トピックを送信</Button>
       </form>
     </div>

@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('topic_list', { title: 'スクリーンリーダープログラミング' });
+    res.render('topic-list', { title: 'スクリーンリーダープログラミング' });
 });
 
 module.exports = router;

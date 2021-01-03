@@ -9,7 +9,6 @@ window.onload = () => {
         ReactDOM.render(<NavBar />, document.getElementById('navbar'));
       }
     if (document.getElementById('post_topic')) {
-      console.log('post')
       ReactDOM.render(<PostTopic />, document.getElementById('post_topic'));
     }
 }

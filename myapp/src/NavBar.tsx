@@ -35,6 +35,7 @@ export default function NavBar() {
           </Typography>
           <Button color="inherit" href="/">トピックリスト</Button>
           <Button color="inherit" href="/postTopic">トピック投稿</Button>
+          <Button color="inherit" href="/topicDetail">トピック投稿</Button>
           <Button color="inherit">ログイン</Button>
         </Toolbar>
       </AppBar>

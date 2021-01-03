@@ -4,10 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var postTopicRouter = require('./routes/postTopic');
-var TopicDetailRouter = require('./routes/TopicDetail');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const postTopicRouter = require('./routes/postTopic');
+const topicDetailRouter = require('./routes/topicDetail');
+const insertTopicRecordRouter = require('./routes/insertTopicRecord');
 
 var app = express();
 
@@ -21,11 +22,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-console.log(postTopicRouter,'postrouter')
-// console.log(postTopicRouter)
 app.use('/', indexRouter);
 app.use('/postTopic', postTopicRouter);
-app.use('/TopicDetail', TopicDetailRouter);
+app.use('/TopicDetail', topicDetailRouter);
+app.use('/insert-topic-record', insertTopicRecordRouter);
+
 app.use('/users', usersRouter);
 
 // 静的ファイル bundleされたjsを読み込めるようにする
