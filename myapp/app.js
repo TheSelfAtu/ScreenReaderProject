@@ -23,8 +23,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/postTopic', postTopicRouter);
-app.use('/TopicDetail', topicDetailRouter);
+app.use('/post-topic', postTopicRouter);
+app.use('/topic-detail/', topicDetailRouter);
 app.use('/insert-topic-record', insertTopicRecordRouter);
 
 app.use('/users', usersRouter);

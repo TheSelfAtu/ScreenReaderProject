@@ -34,8 +34,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title}>
           </Typography>
           <Button color="inherit" href="/">トピックリスト</Button>
-          <Button color="inherit" href="/postTopic">トピック投稿</Button>
-          <Button color="inherit" href="/topicDetail">トピック投稿</Button>
+          <Button color="inherit" href="/post-topic">トピック投稿</Button>
           <Button color="inherit">ログイン</Button>
         </Toolbar>
       </AppBar>

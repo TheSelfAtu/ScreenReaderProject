@@ -12,12 +12,6 @@ const connection = mysql.createConnection({
   port: "3306",
 });
 
-// connection.query({
-//     sql: 'SELECT * FROM `books` WHERE `author` = ?',
-//     timeout: 40000, // 40s
-//     values: ['David']
-//   }, function (error, results, fields) {
-//   });
 
 // middleware that is specific to this router
 router.use(function insertTopicRecordToDB(req, res, next) {
