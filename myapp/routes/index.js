@@ -17,9 +17,7 @@ router.post("/",function selectTopic(req, res, next) {
       sql: "SELECT * FROM topic",
       timeout: 40000, // 40s
     },
-    function showQueryResponse(error, results, fields) {
-      console.log("results", results);
-      console.log("error", error);
+    function responseTopic(error, results, fields) {
       res.json(results);
     }
   );

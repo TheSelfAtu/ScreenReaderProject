@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
-      maxWidth: "36ch",
+      maxWidth: "100%",
       backgroundColor: theme.palette.background.paper,
     },
     inline: {
@@ -48,29 +48,21 @@ export default function TopicList(props: TopicListProps) {
       {topicsInformation.map((topicInfo) => {
         return (
           <List className={classes.root}>
-            <ListItem alignItems="flex-start">
-              <ListItemText
-                primary={topicInfo.title}
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      className={classes.inline}
-                      color="textPrimary"
-                    >
-                      {topicInfo.content}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" />
+            <a href={"/topic-detail/" + topicInfo.id}>
+              <ListItem alignItems="flex-start">
+                <ListItemText primary={topicInfo.title} />
+              </ListItem>
+            </a>
+            <Divider variant="fullWidth" component="li" />
           </List>
         );
       })}
     </div>
   );
+}
+
+function ListItemLink() {
+  return <ListItem button component="a" href="" />;
 }
 
 function fetchTopicList(): any {
