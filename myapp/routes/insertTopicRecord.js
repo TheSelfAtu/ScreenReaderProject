@@ -32,7 +32,7 @@ router.use(function insertTopicRecordToDB(req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-  res.render("topic-detail", { title: "質問詳細" });
+  res.render("topic-list", { title: "質問詳細" });
 });
 
 module.exports = router;

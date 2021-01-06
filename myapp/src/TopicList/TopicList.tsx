@@ -45,18 +45,20 @@ export default function TopicList(props: TopicListProps) {
 
   return (
     <div id="topic-list-wrapper">
-      {topicsInformation.map((topicInfo) => {
-        return (
-          <List className={classes.root}>
-            <a href={"/topic-detail/" + topicInfo.id}>
-              <ListItem alignItems="flex-start">
-                <ListItemText primary={topicInfo.title} />
-              </ListItem>
-            </a>
-            <Divider variant="fullWidth" component="li" />
-          </List>
-        );
-      })}
+      <List className={classes.root}>
+        {topicsInformation.map((topicInfo) => {
+          return (
+            <React.Fragment>
+              <a href={"/topic-detail/" + topicInfo.id}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText primary={topicInfo.title} />
+                </ListItem>
+              </a>
+              <Divider variant="fullWidth" component="li" />
+            </React.Fragment>
+          );
+        })}
+      </List>
     </div>
   );
 }
