@@ -11,6 +11,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 interface FormDialogProps {
   topicTitle: string;
   topicContent: string;
+  postResopnseToDB:(inputValue:string)=>void;
+  fetchData: (endpoint:string)=>Promise<any>
 }
 export default function FormDialog(props: FormDialogProps) {
   const [open, setOpen] = React.useState(false);
@@ -59,7 +61,9 @@ export default function FormDialog(props: FormDialogProps) {
           <Button
             value={inputValue}
             onClick={() => {
-              postResponseToDB(inputValue);
+              props.postResopnseToDB(inputValue);
+              setInputValue("");
+              props.fetchData("getAllResponseToTopic");
               handleClose();
             }}
             color="primary"
@@ -72,22 +76,3 @@ export default function FormDialog(props: FormDialogProps) {
   );
 }
 
-function postResponseToDB(inputValue: string) {
-  if (inputValue === "") {
-    return false;
-  }
-  console.log(inputValue);
-  const params = new URLSearchParams();
-  params.append("inputValue", inputValue);
-
-  axios
-    .post(document.location + "/postResponse", params, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    })
-    .then((response) => {
-      console.log("axios response data", response.data);
-    })
-    .catch((err) => {
-      console.log("err: ", err);
-    });
-}

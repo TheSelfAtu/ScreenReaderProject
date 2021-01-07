@@ -4,7 +4,12 @@ import React, {
   useEffect,
   useContext,
   ReactHTMLElement,
+  useMemo,
 } from "react";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Divider from "@material-ui/core/Divider";
+import ListItemText from "@material-ui/core/ListItemText";
 
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import ButtonAppBar from "../NavBar";
@@ -18,20 +23,60 @@ export default function TopicDetail(props: TopicDetailProps) {
     title: "",
     content: "",
   });
-  const [responsesToTopic, setResponsesToTopic] = useState({
-    content: "",
-    created_at: "",
-  });
+  const [responsesToTopic, setResponsesToTopic] = useState([
+    {
+      content: "",
+      created_at: "",
+    },
+  ]);
+
+  const fetchData = (endpoint: string): Promise<any>=>{
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: document.location + "/" + endpoint,
+        responseType: "json",
+      })
+        .then((response) => {
+          console.log("axios response data", response.data);  
+          resolve(response.data);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  }
+  
+
+  const postResponseToDB = (inputValue: string) => {
+    if (inputValue === "") {
+      return false;
+    }
+    const params = new URLSearchParams();
+    params.append("inputValue", inputValue);
+
+    axios
+      .post(document.location + "/postResponse", params, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      })
+      .then((response) => {
+        console.log("axios response data", response.data);
+      })
+      .catch((err) => {
+        console.log("err: ", err);
+      });
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const topicData = await fetchTopicData("topic");
-      // const responseData = await fetchTopicData("response");
+    const fetchedData = async () => {
+      const topicData = await fetchData("topic");
+      const responseData = await fetchData("getAllResponseToTopic");
       setTopicInformation(topicData);
-      // setResponsesToTopic(responseData);
+      setResponsesToTopic(responseData);
     };
-    fetchData();
+    fetchedData();
   }, []);
+
 
   return (
     <div id="topic-detail-wrapper">
@@ -42,26 +87,29 @@ export default function TopicDetail(props: TopicDetailProps) {
           <FormDialog
             topicTitle={topicInformation.title}
             topicContent={topicInformation.content}
+            postResopnseToDB={postResponseToDB}
+            fetchData={fetchData}
           ></FormDialog>
+          <div id="response-content-wrapper">
+            <h3>回答</h3>
+            <Divider variant="fullWidth"/>
+
+            <List>
+              {responsesToTopic.map((response, index) => {
+                return (
+                  <React.Fragment>
+                    <ListItem key={"item"+index} alignItems="flex-start">
+                      <ListItemText primary={response.content} />
+                    </ListItem>
+                    <Divider variant="fullWidth" component="li" />
+                  </React.Fragment>
+                );
+              })}
+            </List>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function fetchTopicData(endpoint: string): any {
-  return new Promise((resolve, reject) => {
-    axios({
-      method: "POST",
-      url: document.location+"/"+endpoint,
-      responseType: "json",
-    })
-      .then((response) => {
-        console.log("axios response data", response.data);
-        resolve(response.data);
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
-  });
-}

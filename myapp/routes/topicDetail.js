@@ -66,10 +66,38 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       values: req.params["topicID"],
     },
     function responseTopic(error, results, fields) {
-      console.log(results);
-      res.json(results[0]);
+      console.log("resultsdayo",results);
+      res.json(results);
+    }
+  );
+});
+
+router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
+  const connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root",
+    database: "ScreenReaderProject",
+    port: "3306",
+  });
+
+  // トピックに対するレスポンスデータを返却
+  connection.query(
+    {
+      sql: "SELECT * FROM response_to_topic WHERE topic_id=?",
+      timeout: 40000, // 40s
+      values: req.params["topicID"],
+    },
+    function responseTopic(error, results, fields) {
+      console.log("resultsdayo",results);
+      res.json(results);
     }
   );
 });
 
 module.exports = router;
+
+
+function getAllResopnseToTopic(){
+
+}
