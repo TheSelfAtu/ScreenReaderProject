@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -27,7 +28,7 @@ app.use('/post-topic', postTopicRouter);
 app.use('/topic-detail/', topicDetailRouter);
 app.use('/insert-topic-record', insertTopicRecordRouter);
 
-app.use('/users', usersRouter);
+app.use('/users/', usersRouter);
 
 // 静的ファイル bundleされたjsを読み込めるようにする
 app.use("/bundle", express.static('./bundle/'));

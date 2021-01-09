@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 const app = express();
 
@@ -32,7 +32,7 @@ router.use(function insertTopicRecordToDB(req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-  res.render("topic-list", { title: "質問詳細" });
+  res.render("topic-list", { title: "トピック詳細" });
 });
 
 module.exports = router;

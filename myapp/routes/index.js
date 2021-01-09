@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 // 非同期のポストリクエストに対してトピック一覧を返す
 router.post("/",function selectTopic(req, res, next) {

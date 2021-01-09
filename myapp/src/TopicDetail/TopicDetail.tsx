@@ -5,6 +5,7 @@ import React, {
   useContext,
   ReactHTMLElement,
   useMemo,
+  useCallback,
 } from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -30,7 +31,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     },
   ]);
 
-  const fetchData = (endpoint: string): Promise<any>=>{
+  const fetchData = useCallback((endpoint: string): Promise<any>=>{
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -45,10 +46,10 @@ export default function TopicDetail(props: TopicDetailProps) {
           console.log("err: ", err);
         });
     });
-  }
+  },[])
   
 
-  const postResponseToDB = (inputValue: string) => {
+  const postResponseToDB = useCallback((inputValue: string) => {
     if (inputValue === "") {
       return false;
     }
@@ -60,12 +61,13 @@ export default function TopicDetail(props: TopicDetailProps) {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       })
       .then((response) => {
-        console.log("axios response data", response.data);
+        console.log("postResponse axios response data", response.data);
+        setResponsesToTopic(response.data);
       })
       .catch((err) => {
         console.log("err: ", err);
       });
-  };
+  },[]);
 
   useEffect(() => {
     const fetchedData = async () => {
@@ -97,9 +99,9 @@ export default function TopicDetail(props: TopicDetailProps) {
             <List>
               {responsesToTopic.map((response, index) => {
                 return (
-                  <React.Fragment>
-                    <ListItem key={"item"+index} alignItems="flex-start">
-                      <ListItemText primary={response.content} />
+                  <React.Fragment >
+                    <ListItem  alignItems="flex-start">
+                      <ListItemText  primary={response.content} />
                     </ListItem>
                     <Divider variant="fullWidth" component="li" />
                   </React.Fragment>

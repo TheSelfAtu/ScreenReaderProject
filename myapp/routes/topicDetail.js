@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql");
-
-// app.use(express.json())
-// app.use(express.urlencoded({ extended: true }));
+const mysql = require("mysql2");
 
 /* GET home page. */
 // テンプレートを返す
@@ -67,7 +64,7 @@ router.post("/:topicID/postResponse", function (req, res, next) {
     },
     function responseTopic(error, results, fields) {
       console.log("resultsdayo",results);
-      res.json(results);
+      res.json(results);  
     }
   );
 });
