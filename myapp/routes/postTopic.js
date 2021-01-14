@@ -1,4 +1,4 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 const mysql = require("mysql2");
 
@@ -10,18 +10,20 @@ const connection = mysql.createConnection({
   port: "3306",
 });
 
-
 // middleware that is specific to this router
-router.use(function createTopicRecordToDB (req, res, next) {
-
-    next()
-  })
-
-
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    res.render('post-topic', { title: '質問投稿' });
+router.use(function createTopicRecordToDB(req, res, next) {
+  if (req.user) {
+    //if user is looged in, req.isAuthenticated() will return true
+    console.log("yes");
+    next();
+  } else {
+    res.redirect("/users/login");
+  }
 });
 
+/* GET home page. */
+router.get("/", function (req, res, next) {
+  res.render("post-topic", { title: "質問投稿" });
+});
 
 module.exports = router;

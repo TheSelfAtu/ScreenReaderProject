@@ -23,7 +23,7 @@ router.post("/",function selectTopic(req, res, next) {
   );
 });
 
-/* GET home page. */
+// トピック一覧画面を返す
 router.get("/", function (req, res, next) {
   res.render("topic-list", { title: "スクリーンリーダープログラミング" });
 });
