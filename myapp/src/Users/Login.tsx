@@ -72,7 +72,7 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           ログイン
         </Typography>
-        {/* <form className={classes.form}> */}
+        <form className={classes.form}>
         <TextField
           onChange={(e) => {
             setUsername(e.target.value);
@@ -117,7 +117,7 @@ export default function Login() {
         >
           ログイン
         </Button>
-        {/* </form> */}
+        </form>
       </div>
     </Container>
   );

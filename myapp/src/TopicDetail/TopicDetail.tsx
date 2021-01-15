@@ -11,9 +11,9 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
+import LoginRecommendForm from "../Users/LoginRecommend";
 
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import ButtonAppBar from "../NavBar";
 
 import FormDialog from "./FormDialog";
 interface TopicDetailProps {}
@@ -30,8 +30,9 @@ export default function TopicDetail(props: TopicDetailProps) {
       created_at: "",
     },
   ]);
+  const [hasAccessRight, setAccessRight] = useState(false);
 
-  const fetchData = useCallback((endpoint: string): Promise<any>=>{
+  const fetchData = useCallback((endpoint: string): Promise<any> => {
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -39,46 +40,85 @@ export default function TopicDetail(props: TopicDetailProps) {
         responseType: "json",
       })
         .then((response) => {
-          console.log("axios response data", response.data);  
+          console.log("axios fetch response data", response.data);
           resolve(response.data);
         })
         .catch((err) => {
           console.log("err: ", err);
         });
     });
-  },[])
-  
+  }, []);
 
-  const postResponseToDB = useCallback((inputValue: string) => {
-    if (inputValue === "") {
-      return false;
-    }
-    const params = new URLSearchParams();
-    params.append("inputValue", inputValue);
+  const checkAccessRight = useCallback((): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: "/users/checkAccessRight",
+        responseType: "json",
+      })
+        .then((response) => {
+          console.log("checkAccessRight ", response.data.hasAccessRight);
+          resolve(response.data.hasAccessRight);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  }, []);
 
-    axios
-      .post(document.location + "/postResponse", params, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      })
-      .then((response) => {
-        console.log("postResponse axios response data", response.data);
-        setResponsesToTopic(response.data);
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
-  },[]);
+  const postResponseToDB = useCallback((inputValue: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      if (inputValue === "") {
+        return false;
+      }
+      const params = new URLSearchParams();
+      params.append("inputValue", inputValue);
+
+      axios
+        .post(document.location + "/postResponse", params, {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        })
+        .then((response) => {
+          console.log("postResponse axios response data", response.data);
+          resolve(response.data);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  }, []);
 
   useEffect(() => {
     const fetchedData = async () => {
       const topicData = await fetchData("topic");
       const responseData = await fetchData("getAllResponseToTopic");
+      const accessRight = await checkAccessRight();
       setTopicInformation(topicData);
       setResponsesToTopic(responseData);
+      setAccessRight(accessRight);
     };
     fetchedData();
   }, []);
 
+  const DialogButton = () => {
+    if (!hasAccessRight) {
+      return (
+        <div id="login-wrapper">
+          <LoginRecommendForm buttonExplanation="ログインして回答を投稿"></LoginRecommendForm>
+        </div>
+      );
+    }
+    return (
+      <div id="response-post-wrapper">
+        <FormDialog
+          topicTitle={topicInformation.title}
+          topicContent={topicInformation.content}
+          postResopnseToDB={postResponseToDB}
+          fetchData={fetchData}
+        ></FormDialog>
+      </div>
+    );
+  };
 
   return (
     <div id="topic-detail-wrapper">
@@ -86,22 +126,16 @@ export default function TopicDetail(props: TopicDetailProps) {
       <h4>{topicInformation.content}</h4>
       <div id="response-to-topic">
         <div id="response-form">
-          <FormDialog
-            topicTitle={topicInformation.title}
-            topicContent={topicInformation.content}
-            postResopnseToDB={postResponseToDB}
-            fetchData={fetchData}
-          ></FormDialog>
+          {DialogButton()}
           <div id="response-content-wrapper">
             <h3>回答</h3>
-            <Divider variant="fullWidth"/>
-
+            <Divider variant="fullWidth" />
             <List>
               {responsesToTopic.map((response, index) => {
                 return (
-                  <React.Fragment >
-                    <ListItem  alignItems="flex-start">
-                      <ListItemText  primary={response.content} />
+                  <React.Fragment>
+                    <ListItem alignItems="flex-start">
+                      <ListItemText primary={response.content} />
                     </ListItem>
                     <Divider variant="fullWidth" component="li" />
                   </React.Fragment>
@@ -114,4 +148,3 @@ export default function TopicDetail(props: TopicDetailProps) {
     </div>
   );
 }
-

@@ -10,16 +10,16 @@ const connection = mysql.createConnection({
   port: "3306",
 });
 
+
+
 // middleware that is specific to this router
-router.use(function createTopicRecordToDB(req, res, next) {
-  if (req.user) {
-    //if user is looged in, req.isAuthenticated() will return true
-    console.log("yes");
-    next();
-  } else {
-    res.redirect("/users/login");
-  }
-});
+// router.use(function checkAuthority(req, res, next) {
+//   if (req.user) {
+//     next();
+//   } else {
+//     res.redirect("/users/login");
+//   }
+// });
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

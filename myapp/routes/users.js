@@ -9,8 +9,20 @@ router.get("/signup", function (req, res, next) {
   res.render("signup", { title: "サインアップ画面" });
 });
 
+router.post("/checkAccessRight", (req, res, next) => {
+  console.log("req.user",req.user)
+  if (req.user) {
+    return res.json({ hasAccessRight: true });
+  } else {
+    return res.json({ hasAccessRight: false });
+  }
+});
+
 // 新しいユーザーを追加する
 router.post("/signup", function (req, res, next) {
+  console.log("signup start");
+  console.log("req.body username", req);
+  console.log("req query", req.query);
   const connection = mysql.createConnection({
     host: "mysql",
     user: "root",
@@ -24,24 +36,21 @@ router.post("/signup", function (req, res, next) {
       sql: "insert into user SET ?",
       timeout: 40000, // 40s
       values: {
-        username: req.body["username"],
+        username: req.query.username,
         password: crypto
           .createHash("sha256")
-          .update(req.body["password"])
+          .update(req.query.password)
           .digest("hex"),
       },
     },
-    function redirectToLogin(error, results, fields) {
-      if (error != null) {
-        console.log("エラーが発生しました");
-        res.render("signup", {
-          title: "サインアップ画面",
-          error: "エラーが発生しました",
-        });
+    function ResponseSignUpResult(err, results, fields) {
+      console.log("sign up result or err", err, results);
+      if (err != null) {
+        console.log("サインアップでエラーが発生しました");
+        return res.status(500).send({ err: err.message });
       }
       console.log("results", results);
-      console.log("error", error);
-      res.render("login", { title: "ログイン画面" });
+      return res.json({ "login successed": "yes" });
     }
   );
 });
@@ -53,7 +62,7 @@ router.get("/login", function (req, res, next) {
 
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-// 認証でのエラーを返す
+    // 認証でのエラーを返す
     if (err) {
       console.log("error", err);
       console.log("error message", err.message);
@@ -66,8 +75,8 @@ router.post("/login", (req, res, next) => {
       }
       if (!user) {
         res.json(err);
-      } 
-        res.json({ "login successed": "yes" });
+      }
+      res.json({ "login successed": "yes" });
     });
   })(req, res, next);
 });

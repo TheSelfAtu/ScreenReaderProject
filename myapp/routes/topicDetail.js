@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
+const { route } = require(".");
 
 /* GET home page. */
 // テンプレートを返す
@@ -29,6 +30,9 @@ router.post("/:topicID/topic", function (req, res, next) {
     }
   );
 });
+
+
+
 
 router.post("/:topicID/postResponse", function (req, res, next) {
   const connection = mysql.createConnection({
