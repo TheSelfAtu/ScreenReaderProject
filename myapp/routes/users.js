@@ -34,7 +34,10 @@ router.post("/signup", function (req, res, next) {
     function redirectToLogin(error, results, fields) {
       if (error != null) {
         console.log("エラーが発生しました");
-        res.render("signup", { title: "サインアップ画面" ,error:"エラーが発生しました"});
+        res.render("signup", {
+          title: "サインアップ画面",
+          error: "エラーが発生しました",
+        });
       }
       console.log("results", results);
       console.log("error", error);
@@ -48,18 +51,31 @@ router.get("/login", function (req, res, next) {
   res.render("login", { title: "ログイン画面" });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/users/login",
-  })
-);
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+// 認証でのエラーを返す
+    if (err) {
+      console.log("error", err);
+      console.log("error message", err.message);
+      return res.status(500).send({ err: err.message });
+    }
+    // セッションに認証用ユーザ名を埋め込む
+    req.logIn(user, function (err) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        res.json(err);
+      } 
+        res.json({ "login successed": "yes" });
+    });
+  })(req, res, next);
+});
 
 // ログアウト時にセッションの情報を破棄
 router.get("/logout", function (req, res) {
   req.logout();
-  res.redirect("/");
+  res.redirect("/users/login");
 });
 
 module.exports = router;

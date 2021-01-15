@@ -62,40 +62,44 @@ passport.use(
         },
         (error, results, fields) => {
           if (error != null) {
-            console.log(results);
+            console.log("query error", error);
+            return done(error);
           }
-          console.log("results", results);
-          console.log("error", error);
+          if (results.length === 0) {
+            console.log("ユーザーが存在しません ");
+            return done(new Error('ユーザー名またはパスワードが違います'));
+          }
+
+          console.log("ユーザー名による検索結果", results);
           const sendPassword = crypto
             .createHash("sha256")
             .update(password)
             .digest("hex");
 
-        //     try{
-        //   if (results.length===0) {
-        //     throw new Error("BROKEN"); // Express will catch this on its own.
-        //   }
-        // }catch(e){
-          
-        // }        
+            if(results[0].password !== sendPassword) {
+              console.log("パスワードが違います");
+              return done(new Error('ユーザー名またはパスワードがちがいます'));
+            }
+
           if (results[0].password == sendPassword) {
-            console.log("return done username", username);
+            console.log("ユーザー認証に成功", username);
             return done(null, { username: username });
-          } else {
-            console.log("login error");
-            // throw new Error('BROKEN') // Express will catch this on its own.
-            return done(null, false, {
-              message: "パスワードが正しくありません。",
-            });
           }
+
+          console.log("login error");
+          // throw new Error('BROKEN') // Express will catch this on its own.
+return(new Error('"new" キーワードによって生成されました。'))
+          return done(null, false, {
+            message: "パスワードが正しくありません。",
+          });
         }
       );
     }
   )
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user);
+passport.serializeUser((username, done) => {
+  done(null, username);
 }); // ユニークユーザー識別子からユーザーデータを取り出す
 passport.deserializeUser((username, done) => {
   done(null, username);

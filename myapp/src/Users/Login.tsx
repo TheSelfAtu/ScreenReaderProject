@@ -55,7 +55,9 @@ export default function Login() {
           resolve(response.data);
         })
         .catch((err) => {
-          console.log("err: ", err);
+          console.log("error response data", err.response.data);
+
+          setError(err.response.data.err);
         });
     });
   };
@@ -71,48 +73,50 @@ export default function Login() {
           ログイン
         </Typography>
         {/* <form className={classes.form}> */}
-          <TextField
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-            value={username}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="ユーザー名"
-            name="username"
-            autoComplete="username"
-            autoFocus
-          />
-          <TextField
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            value={password}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="パスワード"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            onClick={() => {
-              requestLogin(username, password);
-            }}
-            type="button"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            ログイン
-          </Button>
+        <TextField
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
+          value={username}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="username"
+          label="ユーザー名"
+          name="username"
+          autoComplete="username"
+          autoFocus
+        />
+        <TextField
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+          value={password}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="パスワード"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+        />
+        {/* エラーメッセージを表示 */}
+        {error}
+        <Button
+          onClick={() => {
+            requestLogin(username, password);
+          }}
+          type="button"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          ログイン
+        </Button>
         {/* </form> */}
       </div>
     </Container>
