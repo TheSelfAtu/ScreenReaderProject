@@ -1,38 +1,35 @@
-version: '3'
+version: '2'
+# service
 services:
-  # mysql
-  mysql:
-      image: mysql:5.7
-      command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-      ports:
-          - "3306:3306"
-      environment:
-          MYSQL_DATABASE: db
-          MYSQL_ROOT_USER: root
-          MYSQL_ROOT_PASSWORD: root
-          TZ: Asia/Tokyo
-      volumes:
-          - $PWD/myapp/database:/var/lib/mysql
-          - $PWD/myapp/initdb.d:/docker-entrypoint-initdb.d
+    # mysql
+    mysql:
+        image: mysql:5.7
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: db
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - $PWD/database:/var/lib/mysql
 
 
-  web:
-    build:
-      context: ./docker/construct_web      # Dockerfile保存場所
-      dockerfile: Dockerfile    # Dockerfileファイル名
-    image: nn-web      # docker image name
-    container_name: nn-web       # docker container name
-    ports:
-      - 80:80
-
-  app:
-    build:
-      context: ./docker/construct_app      # Dockerfile保存場所
-      dockerfile: Dockerfile    # Dockerfileファイル名
-    image: nn-app                  # イメージ名
-    container_name: nn-app         # コンテナ名
-    ports:                          # ポート接続
-      - 3000:3000
-    volumes:                        # mount workdir
-      - ./myapp:/src
-    command: [sh, -c, npm install && npm start]
+    # proxy
+    proxy:
+        image: jwilder/nginx-proxy:latest
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+        ports:
+            - "80:80"
+    # www
+    www:
+        image: atsu666/ioncube:7.3 # phpのバージョンにあったものを指定
+        privileged: true
+        volumes:
+            - $PWD:/var/www/html
+        links:
+            - mysql:mysql
+        environment:
+            - VIRTUAL_HOST=acms.com,www.acms.com # host名を指定
+            - APACHE_DOCUMENT_ROOT=/var/www/html # ドキュメントルートを指定
