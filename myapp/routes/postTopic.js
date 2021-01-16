@@ -1,6 +1,6 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "mysql",
@@ -11,17 +11,19 @@ const connection = mysql.createConnection({
 });
 
 
+
 // middleware that is specific to this router
-router.use(function createTopicRecordToDB (req, res, next) {
-
-    next()
-  })
-
+// router.use(function checkAuthority(req, res, next) {
+//   if (req.user) {
+//     next();
+//   } else {
+//     res.redirect("/users/login");
+//   }
+// });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-    res.render('post-topic', { title: '質問投稿' });
+router.get("/", function (req, res, next) {
+  res.render("post-topic", { title: "質問投稿" });
 });
-
 
 module.exports = router;

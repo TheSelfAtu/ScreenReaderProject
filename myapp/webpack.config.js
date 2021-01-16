@@ -4,6 +4,7 @@ module.exports = {
     "topicList": "./src/TopicList/index.tsx",
     "topicDetail": "./src//TopicDetail/index.tsx",
     "postTopic": "./src//PostTopic/index.tsx",
+    "Users": "./src/Users/index.tsx",
   },
   output: {
     path: __dirname + "/bundle",

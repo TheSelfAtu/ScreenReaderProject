@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 // 非同期のポストリクエストに対してトピック一覧を返す
 router.post("/",function selectTopic(req, res, next) {
@@ -23,7 +23,7 @@ router.post("/",function selectTopic(req, res, next) {
   );
 });
 
-/* GET home page. */
+// トピック一覧画面を返す
 router.get("/", function (req, res, next) {
   res.render("topic-list", { title: "スクリーンリーダープログラミング" });
 });

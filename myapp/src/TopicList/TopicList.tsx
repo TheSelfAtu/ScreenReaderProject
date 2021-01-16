@@ -35,6 +35,23 @@ export default function TopicList(props: TopicListProps) {
     { id: "", title: "", content: "" },
   ]);
 
+  const fetchTopicList = (): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: "/",
+        responseType: "json",
+      })
+        .then((response) => {
+          console.log("axios response data", response.data);
+          resolve(response.data);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const topicListInfo = await fetchTopicList();
@@ -61,25 +78,4 @@ export default function TopicList(props: TopicListProps) {
       </List>
     </div>
   );
-}
-
-function ListItemLink() {
-  return <ListItem button component="a" href="" />;
-}
-
-function fetchTopicList(): any {
-  return new Promise((resolve, reject) => {
-    axios({
-      method: "POST",
-      url: "/",
-      responseType: "json",
-    })
-      .then((response) => {
-        console.log("axios response data", response.data);
-        resolve(response.data);
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
-  });
 }
