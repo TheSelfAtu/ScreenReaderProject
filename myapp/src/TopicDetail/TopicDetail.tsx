@@ -30,7 +30,7 @@ export default function TopicDetail(props: TopicDetailProps) {
       created_at: "",
     },
   ]);
-  const [hasAccessRight, setAccessRight] = useState(false);
+  const [userStatus, setUserStatus] = useState({"userId":"","userName":"","session":false});
 
   const fetchData = useCallback((endpoint: string): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -49,15 +49,16 @@ export default function TopicDetail(props: TopicDetailProps) {
     });
   }, []);
 
-  const checkAccessRight = useCallback((): Promise<any> => {
+  const fetchUserStatus = useCallback((): Promise<any> => {
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
-        url: "/users/checkAccessRight",
+        url: "/users/responseUserStatus",
         responseType: "json",
       })
         .then((response) => {
           console.log("checkAccessRight ", response.data.hasAccessRight);
+          setUserStatus({"userId":response.data.userId,"userName":response.data.userName,"session":response.data.session})
           resolve(response.data.hasAccessRight);
         })
         .catch((err) => {
@@ -92,19 +93,17 @@ export default function TopicDetail(props: TopicDetailProps) {
     const fetchedData = async () => {
       const topicData = await fetchData("topic");
       const responseData = await fetchData("getAllResponseToTopic");
-      const accessRight = await checkAccessRight();
       setTopicInformation(topicData);
       setResponsesToTopic(responseData);
-      setAccessRight(accessRight);
     };
     fetchedData();
   }, []);
 
   const DialogButton = () => {
-    if (!hasAccessRight) {
+    if (!userStatus.session) {
       return (
         <div id="login-wrapper">
-          <LoginRecommendForm buttonExplanation="ログインして回答を投稿"></LoginRecommendForm>
+          <LoginRecommendForm fetchUserStatus={fetchUserStatus} dialogTitle="ログインすることで回答を投稿できます" buttonExplanation="ログインして回答を投稿"></LoginRecommendForm>
         </div>
       );
     }

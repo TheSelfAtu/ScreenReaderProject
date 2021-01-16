@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  error: {
+    color: "red",
+  },
 }));
 
 export default function SignUp() {
@@ -50,7 +53,6 @@ export default function SignUp() {
         responseType: "json",
         params: urlParams,
         headers: { "content-type": "application/x-www-form-urlencoded" },
-
       })
         .then((response) => {
           console.log("axios response data", response.data);
@@ -109,6 +111,7 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
+          <span className={classes.error}>{error}</span>
           <Button
             type="button"
             onClick={() => {

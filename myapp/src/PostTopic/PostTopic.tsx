@@ -1,15 +1,6 @@
 import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  ReactHTMLElement,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
-
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 
 import TopicTitle from "./TopicTitle";
@@ -20,18 +11,27 @@ interface PostTopicProps {}
 export default function PostTopic(props: PostTopicProps) {
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
-  const [hasAccessRight, setAccessRight] = useState(false);
+  const [error, setError] = useState(null);
+  const [userStatus, setUserStatus] = useState({
+    userId: "",
+    userName: "",
+    session: false,
+  });
 
-  const checkAccessRight = useCallback((): Promise<any> => {
+  const fetchUserStatus = useCallback((): Promise<any> => {
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
-        url: "/users/checkAccessRight",
+        url: "/users/responseUserStatus",
         responseType: "json",
       })
         .then((response) => {
-          console.log("checkAccessRight ", response.data.hasAccessRight);
-          resolve(response.data.hasAccessRight);
+          console.log("fetchUserStatus response ", response.data);
+          setUserStatus({
+            userId: response.data.userId,
+            userName: response.data.userName,
+            session: response.data.session,
+          });
         })
         .catch((err) => {
           console.log("err: ", err);
@@ -39,48 +39,88 @@ export default function PostTopic(props: PostTopicProps) {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchedData = async () => {
-      const accessRight = await checkAccessRight();
-      setAccessRight(accessRight);
-    };
-    fetchedData();
-  }, []);
+  const postTopicToDB = useCallback(
+    (
+      inputTitle: string,
+      inputContent: string,
+      postUserID: string
+    ): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        const params = new URLSearchParams();
+        params.append("title", inputTitle);
+        params.append("content", inputContent);
+        params.append("post_user_id", postUserID);
+
+        axios
+          .post("/post-topic", params, {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          })
+          .then((response) => {
+            console.log("postTopicResponse axios response data", response.data);
+            location.href = "/";
+          })
+          .catch((err) => {
+            console.log("err: ", err);
+            setError(err.response.data.err);
+          });
+      });
+    },
+    []
+  );
 
   const LoginORSubmitButton = () => {
-    if (!hasAccessRight) {
+    if (!userStatus.session) {
       return (
         <div id="login-wrapper">
-          <LoginRecommendForm buttonExplanation="ログインしてトピックを投稿"></LoginRecommendForm>
+          <LoginRecommendForm
+            fetchUserStatus={fetchUserStatus}
+            dialogTitle="ログインすることでトピックの投稿ができます"
+            buttonExplanation="ログインしてトピックを投稿"
+          ></LoginRecommendForm>
         </div>
       );
     }
     return (
-      <Button type="submit" variant="contained" color="primary">
+      <Button
+        onClick={() => {
+          postTopicToDB(inputTitle, inputContent, userStatus.userId);
+        }}
+        type="submit"
+        variant="contained"
+        color="primary"
+      >
         トピックを送信
       </Button>
     );
   };
 
+  useEffect(() => {
+    const fetchedData = async () => {
+      fetchUserStatus();
+    };
+    fetchedData();
+  }, []);
+
   return (
     <div id="post-topic-wrapper">
-      <form action="/insert-topic-record" method="POST">
-        <div id="topic-title-wrapper">
-          <h3>タイトル</h3>
-          <TopicTitle
-            inputTitle={inputTitle}
-            setInputTitle={setInputTitle}
-          ></TopicTitle>
-        </div>
-        <div id="topic-content-wrapper">
-          <h3>内容</h3>
-          <TopicContent
-            inputContent={inputContent}
-            setInputContent={setInputContent}
-          ></TopicContent>
-        </div>
-        {LoginORSubmitButton()}
-      </form>
+      <div id="topic-title-wrapper">
+        <h3>タイトル</h3>
+        <TopicTitle
+          inputTitle={inputTitle}
+          setInputTitle={setInputTitle}
+        ></TopicTitle>
+      </div>
+      <div id="topic-content-wrapper">
+        <h3>内容</h3>
+        <TopicContent
+          inputContent={inputContent}
+          setInputContent={setInputContent}
+        ></TopicContent>
+      </div>
+      <div>
+        <span>{error}</span>
+      </div>
+      {LoginORSubmitButton()}
     </div>
   );
 }

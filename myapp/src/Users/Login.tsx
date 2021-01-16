@@ -56,7 +56,6 @@ export default function Login() {
         })
         .catch((err) => {
           console.log("error response data", err.response.data);
-
           setError(err.response.data.err);
         });
     });

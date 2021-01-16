@@ -39,7 +39,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface LoginRecommendProps {
+  dialogTitle: string;
   buttonExplanation: string;
+  fetchUserStatus: any;
 }
 
 export default function LoginRecommendForm(props: LoginRecommendProps) {
@@ -71,7 +73,11 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           params: urlParams,
         })
           .then((response) => {
-            console.log("axios response data", response.data);
+            console.log(
+              "axios LoginRecommend Button pushed login succedd",
+              response.data
+            );
+            props.fetchUserStatus();
             resolve(response.data);
           })
           .catch((err) => {
@@ -93,9 +99,8 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title"></DialogTitle>
+        <DialogTitle id="form-dialog-title">{props.dialogTitle}</DialogTitle>
         <DialogContent>
-          <DialogContentText>ログインすることでトピックに回答することができます</DialogContentText>
           <TextField
             onChange={(e) => {
               setUsername(e.target.value);
