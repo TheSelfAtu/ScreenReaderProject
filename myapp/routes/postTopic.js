@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
 
 /* post-topicテンプレートを返す*/
 router.get("/", function (req, res, next) {
-  res.render("post-topic", { title: "質問投稿" });
+  res.render("post-topic", { title: "トピック投稿" });
 });
 
 // 投稿されたトピックを登録する
@@ -20,9 +20,8 @@ router.post("/", function insertTopicRecordToDB(req, res, next) {
   const insertValues = {
     title: req.body.title,
     content: req.body.content,
-    post_user_id: req.body.post_user_id,
+    post_user_id: req.body.response_user_id,
   };
-
   connection.query(
     {
       sql: "insert into topic SET ?",

@@ -11,12 +11,9 @@ router.get("/signup", function (req, res, next) {
 
 router.post("/responseUserStatus", (req, res, next) => {
   if (!req.user) {
-    return res.json({ session: false });
+    return res.json({"session":false, "userId":"", "userName":""});
   }
   if (req.user) {
-console.log("res.user",req.user)
-console.log("res.user username",req.user.username)
-
     const connection = mysql.createConnection({
       host: "mysql",
       user: "root",

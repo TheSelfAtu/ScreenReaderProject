@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
-const { route } = require(".");
 
-/* GET home page. */
 // テンプレートを返す
 router.get("/:topicID", function (req, res, next) {
   res.render("topic-detail", { title: "トピック詳細" });
@@ -31,9 +29,7 @@ router.post("/:topicID/topic", function (req, res, next) {
   );
 });
 
-
-
-
+// トピックに対する回答を登録する
 router.post("/:topicID/postResponse", function (req, res, next) {
   const connection = mysql.createConnection({
     host: "mysql",
@@ -42,7 +38,8 @@ router.post("/:topicID/postResponse", function (req, res, next) {
     database: "ScreenReaderProject",
     port: "3306",
   });
-
+console.log("response_userid ",req.body)
+console.log("response_userid ",req.body.response_user_id)
   // トピックのレスポンスを登録
   connection.query(
     {
@@ -51,11 +48,18 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       values: {
         content: req.body["inputValue"],
         topic_id: req.params["topicID"],
+        response_user_id: req.body["response_user_id"],
       },
     },
-    function showQueryResponse(error, results, fields) {
+    function responseInsertResponseToTopic(err, results, fields) {
+      if (err) {
+        console.log("error", err);
+        return res
+          .status(500)
+          .send({ err: "トピックの回答を投稿できませんでした" });
+      }
+      console.log("トピックの回答の投稿に成功しました");
       console.log("results", results);
-      console.log("error", error);
     }
   );
 
@@ -66,9 +70,8 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },
-    function responseTopic(error, results, fields) {
-      console.log("resultsdayo",results);
-      res.json(results);  
+    function responseToTopic(error, results, fields) {
+      return res.json(results);
     }
   );
 });
@@ -90,15 +93,9 @@ router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
       values: req.params["topicID"],
     },
     function responseTopic(error, results, fields) {
-      console.log("resultsdayo",results);
-      res.json(results);
+      return res.json(results);
     }
   );
 });
 
 module.exports = router;
-
-
-function getAllResopnseToTopic(){
-
-}

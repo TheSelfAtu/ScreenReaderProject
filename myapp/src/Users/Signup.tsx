@@ -33,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   error: {
+    display:"block",
+    textAlign:"center",
     color: "red",
   },
 }));
@@ -111,7 +113,9 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
+          <div>
           <span className={classes.error}>{error}</span>
+          </div>
           <Button
             type="button"
             onClick={() => {
