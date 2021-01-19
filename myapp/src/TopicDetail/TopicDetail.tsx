@@ -7,6 +7,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import LoginRecommendForm from "../Users/LoginRecommend";
 
 import FormDialog from "./FormDialog";
+
+import "./css/style.css";
+
 interface TopicDetailProps {}
 
 export default function TopicDetail(props: TopicDetailProps) {
@@ -14,10 +17,13 @@ export default function TopicDetail(props: TopicDetailProps) {
     id: "",
     title: "",
     content: "",
+    is_topic_active: true,
+    post_user_id: "",
+    created_at: "",
   });
   const [responsesToTopic, setResponsesToTopic] = useState([
     {
-      id : "",
+      id: "",
       response_user_id: "",
       content: "",
       created_at: "",
@@ -103,6 +109,28 @@ export default function TopicDetail(props: TopicDetailProps) {
     fetchedData();
   }, [posted]);
 
+  const topicStatus = () => {
+    const datetime = formatDateTime(topicInformation.created_at);
+    if (topicInformation.is_topic_active) {
+      return (
+        <div className="topic-status">
+          <span>回答受付中</span>
+          <span>投稿{datetime}</span>
+        </div>
+      );
+    }
+    return (
+      <div className="topic-status">
+        <div className="topic-is-active">
+          <span>回答締め切り </span>
+        </div>
+        <div className="topic-datetime">
+          <span>投稿日時 {datetime}</span>
+        </div>
+      </div>
+    );
+  };
+
   const DialogButton = () => {
     if (!userStatus.session) {
       return (
@@ -129,36 +157,68 @@ export default function TopicDetail(props: TopicDetailProps) {
 
   return (
     <div id="topic-detail-wrapper">
-      <div className="topic-title">
+      <div className="topic-title-wrapper">
         <h2>{topicInformation.title}</h2>
+        {topicStatus()}
       </div>
       <div className="topic-content">
         <h4>{topicInformation.content}</h4>
       </div>
-      <div id="response-to-topic">
-        <div id="response-form">
+      <div id="post-response-to-topic">
+        <div id="post-response-form">
           {DialogButton()}
           <div>
             <span>{error}</span>
           </div>
-          <div id="response-content-wrapper">
-            <h3>回答</h3>
-            <Divider variant="fullWidth" />
-            <List>
-              {responsesToTopic.map((response, index) => {
-                return (
-                  <React.Fragment>
-                    <ListItem alignItems="flex-start">
-                      <ListItemText primary={response.content} />
-                    </ListItem>
-                    <Divider variant="fullWidth" component="li" />
-                  </React.Fragment>
-                );
-              })}
-            </List>
-          </div>
         </div>
+      </div>
+      <Divider variant="fullWidth" />
+      <div id="response-content-wrapper">
+        <h3>
+          <span>回答</span>
+          <span className="number-of-response">{responsesToTopic.length}</span>
+          <span>件</span>
+        </h3>
+        <Divider variant="fullWidth" />
+
+        {responsesToTopic.map((response, index) => {
+          return (
+            <div className="topic-response-wrapper">
+              <div className="topic-response-side-menu"></div>
+              <div className="topic-response-main">
+                <div className="topic-response-main-content">
+                  {response.content}
+                </div>
+                <div className="topic-response-status">
+                  <span>投稿{formatDateTime(response.created_at)}</span>
+                </div>
+              </div>
+              <Divider variant="fullWidth" />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
+}
+
+function formatDateTime(datetime: string): string {
+  const separatedDateTime = datetime.match(
+    /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
+  );
+  if (separatedDateTime?.length == 6) {
+    console.log("separateddate", separatedDateTime[1] + "年");
+    return (
+      separatedDateTime[1] +
+      "年" +
+      separatedDateTime[2] +
+      "月" +
+      separatedDateTime[3] +
+      "日" +
+      separatedDateTime[4] +
+      ":" +
+      separatedDateTime[5]
+    );
+  }
+  return "";
 }

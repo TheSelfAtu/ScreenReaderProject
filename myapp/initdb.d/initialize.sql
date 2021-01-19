@@ -29,6 +29,7 @@ CREATE TABLE topic (
     title VARCHAR(100) NOT NULL UNIQUE,
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_topic_active INT NOT NULL DEFAULT 1,
     FOREIGN KEY(post_user_id) REFERENCES user(id)
 );
 
@@ -41,6 +42,19 @@ CREATE TABLE response_to_topic (
     response_user_id INT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    favorite INT NOT NULL DEFAULT 0,
     FOREIGN KEY(topic_id) REFERENCES topic(id),
     FOREIGN KEY(response_user_id) REFERENCES user(id)
+);
+
+-- 登録したトピック
+DROP TABLE IF EXISTS registerd_topic;
+
+CREATE TABLE registerd_topic (
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    user_id INT NOT NULL,
+    topic_id INT NOT NULL,
+    registerd_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(topic_id) REFERENCES topic(id)
 );

@@ -1,0 +1,27 @@
+.topic-title-wrapper {
+  background-color: whitesmoke;
+  /* padding: 5px; */
+}
+/* トピック：回答受付中もしくは回答締め切り */
+.topic-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.topic-is-active {
+  outline: solid 0.5px black;
+  margin-right: 10px;
+}
+
+/* トピックの回答の件数 */
+.number-of-response {
+  padding: 0px 5px;
+  color: violet;
+}
+.topic-response-main-content {
+  padding-bottom: 40px;
+}
+.topic-response-status {
+  display: flex;
+  justify-content: flex-end;
+}
