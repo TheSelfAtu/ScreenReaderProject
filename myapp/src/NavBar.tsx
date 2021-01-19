@@ -5,6 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { Menu } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -78,12 +79,11 @@ export default function NavBar() {
 
           <Typography variant="h6" className={classes.title}></Typography>
           <Button color="inherit" href="/">
-            トピックリスト
+            トピック一覧
           </Button>
           <Button color="inherit" href="/post-topic">
             トピック投稿
           </Button>
-          <Button color="inherit">ログイン</Button>
         </Toolbar>
       </AppBar>
     </div>

@@ -86,8 +86,6 @@ passport.use(
             return done(null, { username: username });
           }
 
-          console.log("login error");
-          // throw new Error('BROKEN') // Express will catch this on its own.
 return(new Error('"new" キーワードによって生成されました。'))
           return done(null, false, {
             message: "パスワードが正しくありません。",

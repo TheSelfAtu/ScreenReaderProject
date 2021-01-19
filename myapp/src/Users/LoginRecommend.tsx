@@ -33,6 +33,11 @@ const useStyles = makeStyles((theme) => ({
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
+  error: {
+    display: "block",
+    textAlign: "center",
+    color: "red",
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
@@ -83,6 +88,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           .catch((err) => {
             console.log("error response data", err.response.data);
             setError(err.response.data.err);
+            return false
           });
       });
     },
@@ -132,7 +138,9 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
             autoComplete="current-password"
           />
           {/* エラーメッセージを表示 */}
-          {error}
+          <div>
+            <span className={classes.error}>{error}</span>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -140,9 +148,11 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           </Button>
           <Button
             value={inputValue}
-            onClick={() => {
-              requestLogin(username, password);
-              handleClose();
+            onClick={async() => {
+              const isLoginSuccess = await requestLogin(username, password);
+              if(isLoginSuccess){
+                handleClose();
+              }
             }}
             color="primary"
           >

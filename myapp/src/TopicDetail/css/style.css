@@ -1,6 +1,5 @@
 .topic-title-wrapper {
   background-color: whitesmoke;
-  /* padding: 5px; */
 }
 /* トピック：回答受付中もしくは回答締め切り */
 .topic-status {
@@ -10,6 +9,7 @@
 }
 .topic-is-active {
   outline: solid 0.5px black;
+  padding: 0px 5px;
   margin-right: 10px;
 }
 
@@ -24,4 +24,10 @@
 .topic-response-status {
   display: flex;
   justify-content: flex-end;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+margin: 5px 0px;
 }

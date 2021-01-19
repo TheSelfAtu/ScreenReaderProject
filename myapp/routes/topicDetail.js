@@ -38,8 +38,6 @@ router.post("/:topicID/postResponse", function (req, res, next) {
     database: "ScreenReaderProject",
     port: "3306",
   });
-console.log("response_userid ",req.body)
-console.log("response_userid ",req.body.response_user_id)
   // トピックのレスポンスを登録
   connection.query(
     {
@@ -98,4 +96,30 @@ router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
   );
 });
 
+router.post("/set-topic-not-active", function (req, res, next) {
+  const connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root",
+    database: "ScreenReaderProject",
+    port: "3306",
+  });
+console.log(req.body,req.body["topic_id"],req)
+  connection.query(
+    {
+      sql: "UPDATE topic SET is_topic_active = 0 WHERE id = ?",
+      timeout: 40000, // 40s
+      values: req.query["topic_id"],
+    },
+    function responseSuccessMessage(error, results, fields) {
+      if (!error == null) {
+console.log(error)
+return res.status(500).send({ err: err.message });
+}
+console.log(results)
+
+      res.json({ "This topic is closed": true });
+    }
+  );
+});
 module.exports = router;

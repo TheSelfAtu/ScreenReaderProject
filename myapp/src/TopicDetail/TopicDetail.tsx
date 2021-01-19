@@ -5,7 +5,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
 import LoginRecommendForm from "../Users/LoginRecommend";
-
+import SetTopicNotActiveButton from "./SetTopicNotActive";
 import FormDialog from "./FormDialog";
 
 import "./css/style.css";
@@ -17,7 +17,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     id: "",
     title: "",
     content: "",
-    is_topic_active: true,
+    is_topic_active: 1,
     post_user_id: "",
     created_at: "",
   });
@@ -114,8 +114,12 @@ export default function TopicDetail(props: TopicDetailProps) {
     if (topicInformation.is_topic_active) {
       return (
         <div className="topic-status">
-          <span>回答受付中</span>
-          <span>投稿{datetime}</span>
+          <div className="topic-is-active">
+            <span>回答受付中</span>
+          </div>
+          <div className="topic-datetime">
+            <span>投稿日時 {datetime}</span>
+          </div>
         </div>
       );
     }
@@ -131,7 +135,24 @@ export default function TopicDetail(props: TopicDetailProps) {
     );
   };
 
+  const SetTopicNotActiveDialog = () => {
+    if (topicInformation.is_topic_active == 0) {
+      return "";
+    }
+    if (userStatus.userId != topicInformation.post_user_id) {
+      return "";
+    }
+    return (
+      <div className="set-topic-not-active">
+        <SetTopicNotActiveButton topicId={topicInformation.id}></SetTopicNotActiveButton>
+      </div>
+    );
+  };
+
   const DialogButton = () => {
+    if (topicInformation.is_topic_active == 0) {
+      return "";
+    }
     if (!userStatus.session) {
       return (
         <div id="login-wrapper">
@@ -166,7 +187,10 @@ export default function TopicDetail(props: TopicDetailProps) {
       </div>
       <div id="post-response-to-topic">
         <div id="post-response-form">
-          {DialogButton()}
+          <div className="dialog-buttons">
+            {SetTopicNotActiveDialog()}
+            {DialogButton()}
+          </div>
           <div>
             <span>{error}</span>
           </div>

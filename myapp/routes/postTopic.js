@@ -17,10 +17,11 @@ router.get("/", function (req, res, next) {
 
 // 投稿されたトピックを登録する
 router.post("/", function insertTopicRecordToDB(req, res, next) {
+console.log("req.body post topic",req.body)
   const insertValues = {
     title: req.body.title,
     content: req.body.content,
-    post_user_id: req.body.response_user_id,
+    post_user_id: req.body.post_user_id,
   };
   connection.query(
     {
