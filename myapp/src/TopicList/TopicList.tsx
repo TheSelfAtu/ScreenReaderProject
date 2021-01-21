@@ -3,6 +3,7 @@ import React, {
   useState,
   useEffect,
   useContext,
+  useCallback,
   ReactHTMLElement,
 } from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
@@ -63,10 +64,16 @@ export default function TopicList(props: TopicListProps) {
       content: "",
       is_topic_active: 1,
       post_user_id: "",
+      username:"",
       created_at: "",
       "COUNT(response.id)": "",
     },
   ]);
+  const [userStatus, setUserStatus] = useState({
+    userId: "",
+    userName: "",
+    session: false,
+  });
   const [filter, setFilter] = useState("all");
 
   const fetchData = (endpoint: string, topic_id = ""): Promise<any> => {
@@ -91,6 +98,27 @@ export default function TopicList(props: TopicListProps) {
         });
     });
   };
+
+  const fetchUserStatus = useCallback((): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: "/users/responseUserStatus",
+        responseType: "json",
+      })
+        .then((response) => {
+          console.log("userstatus",response)
+          setUserStatus({
+            userId: response.data.userId,
+            userName: response.data.userName,
+            session: response.data.session,
+          });
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  }, []);
 
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
@@ -127,6 +155,7 @@ export default function TopicList(props: TopicListProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
+      fetchUserStatus();
       const topicListInfo = await fetchData("/");
       setTopicsInformation(topicListInfo);
       setShownTopics(topicListInfo);
@@ -148,6 +177,12 @@ export default function TopicList(props: TopicListProps) {
       if (filter == "closed") {
         const filterdTopics = topicsInformation.filter((topic) => {
           return topic.is_topic_active == 0;
+        });
+        setShownTopics(filterdTopics);
+      }
+      if (filter == "mytopic") {
+        const filterdTopics = topicsInformation.filter((topic) => {
+          return topic.post_user_id == userStatus.userId;
         });
         setShownTopics(filterdTopics);
       }
@@ -180,7 +215,8 @@ export default function TopicList(props: TopicListProps) {
                       </a>
                     </h2>
                     <div className="topic-status">
-                      <span>投稿{formatDateTime(topic.created_at)}</span>
+                      <div><a className="flex-status-name">投稿者 {topic.username}</a></div>
+                      <span>{formatDateTime(topic.created_at)}</span>
                     </div>
                   </Grid>
                 </Grid>
@@ -236,6 +272,7 @@ function Filter(props: FilterProps) {
   );
 
   const classes = useStyles();
+  
   const [filter, setFilter] = useState("all");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     console.log(newValue);
@@ -255,6 +292,7 @@ function Filter(props: FilterProps) {
         <Tab label="すべて表示" value="all" />
         <Tab label="受付中" value="open" />
         <Tab label="締め切り" value="closed" />
+        <Tab label="投稿したトピック" value="mytopic" />
       </Tabs>
     </Paper>
   );

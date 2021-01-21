@@ -16,7 +16,7 @@ router.post("/", function selectTopic(req, res, next) {
   connection.query(
     {
       sql:
-        "SELECT topic.*, COUNT(response.id) FROM topic LEFT JOIN response_to_topic as response ON topic.id = response.topic_id GROUP BY topic.id ORDER BY topic.created_at DESC",
+        "SELECT topic.*, user.username,COUNT(response.id) FROM topic LEFT JOIN response_to_topic as response ON topic.id = response.topic_id  JOIN user ON topic.post_user_id = user.id GROUP BY topic.id ORDER BY topic.created_at DESC",
       timeout: 40000, // 40s
     },
     function responseTopic(error, results, fields) {
