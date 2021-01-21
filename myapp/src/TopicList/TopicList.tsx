@@ -53,6 +53,7 @@ export default function TopicList(props: TopicListProps) {
       content: "",
       is_topic_active: 1,
       post_user_id: "",
+      username:"",
       created_at: "",
       "COUNT(response.id)": "",
     },
