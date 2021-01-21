@@ -44,3 +44,8 @@ width: 100%;
     padding: 0px 5px;
     color: violet;
   }
+
+  .topic-wrapper {
+      margin-bottom: 5px;
+      border-bottom: solid 0.1px  black ;
+  }

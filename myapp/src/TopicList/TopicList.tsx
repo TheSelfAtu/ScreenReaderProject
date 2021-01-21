@@ -12,6 +12,9 @@ import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
 import "./css/style.css";
 
@@ -53,6 +56,18 @@ export default function TopicList(props: TopicListProps) {
       "COUNT(response.id)": "",
     },
   ]);
+  const [shownTopics, setShownTopics] = useState([
+    {
+      id: "",
+      title: "",
+      content: "",
+      is_topic_active: 1,
+      post_user_id: "",
+      created_at: "",
+      "COUNT(response.id)": "",
+    },
+  ]);
+  const [filter, setFilter] = useState("all");
 
   const fetchData = (endpoint: string, topic_id = ""): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -114,18 +129,40 @@ export default function TopicList(props: TopicListProps) {
     const fetchFromDB = async () => {
       const topicListInfo = await fetchData("/");
       setTopicsInformation(topicListInfo);
+      setShownTopics(topicListInfo);
     };
     fetchFromDB();
   }, []);
+
+  useEffect(() => {
+    const filterTopics = async () => {
+      if (filter == "all") {
+        setShownTopics(topicsInformation);
+      }
+      if (filter == "open") {
+        const filterdTopics = topicsInformation.filter((topic) => {
+          return topic.is_topic_active == 1;
+        });
+        setShownTopics(filterdTopics);
+      }
+      if (filter == "closed") {
+        const filterdTopics = topicsInformation.filter((topic) => {
+          return topic.is_topic_active == 0;
+        });
+        setShownTopics(filterdTopics);
+      }
+    };
+    filterTopics();
+  }, [filter]);
 
   return (
     <div id="topic-list-wrapper">
       <div>
         <h1>トピック一覧</h1>
         <Divider variant="fullWidth" />
+        <Filter setFilter={setFilter}></Filter>
       </div>
-
-      {topicsInformation.map((topic, index) => {
+      {shownTopics.map((topic, index) => {
         return (
           <div className="topic-wrapper">
             <div className="topic-main">
@@ -149,7 +186,6 @@ export default function TopicList(props: TopicListProps) {
                 </Grid>
               </div>
             </div>
-            <Divider variant="fullWidth" />
           </div>
         );
       })}
@@ -183,4 +219,43 @@ function formatDateTime(datetime: string): string {
     );
   }
   return "";
+}
+
+interface FilterProps {
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+}
+function Filter(props: FilterProps) {
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        flexGrow: 1,
+        boxShadow: "none",
+        paddingBottom: "30px",
+      },
+    })
+  );
+
+  const classes = useStyles();
+  const [filter, setFilter] = useState("all");
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    console.log(newValue);
+    setFilter(newValue);
+    props.setFilter(newValue);
+  };
+
+  return (
+    <Paper className={classes.root}>
+      <Tabs
+        value={filter}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        aria-label="simple tabs example"
+      >
+        <Tab label="すべて表示" value="all" />
+        <Tab label="受付中" value="open" />
+        <Tab label="締め切り" value="closed" />
+      </Tabs>
+    </Paper>
+  );
 }
