@@ -104,7 +104,7 @@ router.post("/set-topic-not-active", function (req, res, next) {
     database: "ScreenReaderProject",
     port: "3306",
   });
-console.log(req.body,req.body["topic_id"],req)
+  console.log(req.body, req.body["topic_id"], req);
   connection.query(
     {
       sql: "UPDATE topic SET is_topic_active = 0 WHERE id = ?",
@@ -113,10 +113,10 @@ console.log(req.body,req.body["topic_id"],req)
     },
     function responseSuccessMessage(error, results, fields) {
       if (!error == null) {
-console.log(error)
-return res.status(500).send({ err: err.message });
-}
-console.log(results)
+        console.log(error);
+        return res.status(500).send({ err: err.message });
+      }
+      console.log(results);
 
       res.json({ "This topic is closed": true });
     }
