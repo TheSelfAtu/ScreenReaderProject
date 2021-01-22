@@ -31,6 +31,11 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  error: {
+    display:"block",
+    textAlign:"center",
+    color: "red",
+  },
 }));
 
 export default function Login() {
@@ -56,7 +61,6 @@ export default function Login() {
         })
         .catch((err) => {
           console.log("error response data", err.response.data);
-
           setError(err.response.data.err);
         });
     });
@@ -104,7 +108,9 @@ export default function Login() {
           autoComplete="current-password"
         />
         {/* エラーメッセージを表示 */}
-        {error}
+        <div>
+          <span className={classes.error}>{error}</span>
+        </div>
         <Button
           onClick={() => {
             requestLogin(username, password);

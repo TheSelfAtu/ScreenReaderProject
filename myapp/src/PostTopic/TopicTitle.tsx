@@ -28,6 +28,7 @@ export default function TopicTitle(props: TopicTitleProps) {
       placeholder="話し合いたいトピックのタイトルを記入してください"
       value={props.inputTitle}
       name="title"
+      required
       onChange={(e) => {
         props.setInputTitle(e.target.value);
       }}

@@ -33,13 +33,20 @@ const useStyles = makeStyles((theme) => ({
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
+  error: {
+    display: "block",
+    textAlign: "center",
+    color: "red",
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
 }));
 
 interface LoginRecommendProps {
+  dialogTitle: string;
   buttonExplanation: string;
+  fetchUserStatus: any;
 }
 
 export default function LoginRecommendForm(props: LoginRecommendProps) {
@@ -71,12 +78,17 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           params: urlParams,
         })
           .then((response) => {
-            console.log("axios response data", response.data);
+            console.log(
+              "axios LoginRecommend Button pushed login succedd",
+              response.data
+            );
+            props.fetchUserStatus();
             resolve(response.data);
           })
           .catch((err) => {
             console.log("error response data", err.response.data);
             setError(err.response.data.err);
+            return false
           });
       });
     },
@@ -93,9 +105,8 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title"></DialogTitle>
+        <DialogTitle id="form-dialog-title">{props.dialogTitle}</DialogTitle>
         <DialogContent>
-          <DialogContentText>ログインすることでトピックに回答することができます</DialogContentText>
           <TextField
             onChange={(e) => {
               setUsername(e.target.value);
@@ -127,7 +138,9 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
             autoComplete="current-password"
           />
           {/* エラーメッセージを表示 */}
-          {error}
+          <div>
+            <span className={classes.error}>{error}</span>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -135,9 +148,11 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           </Button>
           <Button
             value={inputValue}
-            onClick={() => {
-              requestLogin(username, password);
-              handleClose();
+            onClick={async() => {
+              const isLoginSuccess = await requestLogin(username, password);
+              if(isLoginSuccess){
+                handleClose();
+              }
             }}
             color="primary"
           >

@@ -9,8 +9,8 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
 
 interface TopicContentProps {
-  inputContent: string
-  setInputContent: (e:any)=> void
+  inputContent: string;
+  setInputContent: (e: any) => void;
 }
 
 const inputProps = {
@@ -18,20 +18,22 @@ const inputProps = {
 };
 
 export default function TopicContent(props: TopicContentProps) {
-  return <TextField 
-  id="" 
-  type="textarea"
-  variant="outlined"
-  placeholder="トピックの内容を記述してください"
-  fullWidth 
-  multiline 
-  rows="7" 
-  inputProps={inputProps} 
-  value={props.inputContent}
-  name="content"
-  onChange={(e)=>{
-    props.setInputContent(e.target.value);
-  }}
-  />;
-
+  return (
+    <TextField
+      id=""
+      type="textarea"
+      variant="outlined"
+      placeholder="トピックの内容を記述してください"
+      fullWidth
+      multiline
+      rows="4"
+      inputProps={inputProps}
+      value={props.inputContent}
+      name="content"
+      required
+      onChange={(e) => {
+        props.setInputContent(e.target.value);
+      }}
+    />
+  );
 }

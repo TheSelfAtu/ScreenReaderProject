@@ -9,20 +9,39 @@ router.get("/signup", function (req, res, next) {
   res.render("signup", { title: "サインアップ画面" });
 });
 
-router.post("/checkAccessRight", (req, res, next) => {
-  console.log("req.user",req.user)
+router.post("/responseUserStatus", (req, res, next) => {
+  if (!req.user) {
+    return res.json({"session":false, "userId":"", "userName":""});
+  }
   if (req.user) {
-    return res.json({ hasAccessRight: true });
-  } else {
-    return res.json({ hasAccessRight: false });
+    const connection = mysql.createConnection({
+      host: "mysql",
+      user: "root",
+      password: "root",
+      database: "ScreenReaderProject",
+      port: "3306",
+    });
+
+    connection.query(
+      {
+        sql: "SELECT * FROM user WHERE username =  ?",
+        timeout: 40000, // 40s
+        values: req.user.username,
+      },
+      function responseUserStatus(err, results, fields) {
+        if (err) {
+          return res.json(err);
+        }        
+        console.log("results",results)
+        console.log(results.id)
+        return res.json({"session":true, "userId":results[0].id, "userName":results[0].username});
+      }
+    );
   }
 });
 
 // 新しいユーザーを追加する
 router.post("/signup", function (req, res, next) {
-  console.log("signup start");
-  console.log("req.body username", req);
-  console.log("req query", req.query);
   const connection = mysql.createConnection({
     host: "mysql",
     user: "root",
@@ -44,13 +63,14 @@ router.post("/signup", function (req, res, next) {
       },
     },
     function ResponseSignUpResult(err, results, fields) {
-      console.log("sign up result or err", err, results);
       if (err != null) {
         console.log("サインアップでエラーが発生しました");
-        return res.status(500).send({ err: err.message });
+        return res
+          .status(500)
+          .send({ err: "サインアップでエラーが発生しました" });
       }
       console.log("results", results);
-      return res.json({ "login successed": "yes" });
+      return res.json({ サインアップに成功しました: true });
     }
   );
 });
