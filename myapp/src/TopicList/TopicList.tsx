@@ -100,7 +100,6 @@ export default function TopicList(props: TopicListProps) {
     });
   };
 
-
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
       return (
@@ -192,19 +191,19 @@ export default function TopicList(props: TopicListProps) {
                       <Link to={"/topic-detail/" + topic.id}>
                         {formatTopicTitle(topic.title)}
                       </Link>
-                      </h2>
+                    </h2>
 
                     <div className="topic-list-status">
                       <BookMarkActionButton
                         userID={props.userStatus.userId}
                         topicID={topic.id}
                         endpoint="register"
-                        ></BookMarkActionButton>
-                        <div>
+                      ></BookMarkActionButton>
+                      <div>
                         <a className="flex-status-name">
                           投稿者 {topic.username}
                         </a>
-                      <span>{formatDateTime(topic.created_at)}</span>
+                        <span>{formatDateTime(topic.created_at)}</span>
                       </div>
                     </div>
                   </Grid>

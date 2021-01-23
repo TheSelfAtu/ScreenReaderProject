@@ -47,6 +47,7 @@ interface NavBarProps {
     session: boolean;
   };
   requestToAPIServer: (endpoint: string) => Promise<any>;
+  fetchUserStatus: () => Promise<any>;
 }
 
 export default function NavBar(props: NavBarProps) {
@@ -64,12 +65,6 @@ export default function NavBar(props: NavBarProps) {
   };
 
   const MenuItemElement = () => {
-    console.log(
-      "nav",
-      props.userStatus,
-      props.userStatus.session,
-      typeof props.userStatus.session
-    );
     // ログインしていないときのメニュー
     if (props.userStatus.session == false) {
       return (
@@ -102,8 +97,9 @@ export default function NavBar(props: NavBarProps) {
           <Link to="/mypage">マイページへ移動</Link>
         </MenuItem>
         <MenuItem
-          onClick={() => {
-            props.requestToAPIServer("/users/logout");
+          onClick={async () => {
+            await props.requestToAPIServer("/users/logout");
+            props.fetchUserStatus();
             handleClose();
           }}
         >

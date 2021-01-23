@@ -53,6 +53,7 @@ export default function ProjectRouter() {
       })
         .then((response) => {
           console.log("request result", response);
+          resolve(response)
         })
         .catch((err) => {
           console.log("err: ", err);
@@ -70,7 +71,7 @@ export default function ProjectRouter() {
   return (
     <Router>
       <div>
-        <NavBar userStatus={userStatus} requestToAPIServer={requestToAPIServer}/>
+        <NavBar userStatus={userStatus} requestToAPIServer={requestToAPIServer} fetchUserStatus={fetchUserStatus}/>
         <Switch>
           <Route path="/post-topic">
             <PostTopic />

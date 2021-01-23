@@ -6,7 +6,6 @@ const passport = require("passport");
 
 // ユーザーのステータスを返す
 // {"session":false, "userId":string, "userName":string}
-
 router.post("/responseUserStatus", (req, res, next) => {
   if (!req.user) {
     return res.json({"session":false, "userId":"", "userName":""});
@@ -103,6 +102,7 @@ router.post("/login", (req, res, next) => {
 // ログアウト時にセッションの情報を破棄
 router.post("/logout", function (req, res) {
   req.logout();
+  res.json({"logout":true});
 });
 
 // ユーザのブックマークを登録
