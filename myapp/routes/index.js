@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
 
+
+
 // 非同期のポストリクエストに対してトピック一覧を返す
 router.post("/", function selectTopic(req, res, next) {
   const connection = mysql.createConnection({
@@ -12,7 +14,6 @@ router.post("/", function selectTopic(req, res, next) {
     port: "3306",
   });
 
-  let resultsWithCountResponseToTopic;
   connection.query(
     {
       sql:
@@ -20,7 +21,6 @@ router.post("/", function selectTopic(req, res, next) {
       timeout: 40000, // 40s
     },
     function responseTopic(error, results, fields) {
-      console.log(results);
       console.log(error);
       res.json(results);
     }
@@ -50,11 +50,6 @@ router.post("/count-response-to-topic", (req, res, next) => {
       res.json(results.length);
     }
   );
-});
-
-// トピック一覧画面を返す
-router.get("/", function (req, res, next) {
-  res.render("topic-list", { title: "スクリーンリーダープログラミング" });
 });
 
 module.exports = router;

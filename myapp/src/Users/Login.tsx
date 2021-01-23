@@ -4,13 +4,12 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from 'react-router-dom';
+
 import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,11 +39,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
+  const history = useHistory();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const requestLogin = (username: string, password: string): Promise<any> => {
     return new Promise((resolve, reject) => {
+      if(username==""||password==""){
+      setError("ユーザ名またはパスワードが入力されていません")  
+        return
+       }
+      
       const urlParams = new URLSearchParams();
       urlParams.append("username", username);
       urlParams.append("password", password);
@@ -56,7 +61,7 @@ export default function Login() {
       })
         .then((response) => {
           console.log("axios response data", response.data);
-          location.href = "/";
+          history.push("/");
           resolve(response.data);
         })
         .catch((err) => {

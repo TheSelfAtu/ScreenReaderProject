@@ -5,6 +5,7 @@ module.exports = {
     "topicDetail": "./src//TopicDetail/index.tsx",
     "postTopic": "./src//PostTopic/index.tsx",
     "Users": "./src/Users/index.tsx",
+    "main":"./src/index.tsx",
   },
   output: {
     path: __dirname + "/bundle",

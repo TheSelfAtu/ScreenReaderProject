@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
 
-// テンプレートを返す
-router.get("/:topicID", function (req, res, next) {
-  res.render("topic-detail", { title: "トピック詳細" });
-});
 
 // トピックのタイトルと内容を返す
 router.post("/:topicID/topic", function (req, res, next) {

@@ -6,16 +6,14 @@ import React, {
   useCallback,
   ReactHTMLElement,
 } from "react";
+import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 
 import "./css/style.css";
 
@@ -211,9 +209,9 @@ export default function TopicList(props: TopicListProps) {
 
                   <Grid item xs={10}>
                     <h2>
-                      <a href={"/topic-detail/" + topic.id}>
+                      <Link to={"/topic-detail/" + topic.id}>
                         {formatTopicTitle(topic.title)}
-                      </a>
+                      </Link>
                     </h2>
                     <div className="topic-status">
                       <div><a className="flex-status-name">投稿者 {topic.username}</a></div>
@@ -242,7 +240,6 @@ function formatDateTime(datetime: string): string {
     /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
   );
   if (separatedDateTime?.length == 6) {
-    console.log("separateddate", separatedDateTime[1] + "年");
     return (
       separatedDateTime[1] +
       "年" +
@@ -276,7 +273,6 @@ function Filter(props: FilterProps) {
   
   const [filter, setFilter] = useState("all");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    console.log(newValue);
     setFilter(newValue);
     props.setFilter(newValue);
   };

@@ -42,6 +42,13 @@ router.post("/responseUserStatus", (req, res, next) => {
 
 // 新しいユーザーを追加する
 router.post("/signup", function (req, res, next) {
+  // リクエストバリデーション
+  if(req.query.username=="" || req.query.password==""){
+    return res
+    .status(500)
+    .send({ err: "サインアップでエラーが発生しました" });
+  }
+
   const connection = mysql.createConnection({
     host: "mysql",
     user: "root",
@@ -105,6 +112,10 @@ router.post("/login", (req, res, next) => {
 router.get("/logout", function (req, res) {
   req.logout();
   res.redirect("/users/login");
+});
+
+router.get("/mypage", function (req, res, next) {
+  res.render("mypage", { title: "mypage" });
 });
 
 module.exports = router;

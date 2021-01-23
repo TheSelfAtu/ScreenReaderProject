@@ -10,10 +10,6 @@ const connection = mysql.createConnection({
   port: "3306",
 });
 
-/* post-topicテンプレートを返す*/
-router.get("/", function (req, res, next) {
-  res.render("post-topic", { title: "トピック投稿" });
-});
 
 // 投稿されたトピックを登録する
 router.post("/", function insertTopicRecordToDB(req, res, next) {

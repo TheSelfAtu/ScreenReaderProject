@@ -6,6 +6,14 @@ import React, {
   useCallback,
   ReactHTMLElement,
 } from "react";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -16,7 +24,9 @@ import AccountCircleRoundedIcon from "@material-ui/icons/AccountCircleRounded";
 import { Menu } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import Link from "@material-ui/core/Link";
+import { blue } from "@material-ui/core/colors";
+
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,38 +39,26 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       flexGrow: 1,
     },
+    navList:{
+      padding:"5px",
+      color:"white",
+      textDecoration:"none",
+    }
   })
 );
 
-export default function NavBar() {
+interface NavBarProps{
+  userStatus:{
+    userId: string,
+    userName: string,
+    session: boolean,
+  }
+}
+
+export default function NavBar(props:NavBarProps) {
+  console.log('navbar',props)
+  console.log('navbar',props.userStatus)
   const classes = useStyles();
-  const [userStatus, setUserStatus] = useState({
-    userId: "",
-    userName: "",
-    session: false,
-  });
-
-  const fetchUserStatus = useCallback((): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: "/users/responseUserStatus",
-        responseType: "json",
-      })
-        .then((response) => {
-          console.log("userstatus navbar", response);
-          setUserStatus({
-            userId: response.data.userId,
-            userName: response.data.userName,
-            session: response.data.session,
-          });
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  }, []);
-
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -73,16 +71,9 @@ export default function NavBar() {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    const fetchFromDB = async () => {
-      fetchUserStatus();
-    };
-    fetchFromDB();
-  }, []);
-
   const MenuItemElement = () => {
     // ログインしていないときのメニュー
-    if (userStatus.session == false) {
+    if (props.userStatus.session == false) {
       return (
         <Menu
           id="user-menu"
@@ -92,10 +83,11 @@ export default function NavBar() {
           onClose={handleClose}
         >
           <MenuItem onClick={handleClose}>
-            <Link href="/users/login">ログイン</Link>
+
+            <Link to="/login">ログイン</Link>
           </MenuItem>
           <MenuItem onClick={handleClose}>
-            <Link href="/users/signup">サインアップ</Link>
+            <Link to="/signup">サインアップ</Link>
           </MenuItem>
         </Menu>
       );
@@ -110,10 +102,10 @@ export default function NavBar() {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose}>
-          <Link href="/users/mypage">マイページへ移動</Link>
+          <Link to="/mypage">マイページへ移動</Link>
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Link href="/users/logout">ログアウト</Link>
+          <Link to="/users/logout">ログアウト</Link>
         </MenuItem>
       </Menu>
     );
@@ -137,12 +129,8 @@ export default function NavBar() {
           {MenuItemElement()}
 
           <Typography variant="h6" className={classes.title}></Typography>
-          <Button color="inherit" href="/">
-            トピック一覧
-          </Button>
-          <Button color="inherit" href="/post-topic">
-            トピック投稿
-          </Button>
+          <Link to="/" className={classes.navList}>トピック一覧</Link>
+          <Link to="/post-topic" className={classes.navList}>トピック投稿</Link>
         </Toolbar>
       </AppBar>
     </div>

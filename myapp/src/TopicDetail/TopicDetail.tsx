@@ -7,6 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
 import FormDialog from "./FormDialog";
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 
 import "./css/style.css";
 
@@ -136,15 +137,17 @@ export default function TopicDetail(props: TopicDetailProps) {
   };
 
   const SetTopicNotActiveDialog = () => {
-    if (topicInformation.is_topic_active == 0) {
-      return "";
-    }
-    if (userStatus.userId != topicInformation.post_user_id) {
+    if (
+      topicInformation.is_topic_active == 0 ||
+      userStatus.userId != topicInformation.post_user_id
+    ) {
       return "";
     }
     return (
       <div className="set-topic-not-active">
-        <SetTopicNotActiveButton topicId={topicInformation.id}></SetTopicNotActiveButton>
+        <SetTopicNotActiveButton
+          topicId={topicInformation.id}
+        ></SetTopicNotActiveButton>
       </div>
     );
   };
@@ -179,8 +182,8 @@ export default function TopicDetail(props: TopicDetailProps) {
   return (
     <div id="topic-detail-wrapper">
       <div className="topic-title-wrapper">
-        <h2>{topicInformation.title}</h2>
         {topicStatus()}
+        <h1>{topicInformation.title}</h1>
       </div>
       <div className="topic-content">
         <h4>{topicInformation.content}</h4>
