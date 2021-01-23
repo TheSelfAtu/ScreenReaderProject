@@ -4,10 +4,8 @@ const mysql = require("mysql2");
 const crypto = require("crypto");
 const passport = require("passport");
 
-// サインアップ画面を返す
-router.get("/signup", function (req, res, next) {
-  res.render("signup", { title: "サインアップ画面" });
-});
+// ユーザーのステータスを返す
+// {"session":false, "userId":string, "userName":string}
 
 router.post("/responseUserStatus", (req, res, next) => {
   if (!req.user) {
@@ -33,7 +31,6 @@ router.post("/responseUserStatus", (req, res, next) => {
           return res.json(err);
         }        
         console.log("results",results)
-        console.log(results.id)
         return res.json({"session":true, "userId":results[0].id, "userName":results[0].username});
       }
     );
@@ -82,20 +79,15 @@ router.post("/signup", function (req, res, next) {
   );
 });
 
-// ログイン画面を返す
-router.get("/login", function (req, res, next) {
-  res.render("login", { title: "ログイン画面" });
-});
-
+// ログインリクエストに対して認証を実行
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     // 認証でのエラーを返す
     if (err) {
       console.log("error", err);
-      console.log("error message", err.message);
       return res.status(500).send({ err: err.message });
     }
-    // セッションに認証用ユーザ名を埋め込む
+    // 認証に成功した場合セッションに認証用ユーザ名を埋め込む
     req.logIn(user, function (err) {
       if (err) {
         return next(err);
@@ -109,13 +101,73 @@ router.post("/login", (req, res, next) => {
 });
 
 // ログアウト時にセッションの情報を破棄
-router.get("/logout", function (req, res) {
+router.post("/logout", function (req, res) {
   req.logout();
-  res.redirect("/users/login");
 });
 
-router.get("/mypage", function (req, res, next) {
-  res.render("mypage", { title: "mypage" });
-});
+// ユーザのブックマークを登録
+router.post("/bookmark/register", (req, res) => {
+  console.log("req",req.query,req.query.user_id,req.query.topic_id)
+  const connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root",
+    database: "ScreenReaderProject",
+    port: "3306",
+  });  
+
+  connection.query(
+    {
+      sql: "insert into bookmark SET ?",
+      timeout: 40000, // 40s
+      values: {
+        user_id: req.query.user_id,
+        topic_id: req.query.topic_id,
+      },
+    },
+    function ResponseSignUpResult(err, results, fields) {
+      if (err != null) {
+        console.log("ブックマークでエラーが発生しました");
+        return res
+          .status(500)
+          .send({ err: "ブックマークでエラーが発生しました" });
+      }
+      console.log("results", results);
+      return res.json({"トピックをブックマークしました": true });
+    }
+  );
+})
+
+// トピックのブックマークを解除する
+router.post("/bookmark/drop", (req, res) => {
+  const connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root",
+    database: "ScreenReaderProject",
+    port: "3306",
+  });  
+
+  connection.query(
+    {
+      sql: "DELETE FROM bookmark WHERE user_id = ? AND topic_id = ?",
+      timeout: 40000, // 40s
+      values: {
+        user_id: req.query.user_id,
+        topic_id: req.query.topic_id,
+      },
+    },
+    function ResponseDropBookMarkResult(err, results, fields) {
+      if (err != null) {
+        console.log("ブックマーク解除でエラーが発生しました");
+        return res
+          .status(500)
+          .send({ err: "ブックマーク解除でエラーが発生しました" });
+      }
+      console.log("results", results);
+      return res.json({"Drop BookMark": true });
+    }
+  );
+})
 
 module.exports = router;

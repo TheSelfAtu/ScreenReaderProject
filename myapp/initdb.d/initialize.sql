@@ -30,6 +30,7 @@ CREATE TABLE topic (
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_topic_active INT NOT NULL DEFAULT 1,
+    good INT NOT NULL DEFAULT 0
     FOREIGN KEY(post_user_id) REFERENCES user(id)
 );
 
@@ -48,9 +49,9 @@ CREATE TABLE response_to_topic (
 );
 
 -- 登録したトピック
-DROP TABLE IF EXISTS registerd_topic;
+DROP TABLE IF EXISTS bookmark_topic;
 
-CREATE TABLE registerd_topic (
+CREATE TABLE bookmark_topic (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     user_id INT NOT NULL,
     topic_id INT NOT NULL,

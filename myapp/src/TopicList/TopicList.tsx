@@ -13,11 +13,17 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-
+import BookMarkActionButton from "..//BookMarkActionButton";
 import "./css/style.css";
 
-interface TopicListProps {}
+interface TopicListProps {
+  userStatus: {
+    userId: string;
+    userName: string;
+    session: boolean;
+  };
+  requestBookMarkAction: (endpoint: string) => Promise<any>;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,7 +57,7 @@ export default function TopicList(props: TopicListProps) {
       content: "",
       is_topic_active: 1,
       post_user_id: "",
-      username:"",
+      username: "",
       created_at: "",
       "COUNT(response.id)": "",
     },
@@ -63,16 +69,12 @@ export default function TopicList(props: TopicListProps) {
       content: "",
       is_topic_active: 1,
       post_user_id: "",
-      username:"",
+      username: "",
       created_at: "",
       "COUNT(response.id)": "",
     },
   ]);
-  const [userStatus, setUserStatus] = useState({
-    userId: "",
-    userName: "",
-    session: false,
-  });
+
   const [filter, setFilter] = useState("all");
 
   const fetchData = (endpoint: string, topic_id = ""): Promise<any> => {
@@ -98,26 +100,6 @@ export default function TopicList(props: TopicListProps) {
     });
   };
 
-  const fetchUserStatus = useCallback((): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: "/users/responseUserStatus",
-        responseType: "json",
-      })
-        .then((response) => {
-          console.log("userstatus",response)
-          setUserStatus({
-            userId: response.data.userId,
-            userName: response.data.userName,
-            session: response.data.session,
-          });
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  }, []);
 
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
@@ -154,7 +136,6 @@ export default function TopicList(props: TopicListProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
-      fetchUserStatus();
       const topicListInfo = await fetchData("/");
       setTopicsInformation(topicListInfo);
       setShownTopics(topicListInfo);
@@ -181,7 +162,7 @@ export default function TopicList(props: TopicListProps) {
       }
       if (filter == "mytopic") {
         const filterdTopics = topicsInformation.filter((topic) => {
-          return topic.post_user_id == userStatus.userId;
+          return topic.post_user_id == props.userStatus.userId;
         });
         setShownTopics(filterdTopics);
       }
@@ -203,7 +184,6 @@ export default function TopicList(props: TopicListProps) {
               <div className="topic-main-content">
                 <Grid container spacing={1}>
                   <Grid item xs={2} className="topic-side-menu">
-                    {/* {countResponseToTopic} */}
                     {topicStatus(topic)}
                   </Grid>
 
@@ -212,10 +192,20 @@ export default function TopicList(props: TopicListProps) {
                       <Link to={"/topic-detail/" + topic.id}>
                         {formatTopicTitle(topic.title)}
                       </Link>
-                    </h2>
-                    <div className="topic-status">
-                      <div><a className="flex-status-name">投稿者 {topic.username}</a></div>
+                      </h2>
+
+                    <div className="topic-list-status">
+                      <BookMarkActionButton
+                        userID={props.userStatus.userId}
+                        topicID={topic.id}
+                        endpoint="register"
+                        ></BookMarkActionButton>
+                        <div>
+                        <a className="flex-status-name">
+                          投稿者 {topic.username}
+                        </a>
                       <span>{formatDateTime(topic.created_at)}</span>
+                      </div>
                     </div>
                   </Grid>
                 </Grid>
@@ -270,7 +260,7 @@ function Filter(props: FilterProps) {
   );
 
   const classes = useStyles();
-  
+
   const [filter, setFilter] = useState("all");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setFilter(newValue);

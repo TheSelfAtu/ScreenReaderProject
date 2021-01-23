@@ -37,9 +37,10 @@ width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
-.topic-status {
+.topic-list-status {
 display: flex;
-justify-content: flex-end;
+justify-content: space-between;
+align-items: flex-end;
 }
 .flex-status-name {
     flex-basis: 200px; 

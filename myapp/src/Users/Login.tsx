@@ -37,7 +37,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+interface LoginProps{
+  fetchUserStatus:()=>Promise<any>
+}
+
+export default function Login(props:LoginProps) {
   const classes = useStyles();
   const history = useHistory();
   const [username, setUsername] = React.useState("");
@@ -61,8 +65,8 @@ export default function Login() {
       })
         .then((response) => {
           console.log("axios response data", response.data);
+          props.fetchUserStatus();
           history.push("/");
-          resolve(response.data);
         })
         .catch((err) => {
           console.log("error response data", err.response.data);

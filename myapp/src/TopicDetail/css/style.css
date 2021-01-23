@@ -4,6 +4,7 @@ padding: 20px;
 }
 /* トピック：回答受付中もしくは回答締め切り */
 .topic-status {
+  padding: 10px 0px 20px 0px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;

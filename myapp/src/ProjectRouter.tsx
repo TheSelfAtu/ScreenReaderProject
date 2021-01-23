@@ -43,6 +43,22 @@ export default function ProjectRouter() {
         });
     });
   }, []);
+  
+  const requestToAPIServer = useCallback((endpoint:string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: endpoint,
+        responseType: "json",
+      })
+        .then((response) => {
+          console.log("request result", response);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    });
+  }, []);
 
   useEffect(() => {
     const fetchFromDB = async () => {
@@ -54,22 +70,22 @@ export default function ProjectRouter() {
   return (
     <Router>
       <div>
-        <NavBar userStatus={userStatus}/>
+        <NavBar userStatus={userStatus} requestToAPIServer={requestToAPIServer}/>
         <Switch>
           <Route path="/post-topic">
             <PostTopic />
           </Route>
           <Route path={`/topic-detail/:topicID`}>
-            <TopicDetail />
+            <TopicDetail requestBookMarkAction={requestToAPIServer}/>
           </Route>
           <Route path="/login">
-            <Login />
+            <Login fetchUserStatus={fetchUserStatus}/>
           </Route>
           <Route path="/signup">
             <Signup />
           </Route>
           <Route path="/">
-            <TopicList />
+            <TopicList userStatus={userStatus} requestBookMarkAction={requestToAPIServer} />
           </Route>
         </Switch>
       </div>

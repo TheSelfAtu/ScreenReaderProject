@@ -11,7 +11,9 @@ import BookmarkIcon from '@material-ui/icons/Bookmark';
 
 import "./css/style.css";
 
-interface TopicDetailProps {}
+interface TopicDetailProps {
+  requestBookMarkAction:(endpoint:string)=>Promise<any>
+}
 
 export default function TopicDetail(props: TopicDetailProps) {
   const [topicInformation, setTopicInformation] = useState({

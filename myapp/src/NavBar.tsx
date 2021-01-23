@@ -7,12 +7,7 @@ import React, {
   ReactHTMLElement,
 } from "react";
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -26,8 +21,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { blue } from "@material-ui/core/colors";
 
-
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -39,25 +32,24 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       flexGrow: 1,
     },
-    navList:{
-      padding:"5px",
-      color:"white",
-      textDecoration:"none",
-    }
+    navList: {
+      padding: "5px",
+      color: "white",
+      textDecoration: "none",
+    },
   })
 );
 
-interface NavBarProps{
-  userStatus:{
-    userId: string,
-    userName: string,
-    session: boolean,
-  }
+interface NavBarProps {
+  userStatus: {
+    userId: string;
+    userName: string;
+    session: boolean;
+  };
+  requestToAPIServer: (endpoint: string) => Promise<any>;
 }
 
-export default function NavBar(props:NavBarProps) {
-  console.log('navbar',props)
-  console.log('navbar',props.userStatus)
+export default function NavBar(props: NavBarProps) {
   const classes = useStyles();
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
@@ -72,6 +64,12 @@ export default function NavBar(props:NavBarProps) {
   };
 
   const MenuItemElement = () => {
+    console.log(
+      "nav",
+      props.userStatus,
+      props.userStatus.session,
+      typeof props.userStatus.session
+    );
     // ログインしていないときのメニュー
     if (props.userStatus.session == false) {
       return (
@@ -83,7 +81,6 @@ export default function NavBar(props:NavBarProps) {
           onClose={handleClose}
         >
           <MenuItem onClick={handleClose}>
-
             <Link to="/login">ログイン</Link>
           </MenuItem>
           <MenuItem onClick={handleClose}>
@@ -104,8 +101,13 @@ export default function NavBar(props:NavBarProps) {
         <MenuItem onClick={handleClose}>
           <Link to="/mypage">マイページへ移動</Link>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link to="/users/logout">ログアウト</Link>
+        <MenuItem
+          onClick={() => {
+            props.requestToAPIServer("/users/logout");
+            handleClose();
+          }}
+        >
+          <Link to="/login">ログアウト</Link>
         </MenuItem>
       </Menu>
     );
@@ -129,8 +131,12 @@ export default function NavBar(props:NavBarProps) {
           {MenuItemElement()}
 
           <Typography variant="h6" className={classes.title}></Typography>
-          <Link to="/" className={classes.navList}>トピック一覧</Link>
-          <Link to="/post-topic" className={classes.navList}>トピック投稿</Link>
+          <Link to="/" className={classes.navList}>
+            トピック一覧
+          </Link>
+          <Link to="/post-topic" className={classes.navList}>
+            トピック投稿
+          </Link>
         </Toolbar>
       </AppBar>
     </div>
