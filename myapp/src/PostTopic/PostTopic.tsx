@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
@@ -16,6 +17,7 @@ interface PostTopicProps {
 }
 
 export default function PostTopic(props: PostTopicProps) {
+  const history = useHistory();
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
   const [error, setError] = useState(null);
@@ -37,7 +39,7 @@ export default function PostTopic(props: PostTopicProps) {
           })
           .then((response) => {
             console.log("postTopicResponse axios response data", response.data);
-            location.href = "/";
+            history.push("/");
           })
           .catch((err) => {
             console.log("err: ", err);
