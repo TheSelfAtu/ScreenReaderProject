@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
@@ -20,7 +20,7 @@ export default function PostTopic(props: PostTopicProps) {
   const history = useHistory();
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const postTopicToDB = useCallback(
     (
       inputTitle: string,
@@ -28,15 +28,21 @@ export default function PostTopic(props: PostTopicProps) {
       postUserID: string
     ): Promise<any> => {
       return new Promise((resolve, reject) => {
+        if (inputTitle == "") {
+          setError("タイトルを記入してください");
+          return;
+        }
+        if (inputContent == "") {
+          setError("内容を記入してください");
+          return;
+        }
         const params = new URLSearchParams();
         params.append("title", inputTitle);
         params.append("content", inputContent);
         params.append("post_user_id", postUserID);
 
         axios
-          .post("/post-topic", params, {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          })
+          .post("/post-topic", params, {})
           .then((response) => {
             console.log("postTopicResponse axios response data", response.data);
             history.push("/");
