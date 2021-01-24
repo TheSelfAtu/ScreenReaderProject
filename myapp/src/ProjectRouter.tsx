@@ -23,6 +23,7 @@ export default function ProjectRouter() {
     session: false,
   });
 
+
   const fetchUserStatus = useCallback((): Promise<any> => {
     return new Promise((resolve, reject) => {
       axios({
@@ -44,12 +45,21 @@ export default function ProjectRouter() {
     });
   }, []);
   
-  const requestToAPIServer = useCallback((endpoint:string): Promise<any> => {
+  const requestToAPIServer = useCallback((endpoint:string, user_id:string="", topic_id:string=""): Promise<any> => {
+    const params = new URLSearchParams();
+    if(user_id!=null){
+      params.append("user_id", user_id);
+    }
+    if(topic_id!=null){
+      params.append("topic_id", topic_id);
+    }
+
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
         url: endpoint,
         responseType: "json",
+        params:params
       })
         .then((response) => {
           console.log("request result", response);
@@ -74,7 +84,7 @@ export default function ProjectRouter() {
         <NavBar userStatus={userStatus} requestToAPIServer={requestToAPIServer} fetchUserStatus={fetchUserStatus}/>
         <Switch>
           <Route path="/post-topic">
-            <PostTopic />
+            <PostTopic userStatus={userStatus} fetchUserStatus={fetchUserStatus}/>
           </Route>
           <Route path={`/topic-detail/:topicID`}>
             <TopicDetail requestBookMarkAction={requestToAPIServer}/>
@@ -86,7 +96,7 @@ export default function ProjectRouter() {
             <Signup />
           </Route>
           <Route path="/">
-            <TopicList userStatus={userStatus} requestBookMarkAction={requestToAPIServer} />
+            <TopicList userStatus={userStatus} />
           </Route>
         </Switch>
       </div>

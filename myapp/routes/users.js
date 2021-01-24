@@ -118,7 +118,7 @@ router.post("/bookmark/register", (req, res) => {
 
   connection.query(
     {
-      sql: "insert into bookmark SET ?",
+      sql: "insert into bookmark_topic SET ?",
       timeout: 40000, // 40s
       values: {
         user_id: req.query.user_id,
@@ -127,13 +127,42 @@ router.post("/bookmark/register", (req, res) => {
     },
     function ResponseSignUpResult(err, results, fields) {
       if (err != null) {
-        console.log("ブックマークでエラーが発生しました");
+        console.log(err)
         return res
           .status(500)
           .send({ err: "ブックマークでエラーが発生しました" });
       }
       console.log("results", results);
       return res.json({"トピックをブックマークしました": true });
+    }
+  );
+})
+
+router.post("/fetch-bookmark-topic", (req, res) => {
+  console.log("fetch-bookmark",req.query,req.query.user_id,req.query.topic_id)
+  const connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root",
+    database: "ScreenReaderProject",
+    port: "3306",
+  });  
+
+  connection.query(
+    {
+      sql: "SELECT * FROM bookmark_topic WHERE user_id =  ?",
+      timeout: 40000, // 40s
+      values: req.query.user_id,
+    },
+    function ResponseResult(err, results, fields) {
+      if (err != null) {
+        console.log(err)
+        return res
+          .status(500)
+          .send({ err: "ブックマークしたトピックを取得できません" });
+      }
+      console.log("results", results);
+      return res.json(results);
     }
   );
 })

@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface BookMarkActionButtonProps {
-userID:string
-topicID:string
-    endpoint: string;
+  userID: string;
+  topicID: string;
+  endpoint: string;
 }
 export default function BookMarkActionButton(props: BookMarkActionButtonProps) {
   const classes = useStyles();
@@ -43,7 +43,7 @@ export default function BookMarkActionButton(props: BookMarkActionButtonProps) {
           console.log("err: ", err);
         });
     });
-  }, []);
+  }, [props.userID, props.topicID]);
 
   return (
     <div className="bookmark-wrapper">
@@ -53,6 +53,7 @@ export default function BookMarkActionButton(props: BookMarkActionButtonProps) {
         size="small"
         className={classes.button}
         onClick={() => {
+          console.log("click");
           requestBookMarkAction();
         }}
         startIcon={<BookmarkIcon />}

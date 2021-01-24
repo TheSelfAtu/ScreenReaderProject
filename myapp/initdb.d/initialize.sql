@@ -30,7 +30,7 @@ CREATE TABLE topic (
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_topic_active INT NOT NULL DEFAULT 1,
-    good INT NOT NULL DEFAULT 0
+    good INT NOT NULL DEFAULT 0,
     FOREIGN KEY(post_user_id) REFERENCES user(id)
 );
 
@@ -57,5 +57,6 @@ CREATE TABLE bookmark_topic (
     topic_id INT NOT NULL,
     registerd_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES user(id),
-    FOREIGN KEY(topic_id) REFERENCES topic(id)
+    FOREIGN KEY(topic_id) REFERENCES topic(id),
+    UNIQUE (user_id, topic_id)
 );
