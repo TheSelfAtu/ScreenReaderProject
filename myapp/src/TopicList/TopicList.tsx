@@ -13,7 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import BookMarkActionButton from "..//BookMarkActionButton";
+import BookMark from "../BookMark";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import "./css/style.css";
 
@@ -23,6 +23,15 @@ interface TopicListProps {
     userName: string;
     session: boolean;
   };
+
+  requestToApiServer: (
+    endpoint: string,
+    user_id: string,
+    topic_id: string
+  ) => Promise<any>;
+
+  requestSuccessMessage: string[];
+  setRequestSuccessMessage:React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -86,36 +95,6 @@ export default function TopicList(props: TopicListProps) {
 
   const [filter, setFilter] = useState("all");
 
-  const fetchData = (
-    endpoint: string,
-    topic_id = "",
-    user_id = ""
-  ): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      const params = new URLSearchParams();
-      if (topic_id != "") {
-        params.append("topic_id", topic_id);
-      }
-      if (user_id != "") {
-        params.append("user_id", user_id);
-      }
-
-      axios({
-        method: "POST",
-        url: endpoint,
-        responseType: "json",
-        params: params,
-      })
-        .then((response) => {
-          console.log("axios response data", response.data);
-          resolve(response.data);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  };
-
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
       return (
@@ -149,14 +128,40 @@ export default function TopicList(props: TopicListProps) {
     );
   };
 
-  const showBookMarkActionButton = (topicId: string) => {
+  const showBookMark = (topicId: string) => {
+    // ブックマークしているトピックIDを返す
+    const bookmarkTopicID = bookmarkTopicInfo.map((eachTopic) => {
+      return eachTopic.topic_id;
+    });
+    // トピックがブックマークされている場合のJSXを返す
+    if (
+      props.userStatus.session &&
+      bookmarkTopicID.some((id) => id == topicId)
+    ) {
+      return (
+        <BookMark
+          bookmark={true}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="drop"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+
+    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
     if (props.userStatus.session) {
       return (
-        <BookMarkActionButton
+        <BookMark
+          bookmark={false}
           userID={props.userStatus.userId}
           topicID={topicId}
           endpoint="register"
-        ></BookMarkActionButton>
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+
+          ></BookMark>
       );
     }
     return null;
@@ -164,18 +169,31 @@ export default function TopicList(props: TopicListProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await fetchData("/");
+      const topicListInfo = await props.requestToApiServer("/", "", "");
       setTopicsInformation(topicListInfo);
       setShownTopics(topicListInfo);
-      const bookMarkTopic = await fetchData(
+      const bookMarkTopic = await props.requestToApiServer(
         "/users/fetch-bookmark-topic",
-        "",
-        props.userStatus.userId
+        props.userStatus.userId,
+        ""
       );
       setBookMarkTopicInfo(bookMarkTopic);
     };
     fetchFromDB();
   }, [props.userStatus]);
+
+  // ブックマークの状態が変化した際に実行
+  useEffect(() => {
+    const fetchBookmarkInfo = async () => {
+      const bookMarkTopic = await props.requestToApiServer(
+        "/users/fetch-bookmark-topic",
+        props.userStatus.userId,
+        ""
+      );
+      setBookMarkTopicInfo(bookMarkTopic);
+    };
+    fetchBookmarkInfo();
+  }, [props.requestSuccessMessage]);
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
@@ -238,14 +256,16 @@ export default function TopicList(props: TopicListProps) {
                   </Grid>
 
                   <Grid item xs={10}>
-                    <h2>
-                      <Link to={"/topic-detail/" + topic.id}>
-                        {formatTopicTitle(topic.title)}
-                      </Link>
-                    </h2>
+                    <div>
+                      <h2 className="topic-list-title">
+                        <Link to={"/topic-detail/" + topic.id}>
+                          {formatTopicTitle(topic.title)}
+                        </Link>
+                      </h2>
+                    </div>
 
                     <div className="topic-list-status">
-                      {showBookMarkActionButton(topic.id)}
+                      {showBookMark(topic.id)}
                       {/* <BookMarkActionButton
                           userID={props.userStatus.userId}
                           topicID={topic.id}

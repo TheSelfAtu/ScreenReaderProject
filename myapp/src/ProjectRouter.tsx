@@ -22,7 +22,7 @@ export default function ProjectRouter() {
     userName: "",
     session: false,
   });
-
+  const [requestSuccessMessage, setReqestSuccessMessage] = useState([""]);
 
   const fetchUserStatus = useCallback((): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -44,33 +44,41 @@ export default function ProjectRouter() {
         });
     });
   }, []);
-  
-  const requestToAPIServer = useCallback((endpoint:string, user_id:string="", topic_id:string=""): Promise<any> => {
-    const params = new URLSearchParams();
-    if(user_id!=null){
-      params.append("user_id", user_id);
-    }
-    if(topic_id!=null){
-      params.append("topic_id", topic_id);
-    }
 
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: endpoint,
-        responseType: "json",
-        params:params
-      })
-        .then((response) => {
-          console.log("request result", response);
-          resolve(response)
+  const requestToAPIServer = useCallback(
+    (
+      endpoint: string,
+      user_id: string = "",
+      topic_id: string = ""
+    ): Promise<any> => {
+      const params = new URLSearchParams();
+      if (user_id != null) {
+        params.append("user_id", user_id);
+      }
+      if (topic_id != null) {
+        params.append("topic_id", topic_id);
+      }
+
+      return new Promise((resolve, reject) => {
+        axios({
+          method: "POST",
+          url: endpoint,
+          responseType: "json",
+          params: params,
         })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  }, []);
+          .then((response) => {
+            console.log("request result", response);
+            resolve(response.data);
+          })
+          .catch((err) => {
+            console.log("err: ", err);
+          });
+      });
+    },
+    []
+  );
 
+  // アプリロード時にユーザーのステータスを取得
   useEffect(() => {
     const fetchFromDB = async () => {
       fetchUserStatus();
@@ -81,22 +89,34 @@ export default function ProjectRouter() {
   return (
     <Router>
       <div>
-        <NavBar userStatus={userStatus} requestToAPIServer={requestToAPIServer} fetchUserStatus={fetchUserStatus}/>
+        <NavBar
+          userStatus={userStatus}
+          requestToAPIServer={requestToAPIServer}
+          fetchUserStatus={fetchUserStatus}
+        />
         <Switch>
           <Route path="/post-topic">
-            <PostTopic userStatus={userStatus} fetchUserStatus={fetchUserStatus}/>
+            <PostTopic
+              userStatus={userStatus}
+              fetchUserStatus={fetchUserStatus}
+            />
           </Route>
           <Route path={`/topic-detail/:topicID`}>
-            <TopicDetail requestBookMarkAction={requestToAPIServer}/>
+            <TopicDetail requestBookMarkAction={requestToAPIServer} />
           </Route>
           <Route path="/login">
-            <Login fetchUserStatus={fetchUserStatus}/>
+            <Login fetchUserStatus={fetchUserStatus} />
           </Route>
           <Route path="/signup">
             <Signup />
           </Route>
           <Route path="/">
-            <TopicList userStatus={userStatus} />
+            <TopicList
+              userStatus={userStatus}
+              requestToApiServer={requestToAPIServer}
+              requestSuccessMessage={requestSuccessMessage}
+              setRequestSuccessMessage={setReqestSuccessMessage}
+            />
           </Route>
         </Switch>
       </div>

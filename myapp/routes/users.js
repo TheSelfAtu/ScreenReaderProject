@@ -169,6 +169,7 @@ router.post("/fetch-bookmark-topic", (req, res) => {
 
 // トピックのブックマークを解除する
 router.post("/bookmark/drop", (req, res) => {
+  console.log("req",req.query,req.query.user_id,req.query.topic_id)
   const connection = mysql.createConnection({
     host: "mysql",
     user: "root",
@@ -179,15 +180,13 @@ router.post("/bookmark/drop", (req, res) => {
 
   connection.query(
     {
-      sql: "DELETE FROM bookmark WHERE user_id = ? AND topic_id = ?",
+      sql: "DELETE FROM bookmark_topic WHERE user_id = ? AND topic_id = ?",
       timeout: 40000, // 40s
-      values: {
-        user_id: req.query.user_id,
-        topic_id: req.query.topic_id,
-      },
+      values: [req.query.user_id,req.query.topic_id]
     },
     function ResponseDropBookMarkResult(err, results, fields) {
       if (err != null) {
+        console.log(err)
         console.log("ブックマーク解除でエラーが発生しました");
         return res
           .status(500)
