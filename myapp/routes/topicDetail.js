@@ -68,7 +68,7 @@ router.post("/:topicID/postResponse", function (req, res, next) {
   // トピックに対するレスポンスデータを返却
   connection.query(
     {
-      sql: "SELECT * FROM response_to_topic WHERE topic_id=?",
+      sql: "SELECT response_to_topic.*, user.username FROM response_to_topic JOIN user ON response_to_topic.response_user_id = user.id  WHERE topic_id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },
@@ -90,7 +90,7 @@ router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
   // トピックに対するレスポンスデータを返却
   connection.query(
     {
-      sql: "SELECT * FROM response_to_topic WHERE topic_id=?",
+      sql: "SELECT response_to_topic.*, user.username FROM response_to_topic JOIN user ON response_to_topic.response_user_id = user.id  WHERE topic_id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },

@@ -61,11 +61,13 @@ export default function BookMark(props: BookMarkProps) {
           size="small"
           className={classes.button}
           onClick={async () => {
+            console.log("unbook ")
             const requestResult = await requestBookMarkAction();
             // ブックマーク解除に成功した場合にブックマークの状態を再取得
             if (requestResult) {
+              console.log("unbook success")
               props.setRequestSuccessMessage(
-                prevMessageRef.current.concat(["ブックマークしました"])
+                prevMessageRef.current.concat(["ブックマークを解除しました"])
               );
               console.log(props.requestSuccessMessage);
             }
@@ -86,9 +88,11 @@ export default function BookMark(props: BookMarkProps) {
         size="small"
         className={classes.button}
         onClick={async () => {
+          console.log('async')
           const requestResult = await requestBookMarkAction();
           // ブックマークに成功した場合にブックマークの状態を再取得
           if (requestResult) {
+            console.log("request success book")
             props.setRequestSuccessMessage(
               prevMessageRef.current.concat(["ブックマークしました"])
             );

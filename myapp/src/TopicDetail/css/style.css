@@ -33,6 +33,9 @@ padding: 20px;
   display: flex;
   justify-content: flex-end;
 }
+.topic-response-status  span {
+  padding-right: 5px;
+}
 
 .dialog-buttons {
     display: flex;

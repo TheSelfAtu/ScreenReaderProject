@@ -67,6 +67,7 @@ export default function TopicDetail(props: TopicDetailProps) {
       response_user_id: "",
       content: "",
       created_at: "",
+      username: "",
     },
   ]);
 
@@ -153,8 +154,16 @@ export default function TopicDetail(props: TopicDetailProps) {
         "",
         ""
       );
+      const bookMarkTopic = await props.requestToApiServer(
+        "/users/fetch-bookmark-topic",
+        props.userStatus.userId,
+        ""
+      );
+      props.setBookMarkTopicInfo(bookMarkTopic);
+
       setTopicInformation(topicData);
       setResponsesToTopic(responseData);
+      props.setBookMarkTopicInfo(bookMarkTopic);
     };
     fetchFromDB();
   }, [props.userStatus, props.requestSuccessMessage]);
@@ -245,6 +254,7 @@ export default function TopicDetail(props: TopicDetailProps) {
         <div className="topic-content">
           <h4>{topicInformation.content}</h4>
         </div>
+        {showBookMark(topicID)}
       </div>
 
       <Divider variant="fullWidth" />
@@ -265,7 +275,12 @@ export default function TopicDetail(props: TopicDetailProps) {
                   {response.content}
                 </div>
                 <div className="topic-response-status">
-                  <span>投稿{formatDateTime(response.created_at)}</span>
+                  <div>
+                    <span>投稿者{response.username}</span>
+                  </div>
+                  <div>
+                    <span>投稿{formatDateTime(response.created_at)}</span>
+                  </div>
                 </div>
               </div>
               <Divider variant="fullWidth" />
