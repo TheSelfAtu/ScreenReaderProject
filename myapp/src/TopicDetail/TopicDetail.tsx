@@ -9,6 +9,7 @@ import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
 import PostResponseFormDialog from "./PostResponseFormDialog";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
+import BookMark from "../BookMark";
 
 import "./css/style.css";
 
@@ -57,6 +58,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     content: "",
     is_topic_active: 1,
     post_user_id: "",
+    username: "",
     created_at: "",
   });
   const [responsesToTopic, setResponsesToTopic] = useState([
@@ -69,19 +71,16 @@ export default function TopicDetail(props: TopicDetailProps) {
   ]);
 
   const [error, setError] = useState(null);
-  const [posted, setPosted] = useState(false);
 
   const postResponseToDB = useCallback(
-    (inputValue: string,): Promise<any> => {
+    (inputValue: string): Promise<any> => {
       return new Promise((resolve, reject) => {
         const params = new URLSearchParams();
         params.append("inputValue", inputValue);
-        // params.append("response_user_id", props.userStatus.userId);
         params.append("response_user_id", props.userStatus.userId);
-console.log("in axios userId"props.userStatus.userId)
         axios({
           method: "POST",
-          url: "/topic-detail/"+ topicID + "/postResponse",
+          url: "/topic-detail/" + topicID + "/postResponse",
           responseType: "json",
           params: params,
         })
@@ -102,6 +101,44 @@ console.log("in axios userId"props.userStatus.userId)
     },
     [props.userStatus]
   );
+
+  const showBookMark = (topicId: string) => {
+    // ブックマークしているトピックIDを返す
+    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
+      return eachTopic.topic_id;
+    });
+    // トピックがブックマークされている場合のJSXを返す
+    if (
+      props.userStatus.session &&
+      bookmarkTopicID.some((id) => id == topicId)
+    ) {
+      return (
+        <BookMark
+          bookmark={true}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="drop"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+
+    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
+    if (props.userStatus.session) {
+      return (
+        <BookMark
+          bookmark={false}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="register"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+    return null;
+  };
 
   useEffect(() => {
     const fetchFromDB = async () => {
@@ -130,6 +167,9 @@ console.log("in axios userId"props.userStatus.userId)
           <div className="topic-is-active">
             <span>回答受付中</span>
           </div>
+          <div className="topic-post-username">
+            <span>投稿者 {topicInformation.username}</span>
+          </div>
           <div className="topic-datetime">
             <span>投稿日時 {datetime}</span>
           </div>
@@ -140,6 +180,9 @@ console.log("in axios userId"props.userStatus.userId)
       <div className="topic-status">
         <div className="topic-is-active">
           <span>回答締め切り </span>
+        </div>
+        <div className="topic-post-username">
+          <span>投稿者 {topicInformation.username}</span>
         </div>
         <div className="topic-datetime">
           <span>投稿日時 {datetime}</span>
@@ -198,20 +241,12 @@ console.log("in axios userId"props.userStatus.userId)
         {topicStatus()}
         <h1>{topicInformation.title}</h1>
       </div>
-      <div className="topic-content">
-        <h4>{topicInformation.content}</h4>
-      </div>
-      <div id="post-response-to-topic">
-        <div id="post-response-form">
-          <div className="dialog-buttons">
-            {SetTopicNotActiveDialog()}
-            {DialogButton()}
-          </div>
-          <div>
-            <span>{error}</span>
-          </div>
+      <div className="topic-content-wrapper">
+        <div className="topic-content">
+          <h4>{topicInformation.content}</h4>
         </div>
       </div>
+
       <Divider variant="fullWidth" />
       <div id="response-content-wrapper">
         <h3>
@@ -237,6 +272,15 @@ console.log("in axios userId"props.userStatus.userId)
             </div>
           );
         })}
+      </div>
+      <div id="post-response-form">
+        <div className="dialog-buttons">
+          {SetTopicNotActiveDialog()}
+          {DialogButton()}
+        </div>
+        <div>
+          <span>{error}</span>
+        </div>
       </div>
     </div>
   );

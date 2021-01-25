@@ -12,14 +12,22 @@ router.post("/:topicID/topic", function (req, res, next) {
     database: "ScreenReaderProject",
     port: "3306",
   });
+  // "SELECT topic.*, user.username,COUNT(response.id) FROM topic LEFT JOIN response_to_topic as response ON topic.id = response.topic_id  JOIN user ON topic.post_user_id = user.id GROUP BY topic.id ORDER BY topic.created_at DESC",
 
   connection.query(
     {
-      sql: "SELECT * FROM topic WHERE id=?",
+      sql: "SELECT topic.*, user.username FROM topic JOIN user ON topic.post_user_id = user.id  WHERE topic.id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },
     function responseTopic(error, results, fields) {
+      if (error != null) {
+        console.log(error)
+        return res
+          .status(500)
+          .send({ err: "トピック取得でエラーが発生しました" });
+      }
+      console.log(results);
       res.json(results[0]);
     }
   );

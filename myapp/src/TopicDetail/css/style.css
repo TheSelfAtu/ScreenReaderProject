@@ -9,12 +9,18 @@ padding: 20px;
   flex-direction: row;
   justify-content: flex-start;
 }
+.topic-post-username {
+  padding-right: 5px;
+}
 .topic-is-active {
   outline: solid 0.5px black;
   padding: 0px 5px;
   margin-right: 10px;
 }
 
+.topic-content-wrapper {
+  padding: 5px;
+}
 /* トピックの回答の件数 */
 .number-of-response {
   padding: 0px 5px;
