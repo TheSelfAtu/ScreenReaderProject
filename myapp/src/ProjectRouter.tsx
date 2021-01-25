@@ -22,6 +22,13 @@ export default function ProjectRouter() {
     userName: "",
     session: false,
   });
+  const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
+    {
+      id: "",
+      topic_id: "",
+      user_id: "",
+    },
+  ]);
   const [requestSuccessMessage, setReqestSuccessMessage] = useState([""]);
 
   const fetchUserStatus = useCallback((): Promise<any> => {
@@ -99,10 +106,22 @@ export default function ProjectRouter() {
             <PostTopic
               userStatus={userStatus}
               fetchUserStatus={fetchUserStatus}
+              bookmarkTopicInfo={bookmarkTopicInfo}
+              setBookMarkTopicInfo={setBookMarkTopicInfo}
+              requestSuccessMessage={requestSuccessMessage}
+              setRequestSuccessMessage={setReqestSuccessMessage}
             />
           </Route>
           <Route path={`/topic-detail/:topicID`}>
-            <TopicDetail requestBookMarkAction={requestToAPIServer} />
+            <TopicDetail
+              userStatus={userStatus}
+              fetchUserStatus={fetchUserStatus}
+              requestToApiServer={requestToAPIServer}
+              requestSuccessMessage={requestSuccessMessage}
+              setRequestSuccessMessage={setReqestSuccessMessage}
+              bookmarkTopicInfo={bookmarkTopicInfo}
+              setBookMarkTopicInfo={setBookMarkTopicInfo}
+            />
           </Route>
           <Route path="/login">
             <Login fetchUserStatus={fetchUserStatus} />
@@ -116,6 +135,8 @@ export default function ProjectRouter() {
               requestToApiServer={requestToAPIServer}
               requestSuccessMessage={requestSuccessMessage}
               setRequestSuccessMessage={setReqestSuccessMessage}
+              bookmarkTopicInfo={bookmarkTopicInfo}
+              setBookMarkTopicInfo={setBookMarkTopicInfo}
             />
           </Route>
         </Switch>

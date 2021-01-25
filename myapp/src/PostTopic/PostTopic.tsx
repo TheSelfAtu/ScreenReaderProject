@@ -3,17 +3,41 @@ import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
-
+import BookMark from "../BookMark";
 import TopicTitle from "./TopicTitle";
 import TopicContent from "./TopicContent";
 
 interface PostTopicProps {
+  // ログインユーザーのステータス
   userStatus: {
     userId: string;
     userName: string;
     session: boolean;
   };
+  // ログインユーザーのブックマーク情報
+  bookmarkTopicInfo: {
+    id: string;
+    topic_id: string;
+    user_id: string;
+}[];
+  // ユーザーのステータスをサーバーから取得する
   fetchUserStatus: () => Promise<any>;
+
+  // ブックマーク情報更新のためのフック
+  setBookMarkTopicInfo: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string;
+        topic_id: string;
+        user_id: string;
+      }[]
+    >
+  >;
+  // リクエストが成功した時のメッセージを追加する配列
+  requestSuccessMessage: string[];
+  // リクエストが成功した時のメッセージを追加するフック
+  setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
+
 }
 
 export default function PostTopic(props: PostTopicProps) {
@@ -21,6 +45,43 @@ export default function PostTopic(props: PostTopicProps) {
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
   const [error, setError] = useState("");
+  const showBookMark = (topicId: string) => {
+    // ブックマークしているトピックIDを返す
+    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
+      return eachTopic.topic_id;
+    });
+    // トピックがブックマークされている場合のJSXを返す
+    if (
+      props.userStatus.session &&
+      bookmarkTopicID.some((id) => id == topicId)
+    ) {
+      return (
+        <BookMark
+          bookmark={true}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="drop"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+
+    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
+    if (props.userStatus.session) {
+      return (
+        <BookMark
+          bookmark={false}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="register"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+    return null;
+  };
   const postTopicToDB = useCallback(
     (
       inputTitle: string,
@@ -108,6 +169,7 @@ export default function PostTopic(props: PostTopicProps) {
       <div>
         <span>{error}</span>
       </div>
+      {/* {showBookMark()} */}
       {LoginORSubmitButton()}
     </div>
   );

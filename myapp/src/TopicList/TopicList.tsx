@@ -1,11 +1,5 @@
 import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  ReactHTMLElement,
-} from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -14,25 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
-import LoginRecommendForm from "../Users/LoginRecommend";
 import "./css/style.css";
 
-interface TopicListProps {
-  userStatus: {
-    userId: string;
-    userName: string;
-    session: boolean;
-  };
-
-  requestToApiServer: (
-    endpoint: string,
-    user_id: string,
-    topic_id: string
-  ) => Promise<any>;
-
-  requestSuccessMessage: string[];
-  setRequestSuccessMessage:React.Dispatch<React.SetStateAction<string[]>>
-}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,6 +33,41 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+interface TopicListProps {
+  userStatus: {
+    userId: string;
+    userName: string;
+    session: boolean;
+  };
+
+  // ログインユーザーのブックマーク情報
+  bookmarkTopicInfo: {
+    id: string;
+    topic_id: string;
+    user_id: string;
+}[]
+
+  // ブックマーク情報更新のためのフック
+  setBookMarkTopicInfo: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string;
+        topic_id: string;
+        user_id: string;
+      }[]
+    >
+  >;
+
+  requestToApiServer: (
+    endpoint: string,
+    user_id: string,
+    topic_id: string
+  ) => Promise<any>;
+
+  requestSuccessMessage: string[];
+  setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
 export default function TopicList(props: TopicListProps) {
   const classes = useStyles();
@@ -85,13 +97,6 @@ export default function TopicList(props: TopicListProps) {
     },
   ]);
 
-  const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
-    {
-      id: "",
-      topic_id: "",
-      user_id: "",
-    },
-  ]);
 
   const [filter, setFilter] = useState("all");
 
@@ -130,7 +135,7 @@ export default function TopicList(props: TopicListProps) {
 
   const showBookMark = (topicId: string) => {
     // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = bookmarkTopicInfo.map((eachTopic) => {
+    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
       return eachTopic.topic_id;
     });
     // トピックがブックマークされている場合のJSXを返す
@@ -160,8 +165,7 @@ export default function TopicList(props: TopicListProps) {
           endpoint="register"
           requestSuccessMessage={props.requestSuccessMessage}
           setRequestSuccessMessage={props.setRequestSuccessMessage}
-
-          ></BookMark>
+        ></BookMark>
       );
     }
     return null;
@@ -177,7 +181,7 @@ export default function TopicList(props: TopicListProps) {
         props.userStatus.userId,
         ""
       );
-      setBookMarkTopicInfo(bookMarkTopic);
+      props.setBookMarkTopicInfo(bookMarkTopic);
     };
     fetchFromDB();
   }, [props.userStatus]);
@@ -190,7 +194,7 @@ export default function TopicList(props: TopicListProps) {
         props.userStatus.userId,
         ""
       );
-      setBookMarkTopicInfo(bookMarkTopic);
+      props.setBookMarkTopicInfo(bookMarkTopic);
     };
     fetchBookmarkInfo();
   }, [props.requestSuccessMessage]);
@@ -225,7 +229,7 @@ export default function TopicList(props: TopicListProps) {
       }
       if (filter == "bookmark-topic") {
         // ブックマークされたトピックIDの配列を返す
-        const bookmarkTopicID = bookmarkTopicInfo.map((eachTopic) => {
+        const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
           return eachTopic.topic_id;
         });
         // 配列の中にIDが含まれているトピックのデータを返す
@@ -266,11 +270,6 @@ export default function TopicList(props: TopicListProps) {
 
                     <div className="topic-list-status">
                       {showBookMark(topic.id)}
-                      {/* <BookMarkActionButton
-                          userID={props.userStatus.userId}
-                          topicID={topic.id}
-                          endpoint="register"
-                        ></BookMarkActionButton> */}
                       <div>
                         <a className="flex-status-name">
                           投稿者 {topic.username}
