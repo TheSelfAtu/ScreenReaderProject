@@ -15,12 +15,14 @@ import PostTopic from "./PostTopic/PostTopic";
 import TopicDetail from "./TopicDetail/TopicDetail";
 import Login from "./Users/Login";
 import Signup from "./Users/Signup";
+import Mypage from "./Mypage/Mypage";
 
 export default function ProjectRouter() {
   const [userStatus, setUserStatus] = useState({
     userId: "",
     userName: "",
     session: false,
+    comment:""
   });
   const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
     {
@@ -44,6 +46,7 @@ export default function ProjectRouter() {
             userId: response.data.userId,
             userName: response.data.userName,
             session: response.data.session,
+            comment: response.data.comment,
           });
         })
         .catch((err) => {
@@ -116,6 +119,16 @@ export default function ProjectRouter() {
             <TopicDetail
               userStatus={userStatus}
               fetchUserStatus={fetchUserStatus}
+              requestToApiServer={requestToAPIServer}
+              requestSuccessMessage={requestSuccessMessage}
+              setRequestSuccessMessage={setReqestSuccessMessage}
+              bookmarkTopicInfo={bookmarkTopicInfo}
+              setBookMarkTopicInfo={setBookMarkTopicInfo}
+            />
+          </Route>
+          <Route path={`/mypage/:userID`}>
+            <Mypage
+              userStatus={userStatus}
               requestToApiServer={requestToAPIServer}
               requestSuccessMessage={requestSuccessMessage}
               setRequestSuccessMessage={setReqestSuccessMessage}

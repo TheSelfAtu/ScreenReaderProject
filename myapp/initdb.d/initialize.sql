@@ -12,6 +12,7 @@ CREATE TABLE user (
     is_superuser INT NOT NULL DEFAULT 0,
     username VARCHAR(40) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    comment TEXT ,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

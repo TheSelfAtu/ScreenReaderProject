@@ -94,7 +94,7 @@ export default function NavBar(props: NavBarProps) {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose}>
-          <Link to="/mypage">マイページへ移動</Link>
+          <Link to={`/mypage/${props.userStatus.userId}`}>マイページへ移動</Link>
         </MenuItem>
         <MenuItem
           onClick={async () => {

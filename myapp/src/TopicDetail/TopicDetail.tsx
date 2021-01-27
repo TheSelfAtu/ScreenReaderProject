@@ -19,6 +19,7 @@ interface TopicDetailProps {
     userId: string;
     userName: string;
     session: boolean;
+    comment:string;
   };
   fetchUserStatus: () => Promise<any>;
   // ログインユーザーのブックマーク情報
