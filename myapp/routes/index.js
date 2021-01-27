@@ -1,18 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
-
+const app_exports = require("../app");
+const connection = app_exports.connection;
 
 
 // 非同期のポストリクエストに対してトピック一覧を返す
 router.post("/", function selectTopic(req, res, next) {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
 
   connection.query(
     {
@@ -52,4 +46,4 @@ router.post("/count-response-to-topic", (req, res, next) => {
   );
 });
 
-module.exports = router;
+module.exports = router

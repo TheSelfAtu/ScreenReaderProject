@@ -1,16 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
+const app_exports = require("../app");
+const connection = app_exports.connection;
 
 const app = express();
-
-const connection = mysql.createConnection({
-  host: "mysql",
-  user: "root",
-  password: "root",
-  database: "ScreenReaderProject",
-  port: "3306",
-});
 
 // middleware that is specific to this router
 router.use(function insertTopicRecordToDB(req, res, next) {
@@ -33,7 +27,5 @@ router.use(function insertTopicRecordToDB(req, res, next) {
   );
   next();
 });
-
-
 
 module.exports = router;

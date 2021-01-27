@@ -3,6 +3,9 @@ const router = express.Router();
 const mysql = require("mysql2");
 const crypto = require("crypto");
 const passport = require("passport");
+const app_exports = require("../app");
+const connection = app_exports.connection;
+
 
 // ユーザーのステータスを返す
 // {"session":false, "userId":string, "userName":string}
@@ -11,14 +14,6 @@ router.post("/responseUserStatus", (req, res, next) => {
     return res.json({"session":false, "userId":"", "userName":""});
   }
   if (req.user) {
-    const connection = mysql.createConnection({
-      host: "mysql",
-      user: "root",
-      password: "root",
-      database: "ScreenReaderProject",
-      port: "3306",
-    });
-
     connection.query(
       {
         sql: "SELECT * FROM user WHERE username =  ?",
@@ -44,14 +39,6 @@ router.post("/signup", function (req, res, next) {
     .status(500)
     .send({ err: "サインアップでエラーが発生しました" });
   }
-
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
 
   connection.query(
     {
@@ -107,15 +94,6 @@ router.post("/logout", function (req, res) {
 
 // ユーザのブックマークを登録
 router.post("/bookmark/register", (req, res) => {
-  console.log("req",req.query,req.query.user_id,req.query.topic_id)
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });  
-
   connection.query(
     {
       sql: "insert into bookmark_topic SET ?",
@@ -139,14 +117,6 @@ router.post("/bookmark/register", (req, res) => {
 })
 
 router.post("/fetch-bookmark-topic", (req, res) => {
-  console.log("fetch-bookmark",req.query,req.query.user_id,req.query.topic_id)
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });  
 
   connection.query(
     {
@@ -170,13 +140,6 @@ router.post("/fetch-bookmark-topic", (req, res) => {
 // トピックのブックマークを解除する
 router.post("/bookmark/drop", (req, res) => {
   console.log("req",req.query,req.query.user_id,req.query.topic_id)
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });  
 
   connection.query(
     {
