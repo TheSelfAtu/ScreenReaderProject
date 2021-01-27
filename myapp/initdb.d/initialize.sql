@@ -12,6 +12,7 @@ CREATE TABLE user (
     is_superuser INT NOT NULL DEFAULT 0,
     username VARCHAR(40) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    comment TEXT ,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -30,6 +31,7 @@ CREATE TABLE topic (
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_topic_active INT NOT NULL DEFAULT 1,
+    good INT NOT NULL DEFAULT 0,
     FOREIGN KEY(post_user_id) REFERENCES user(id)
 );
 
@@ -48,13 +50,14 @@ CREATE TABLE response_to_topic (
 );
 
 -- 登録したトピック
-DROP TABLE IF EXISTS registerd_topic;
+DROP TABLE IF EXISTS bookmark_topic;
 
-CREATE TABLE registerd_topic (
+CREATE TABLE bookmark_topic (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     user_id INT NOT NULL,
     topic_id INT NOT NULL,
     registerd_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES user(id),
-    FOREIGN KEY(topic_id) REFERENCES topic(id)
+    FOREIGN KEY(topic_id) REFERENCES topic(id),
+    UNIQUE (user_id, topic_id)
 );

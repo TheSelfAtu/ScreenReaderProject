@@ -67,7 +67,7 @@ passport.use(
           }
           if (results.length === 0) {
             console.log("ユーザーが存在しません ");
-            return done(new Error('ユーザー名またはパスワードが違います'));
+            return done(new Error("ユーザー名またはパスワードが違います"));
           }
 
           console.log("ユーザー名による検索結果", results);
@@ -76,20 +76,16 @@ passport.use(
             .update(password)
             .digest("hex");
 
-            if(results[0].password !== sendPassword) {
-              console.log("パスワードが違います");
-              return done(new Error('ユーザー名またはパスワードがちがいます'));
-            }
+          if (results[0].password !== sendPassword) {
+            console.log("パスワードが違います");
+            return done(new Error("ユーザー名またはパスワードがちがいます"));
+          }
 
           if (results[0].password == sendPassword) {
             console.log("ユーザー認証に成功", username);
             return done(null, { username: username });
           }
-
-return(new Error('"new" キーワードによって生成されました。'))
-          return done(null, false, {
-            message: "パスワードが正しくありません。",
-          });
+          return new Error('"new" キーワードによって生成されました。');
         }
       );
     }
@@ -103,15 +99,21 @@ passport.deserializeUser((username, done) => {
   done(null, username);
 });
 
-app.use("/", indexRouter);
+// 静的ファイル bundleされたjsを読み込めるようにする
+app.use("/bundle", express.static("./bundle/"));
+
+
+app.get(`*`, (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+}); 
+
+app.use(`/`, indexRouter);
 app.use("/post-topic", postTopicRouter);
 app.use("/topic-detail/", topicDetailRouter);
 app.use("/insert-topic-record", insertTopicRecordRouter);
 
 app.use("/users/", usersRouter);
 
-// 静的ファイル bundleされたjsを読み込めるようにする
-app.use("/bundle", express.static("./bundle/"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

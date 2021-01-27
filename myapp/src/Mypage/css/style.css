@@ -1,0 +1,52 @@
+h1 {
+  margin: 0px;
+  padding: 5px;
+  font-size: 1.2rem;
+}
+h2 {
+  font-size: 1rem;
+  margin: 0px;
+  padding: 5px;
+}
+
+/* .topic-main {
+
+} */
+
+.topic-side-menu {
+  background-color: whitesmoke;
+  text-align: center;
+}
+
+.topic-is-active-true span {
+  display: inline;
+  margin-left: auto;
+  margin-right: auto;
+}
+.topic-is-active-false span {
+  display: inline;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.topic-list-title {
+  padding-bottom: 20px;
+}
+.topic-list-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.flex-status-name {
+  flex-basis: 200px;
+  padding-right: 20px;
+}
+.number-of-response {
+  padding: 0px 5px;
+  color: violet;
+}
+
+.topic-wrapper {
+  margin-bottom: 5px;
+  border-bottom: solid 0.1px black;
+}

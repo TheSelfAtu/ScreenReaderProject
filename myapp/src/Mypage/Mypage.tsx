@@ -10,7 +10,6 @@ import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import "./css/style.css";
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     flex: {
@@ -34,11 +33,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface TopicListProps {
+interface MypageProps {
   userStatus: {
     userId: string;
     userName: string;
     session: boolean;
+    comment: string;
   };
 
   // ログインユーザーのブックマーク情報
@@ -46,7 +46,7 @@ interface TopicListProps {
     id: string;
     topic_id: string;
     user_id: string;
-}[]
+  }[];
 
   // ブックマーク情報更新のためのフック
   setBookMarkTopicInfo: React.Dispatch<
@@ -69,7 +69,7 @@ interface TopicListProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function TopicList(props: TopicListProps) {
+export default function Mypage(props: MypageProps) {
   const classes = useStyles();
   const [topicsInformation, setTopicsInformation] = useState([
     {
@@ -97,8 +97,34 @@ export default function TopicList(props: TopicListProps) {
     },
   ]);
 
+  const [error, setError] = useState(null);
 
-  const [filter, setFilter] = useState("all");
+  const postProfileCommentToDB = useCallback(
+    (profileComment: string): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        const params = new URLSearchParams();
+        params.append("comment", profileComment);
+        params.append("user_id", props.userStatus.userId);
+        axios({
+          method: "POST",
+          url: "/user/" + props.userStatus.userId + "/profile",
+          responseType: "json",
+          params: params,
+        })
+          .then((response) => {
+            console.log("profile rewrite", response.data);
+            resolve(true);
+          })
+          .catch((err) => {
+            console.log("err: ", err);
+            setError(err.response.data.err);
+          });
+      });
+    },
+    [props.userStatus]
+  );
+
+  const [filter, setFilter] = useState("mytopic");
 
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
@@ -171,11 +197,40 @@ export default function TopicList(props: TopicListProps) {
     return null;
   };
 
+  // フィルターにより表示するトピックを制御
+  useEffect(() => {
+  const filterTopics =  () => {
+    // 投稿したトピックを返す
+    if (filter == "mytopic") {
+      // ログインしているユーザーが投稿したトピックを返す
+      const filterdTopics = topicsInformation.filter((topic) => {
+        return topic.post_user_id == props.userStatus.userId;
+      });
+      setShownTopics(filterdTopics);
+    }
+    if (filter == "bookmark-topic") {
+      // ブックマークされたトピックIDの配列を返す
+      const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
+        return eachTopic.topic_id;
+      });
+      // 配列の中にIDが含まれているトピックのデータを返す
+      const filterdTopics = topicsInformation.filter((topic) => {
+        return bookmarkTopicID.some((id) => id == topic.id);
+      });
+      setShownTopics(filterdTopics);
+    }
+  };
+  filterTopics();
+}, [filter,topicsInformation]);
+
   useEffect(() => {
     const fetchFromDB = async () => {
       const topicListInfo = await props.requestToApiServer("/", "", "");
       setTopicsInformation(topicListInfo);
-      setShownTopics(topicListInfo);
+      const filterdTopics = topicsInformation.filter((topic) => {
+      return topic.post_user_id == props.userStatus.userId;
+    });
+      setShownTopics(filterdTopics);
       const bookMarkTopic = await props.requestToApiServer(
         "/users/fetch-bookmark-topic",
         props.userStatus.userId,
@@ -199,53 +254,24 @@ export default function TopicList(props: TopicListProps) {
     fetchBookmarkInfo();
   }, [props.requestSuccessMessage]);
 
-  // フィルターにより表示するトピックを制御
-  useEffect(() => {
-    const filterTopics = async () => {
-      // すべてのトピックを返す
-      if (filter == "all") {
-        setShownTopics(topicsInformation);
-      }
-      if (filter == "open") {
-        // トピックへの回答が受付中のトピックを返す
-        const filterdTopics = topicsInformation.filter((topic) => {
-          return topic.is_topic_active == 1;
-        });
-        setShownTopics(filterdTopics);
-      }
-      if (filter == "closed") {
-        // トピックへの回答が締め切られたトピックを返す
-        const filterdTopics = topicsInformation.filter((topic) => {
-          return topic.is_topic_active == 0;
-        });
-        setShownTopics(filterdTopics);
-      }
-      if (filter == "mytopic") {
-        // ログインしているユーザーが投稿したトピックを返す
-        const filterdTopics = topicsInformation.filter((topic) => {
-          return topic.post_user_id == props.userStatus.userId;
-        });
-        setShownTopics(filterdTopics);
-      }
-      if (filter == "bookmark-topic") {
-        // ブックマークされたトピックIDの配列を返す
-        const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-          return eachTopic.topic_id;
-        });
-        // 配列の中にIDが含まれているトピックのデータを返す
-        const filterdTopics = topicsInformation.filter((topic) => {
-          return bookmarkTopicID.some((id) => id == topic.id);
-        });
-        setShownTopics(filterdTopics);
-      }
-    };
-    filterTopics();
-  }, [filter]);
+
 
   return (
-    <div id="topic-list-wrapper">
+    <div id="mypage-wrapper">
+      <div className="profile">
+        <Grid container spacing={1}>
+          <Grid item xs={3} >
+              <div className="profile-sidemenu">
+              <h1>プロフィール</h1>
+              </div>
+          </Grid>
+          <Grid item xs={11} >
+            <h1>{props.userStatus.userName}</h1>
+            <h2>{props.userStatus.comment}</h2>
+          </Grid>
+        </Grid>
+      </div>
       <div>
-        <h1>トピック一覧</h1>
         <Divider variant="fullWidth" />
         <Filter setFilter={setFilter}></Filter>
       </div>
@@ -331,7 +357,7 @@ function Filter(props: FilterProps) {
 
   const classes = useStyles();
 
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("mytopic");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setFilter(newValue);
     props.setFilter(newValue);
@@ -346,9 +372,6 @@ function Filter(props: FilterProps) {
         textColor="primary"
         aria-label="simple tabs example"
       >
-        <Tab label="すべて表示" value="all" />
-        <Tab label="受付中" value="open" />
-        <Tab label="締め切り" value="closed" />
         <Tab label="投稿したトピック" value="mytopic" />
         <Tab label="ブックマークしたトピック" value="bookmark-topic" />
       </Tabs>

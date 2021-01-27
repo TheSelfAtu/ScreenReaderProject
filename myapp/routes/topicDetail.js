@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
 
-// テンプレートを返す
-router.get("/:topicID", function (req, res, next) {
-  res.render("topic-detail", { title: "トピック詳細" });
-});
 
 // トピックのタイトルと内容を返す
 router.post("/:topicID/topic", function (req, res, next) {
@@ -16,14 +12,22 @@ router.post("/:topicID/topic", function (req, res, next) {
     database: "ScreenReaderProject",
     port: "3306",
   });
+  // "SELECT topic.*, user.username,COUNT(response.id) FROM topic LEFT JOIN response_to_topic as response ON topic.id = response.topic_id  JOIN user ON topic.post_user_id = user.id GROUP BY topic.id ORDER BY topic.created_at DESC",
 
   connection.query(
     {
-      sql: "SELECT * FROM topic WHERE id=?",
+      sql: "SELECT topic.*, user.username FROM topic JOIN user ON topic.post_user_id = user.id  WHERE topic.id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },
     function responseTopic(error, results, fields) {
+      if (error != null) {
+        console.log(error)
+        return res
+          .status(500)
+          .send({ err: "トピック取得でエラーが発生しました" });
+      }
+      console.log(results);
       res.json(results[0]);
     }
   );
@@ -44,9 +48,9 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       sql: "insert into response_to_topic SET ?",
       timeout: 40000, // 40s
       values: {
-        content: req.body["inputValue"],
+        content: req.query["inputValue"],
         topic_id: req.params["topicID"],
-        response_user_id: req.body["response_user_id"],
+        response_user_id: req.query["response_user_id"],
       },
     },
     function responseInsertResponseToTopic(err, results, fields) {
@@ -64,7 +68,7 @@ router.post("/:topicID/postResponse", function (req, res, next) {
   // トピックに対するレスポンスデータを返却
   connection.query(
     {
-      sql: "SELECT * FROM response_to_topic WHERE topic_id=?",
+      sql: "SELECT response_to_topic.*, user.username FROM response_to_topic JOIN user ON response_to_topic.response_user_id = user.id  WHERE topic_id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },
@@ -86,7 +90,7 @@ router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
   // トピックに対するレスポンスデータを返却
   connection.query(
     {
-      sql: "SELECT * FROM response_to_topic WHERE topic_id=?",
+      sql: "SELECT response_to_topic.*, user.username FROM response_to_topic JOIN user ON response_to_topic.response_user_id = user.id  WHERE topic_id=?",
       timeout: 40000, // 40s
       values: req.params["topicID"],
     },

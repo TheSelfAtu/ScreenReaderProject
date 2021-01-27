@@ -1,24 +1,65 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext, useCallback } from "react";
+import { useRouteMatch, useParams } from "react-router-dom";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
-import FormDialog from "./FormDialog";
+import PostResponseFormDialog from "./PostResponseFormDialog";
+import BookmarkIcon from "@material-ui/icons/Bookmark";
+import BookMark from "../BookMark";
 
 import "./css/style.css";
 
-interface TopicDetailProps {}
+interface TopicDetailProps {
+  // ユーザーの状態
+  userStatus: {
+    userId: string;
+    userName: string;
+    session: boolean;
+    comment:string;
+  };
+  fetchUserStatus: () => Promise<any>;
+  // ログインユーザーのブックマーク情報
+  bookmarkTopicInfo: {
+    id: string;
+    topic_id: string;
+    user_id: string;
+  }[];
+
+  // ブックマーク情報更新のためのフック
+  setBookMarkTopicInfo: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string;
+        topic_id: string;
+        user_id: string;
+      }[]
+    >
+  >;
+
+  requestToApiServer: (
+    endpoint: string,
+    user_id: string,
+    topic_id: string
+  ) => Promise<any>;
+
+  requestSuccessMessage: string[];
+  setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
 export default function TopicDetail(props: TopicDetailProps) {
+  let { topicID }: any = useParams();
+
   const [topicInformation, setTopicInformation] = useState({
     id: "",
     title: "",
     content: "",
     is_topic_active: 1,
     post_user_id: "",
+    username: "",
     created_at: "",
   });
   const [responsesToTopic, setResponsesToTopic] = useState([
@@ -27,67 +68,32 @@ export default function TopicDetail(props: TopicDetailProps) {
       response_user_id: "",
       content: "",
       created_at: "",
+      username: "",
     },
   ]);
-  const [userStatus, setUserStatus] = useState({
-    userId: "",
-    userName: "",
-    session: false,
-  });
+
   const [error, setError] = useState(null);
-  const [posted, setPosted] = useState(false);
-
-  const fetchData = useCallback((endpoint: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: document.location + "/" + endpoint,
-        responseType: "json",
-      })
-        .then((response) => {
-          console.log("axios fetch response data", response.data);
-          resolve(response.data);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  }, []);
-
-  const fetchUserStatus = useCallback((): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: "/users/responseUserStatus",
-        responseType: "json",
-      })
-        .then((response) => {
-          setUserStatus({
-            userId: response.data.userId,
-            userName: response.data.userName,
-            session: response.data.session,
-          });
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
-  }, []);
 
   const postResponseToDB = useCallback(
     (inputValue: string): Promise<any> => {
       return new Promise((resolve, reject) => {
         const params = new URLSearchParams();
         params.append("inputValue", inputValue);
-        params.append("response_user_id", userStatus.userId);
-        axios
-          .post(document.location + "/postResponse", params, {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          })
+        params.append("response_user_id", props.userStatus.userId);
+        axios({
+          method: "POST",
+          url: "/topic-detail/" + topicID + "/postResponse",
+          responseType: "json",
+          params: params,
+        })
           .then((response) => {
             console.log("postResponse axios response data", response.data);
-            const fetchedResponseData = fetchData("getAllResponseToTopic");
-            setPosted(true);
+            const fetchedResponseData = props.requestToApiServer(
+              "/topic-detail/" + topicID + "/topic",
+              "",
+              ""
+            );
+            resolve(true);
           })
           .catch((err) => {
             console.log("err: ", err);
@@ -95,19 +101,73 @@ export default function TopicDetail(props: TopicDetailProps) {
           });
       });
     },
-    [userStatus]
+    [props.userStatus]
   );
 
+  const showBookMark = (topicId: string) => {
+    // ブックマークしているトピックIDを返す
+    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
+      return eachTopic.topic_id;
+    });
+    // トピックがブックマークされている場合のJSXを返す
+    if (
+      props.userStatus.session &&
+      bookmarkTopicID.some((id) => id == topicId)
+    ) {
+      return (
+        <BookMark
+          bookmark={true}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="drop"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+
+    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
+    if (props.userStatus.session) {
+      return (
+        <BookMark
+          bookmark={false}
+          userID={props.userStatus.userId}
+          topicID={topicId}
+          endpoint="register"
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></BookMark>
+      );
+    }
+    return null;
+  };
+
   useEffect(() => {
-    const fetchedData = async () => {
-      const topicData = await fetchData("topic");
-      const responseData = await fetchData("getAllResponseToTopic");
-      fetchUserStatus();
+    const fetchFromDB = async () => {
+      const topicData = await props.requestToApiServer(
+        "/topic-detail/" + topicID + "/topic",
+        "",
+        ""
+      );
+
+      const responseData = await props.requestToApiServer(
+        "/topic-detail/" + topicID + "/getAllResponseToTopic",
+        "",
+        ""
+      );
+      const bookMarkTopic = await props.requestToApiServer(
+        "/users/fetch-bookmark-topic",
+        props.userStatus.userId,
+        ""
+      );
+      props.setBookMarkTopicInfo(bookMarkTopic);
+
       setTopicInformation(topicData);
       setResponsesToTopic(responseData);
+      props.setBookMarkTopicInfo(bookMarkTopic);
     };
-    fetchedData();
-  }, [posted]);
+    fetchFromDB();
+  }, [props.userStatus, props.requestSuccessMessage]);
 
   const topicStatus = () => {
     const datetime = formatDateTime(topicInformation.created_at);
@@ -116,6 +176,9 @@ export default function TopicDetail(props: TopicDetailProps) {
         <div className="topic-status">
           <div className="topic-is-active">
             <span>回答受付中</span>
+          </div>
+          <div className="topic-post-username">
+            <span>投稿者 {topicInformation.username}</span>
           </div>
           <div className="topic-datetime">
             <span>投稿日時 {datetime}</span>
@@ -128,6 +191,9 @@ export default function TopicDetail(props: TopicDetailProps) {
         <div className="topic-is-active">
           <span>回答締め切り </span>
         </div>
+        <div className="topic-post-username">
+          <span>投稿者 {topicInformation.username}</span>
+        </div>
         <div className="topic-datetime">
           <span>投稿日時 {datetime}</span>
         </div>
@@ -136,15 +202,17 @@ export default function TopicDetail(props: TopicDetailProps) {
   };
 
   const SetTopicNotActiveDialog = () => {
-    if (topicInformation.is_topic_active == 0) {
-      return "";
-    }
-    if (userStatus.userId != topicInformation.post_user_id) {
+    if (
+      topicInformation.is_topic_active == 0 ||
+      props.userStatus.userId != topicInformation.post_user_id
+    ) {
       return "";
     }
     return (
       <div className="set-topic-not-active">
-        <SetTopicNotActiveButton topicId={topicInformation.id}></SetTopicNotActiveButton>
+        <SetTopicNotActiveButton
+          topicId={topicInformation.id}
+        ></SetTopicNotActiveButton>
       </div>
     );
   };
@@ -153,11 +221,11 @@ export default function TopicDetail(props: TopicDetailProps) {
     if (topicInformation.is_topic_active == 0) {
       return "";
     }
-    if (!userStatus.session) {
+    if (!props.userStatus.session) {
       return (
         <div id="login-wrapper">
           <LoginRecommendForm
-            fetchUserStatus={fetchUserStatus}
+            fetchUserStatus={props.fetchUserStatus}
             dialogTitle="ログインすることで回答を投稿できます"
             buttonExplanation="ログインして回答を投稿"
           ></LoginRecommendForm>
@@ -166,12 +234,13 @@ export default function TopicDetail(props: TopicDetailProps) {
     }
     return (
       <div id="response-post-wrapper">
-        <FormDialog
+        <PostResponseFormDialog
           topicTitle={topicInformation.title}
           topicContent={topicInformation.content}
           postResopnseToDB={postResponseToDB}
-          fetchData={fetchData}
-        ></FormDialog>
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></PostResponseFormDialog>
       </div>
     );
   };
@@ -179,23 +248,16 @@ export default function TopicDetail(props: TopicDetailProps) {
   return (
     <div id="topic-detail-wrapper">
       <div className="topic-title-wrapper">
-        <h2>{topicInformation.title}</h2>
         {topicStatus()}
+        <h1>{topicInformation.title}</h1>
       </div>
-      <div className="topic-content">
-        <h4>{topicInformation.content}</h4>
-      </div>
-      <div id="post-response-to-topic">
-        <div id="post-response-form">
-          <div className="dialog-buttons">
-            {SetTopicNotActiveDialog()}
-            {DialogButton()}
-          </div>
-          <div>
-            <span>{error}</span>
-          </div>
+      <div className="topic-content-wrapper">
+        <div className="topic-content">
+          <h4>{topicInformation.content}</h4>
         </div>
+        {showBookMark(topicID)}
       </div>
+
       <Divider variant="fullWidth" />
       <div id="response-content-wrapper">
         <h3>
@@ -214,13 +276,27 @@ export default function TopicDetail(props: TopicDetailProps) {
                   {response.content}
                 </div>
                 <div className="topic-response-status">
-                  <span>投稿{formatDateTime(response.created_at)}</span>
+                  <div>
+                    <span>投稿者{response.username}</span>
+                  </div>
+                  <div>
+                    <span>投稿{formatDateTime(response.created_at)}</span>
+                  </div>
                 </div>
               </div>
               <Divider variant="fullWidth" />
             </div>
           );
         })}
+      </div>
+      <div id="post-response-form">
+        <div className="dialog-buttons">
+          {SetTopicNotActiveDialog()}
+          {DialogButton()}
+        </div>
+        <div>
+          <span>{error}</span>
+        </div>
       </div>
     </div>
   );
@@ -231,7 +307,6 @@ function formatDateTime(datetime: string): string {
     /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
   );
   if (separatedDateTime?.length == 6) {
-    console.log("separateddate", separatedDateTime[1] + "年");
     return (
       separatedDateTime[1] +
       "年" +

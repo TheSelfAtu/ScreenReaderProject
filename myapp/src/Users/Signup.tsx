@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -33,19 +34,25 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   error: {
-    display:"block",
-    textAlign:"center",
+    display: "block",
+    textAlign: "center",
     color: "red",
   },
 }));
 
 export default function SignUp() {
   const classes = useStyles();
+  const history = useHistory();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const requestSignup = (username: string, password: string): Promise<any> => {
     return new Promise((resolve, reject) => {
+      if (username == "" || password == "") {
+        setError("ユーザ名またはパスワードが入力されていません");
+        return;
+      }
+      
       const urlParams = new URLSearchParams();
       urlParams.append("username", username);
       urlParams.append("password", password);
@@ -58,7 +65,7 @@ export default function SignUp() {
       })
         .then((response) => {
           console.log("axios response data", response.data);
-          location.href = "/users/login";
+          history.push("/login");
           resolve(response.data);
         })
         .catch((err) => {
@@ -114,7 +121,7 @@ export default function SignUp() {
             </Grid>
           </Grid>
           <div>
-          <span className={classes.error}>{error}</span>
+            <span className={classes.error}>{error}</span>
           </div>
           <Button
             type="button"
