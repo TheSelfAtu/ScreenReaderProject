@@ -1,19 +1,12 @@
 var express = require("express");
 var router = express.Router();
 const mysql = require("mysql2");
-
-const connection = mysql.createConnection({
-  host: "mysql",
-  user: "root",
-  password: "root",
-  database: "ScreenReaderProject",
-  port: "3306",
-});
+const app_exports = require("../app");
+const connection = app_exports.connection;
 
 
 // 投稿されたトピックを登録する
 router.post("/", function insertTopicRecordToDB(req, res, next) {
-console.log("req.body post topic",req.body)
   const insertValues = {
     title: req.body.title,
     content: req.body.content,

@@ -8,6 +8,16 @@ const passport = require("passport"); // 追記
 const mysql = require("mysql2");
 const crypto = require("crypto");
 
+const connection = mysql.createConnection({
+  host: "mysql",
+  user: "root",
+  password: "root",
+  database: "ScreenReaderProject",
+  port: "3306",
+});
+
+exports.connection = connection
+
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const postTopicRouter = require("./routes/postTopic");
@@ -47,13 +57,6 @@ passport.use(
       session: true,
     },
     function (username, password, done) {
-      const connection = mysql.createConnection({
-        host: "mysql",
-        user: "root",
-        password: "root",
-        database: "ScreenReaderProject",
-        port: "3306",
-      });
       connection.query(
         {
           sql: "SELECT * FROM user WHERE username =  ?",
@@ -102,10 +105,9 @@ passport.deserializeUser((username, done) => {
 // 静的ファイル bundleされたjsを読み込めるようにする
 app.use("/bundle", express.static("./bundle/"));
 
-
 app.get(`*`, (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-}); 
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 app.use(`/`, indexRouter);
 app.use("/post-topic", postTopicRouter);
@@ -113,7 +115,6 @@ app.use("/topic-detail/", topicDetailRouter);
 app.use("/insert-topic-record", insertTopicRecordRouter);
 
 app.use("/users/", usersRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -131,4 +132,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+exports.app = app

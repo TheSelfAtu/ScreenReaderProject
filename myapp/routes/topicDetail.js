@@ -1,18 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
-
+const app_exports = require("../app");
+const connection = app_exports.connection;
 
 // トピックのタイトルと内容を返す
 router.post("/:topicID/topic", function (req, res, next) {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
-  // "SELECT topic.*, user.username,COUNT(response.id) FROM topic LEFT JOIN response_to_topic as response ON topic.id = response.topic_id  JOIN user ON topic.post_user_id = user.id GROUP BY topic.id ORDER BY topic.created_at DESC",
 
   connection.query(
     {
@@ -35,13 +28,6 @@ router.post("/:topicID/topic", function (req, res, next) {
 
 // トピックに対する回答を登録する
 router.post("/:topicID/postResponse", function (req, res, next) {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
   // トピックのレスポンスを登録
   connection.query(
     {
@@ -79,13 +65,6 @@ router.post("/:topicID/postResponse", function (req, res, next) {
 });
 
 router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
 
   // トピックに対するレスポンスデータを返却
   connection.query(
@@ -101,14 +80,7 @@ router.post("/:topicID/getAllResponseToTopic", function (req, res, next) {
 });
 
 router.post("/set-topic-not-active", function (req, res, next) {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
-  console.log(req.body, req.body["topic_id"], req);
+
   connection.query(
     {
       sql: "UPDATE topic SET is_topic_active = 0 WHERE id = ?",
@@ -126,4 +98,5 @@ router.post("/set-topic-not-active", function (req, res, next) {
     }
   );
 });
+
 module.exports = router;
