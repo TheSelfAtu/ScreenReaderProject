@@ -120,7 +120,7 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
-          <div>
+          <div role="alert">
             <span className={classes.error}>{error}</span>
           </div>
           <Button

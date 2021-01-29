@@ -85,7 +85,7 @@ export default function Login(props:LoginProps) {
         <Typography component="h1" variant="h5">
           ログイン
         </Typography>
-        <form className={classes.form}>
+        <form className={classes.form} >
         <TextField
           onChange={(e) => {
             setUsername(e.target.value);
@@ -94,12 +94,15 @@ export default function Login(props:LoginProps) {
           variant="outlined"
           margin="normal"
           required
+          aria-required
           fullWidth
           id="username"
           label="ユーザー名"
           name="username"
           autoComplete="username"
           autoFocus
+          aria-describedby="login-error"
+
         />
         <TextField
           onChange={(e) => {
@@ -109,16 +112,18 @@ export default function Login(props:LoginProps) {
           variant="outlined"
           margin="normal"
           required
+          aria-required
           fullWidth
           name="password"
           label="パスワード"
           type="password"
           id="password"
           autoComplete="current-password"
+          aria-describedby="login-error"
         />
         {/* エラーメッセージを表示 */}
-        <div>
-          <span className={classes.error}>{error}</span>
+        <div role="alert">
+          <span id="login-error" className={classes.error}>{error}</span>
         </div>
         <Button
           onClick={() => {
@@ -129,6 +134,7 @@ export default function Login(props:LoginProps) {
           variant="contained"
           color="primary"
           className={classes.submit}
+          
         >
           ログイン
         </Button>

@@ -22,14 +22,6 @@ router.post("/", function selectTopic(req, res, next) {
 });
 
 router.post("/count-response-to-topic", (req, res, next) => {
-  const connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root",
-    database: "ScreenReaderProject",
-    port: "3306",
-  });
-
   const insertValues = {
     topic_id: req.body.topic_id,
   };
@@ -46,4 +38,18 @@ router.post("/count-response-to-topic", (req, res, next) => {
   );
 });
 
-module.exports = router
+router.post("/delete-topic", (req, res, next) => {
+
+  connection.query(
+    {
+      sql: "Delete FROM topic WHERE id = ?",
+      timeout: 40000, // 40s,
+      values: req.query.topic_id,
+    },
+    function responseTopic(error, results, fields) {
+      res.json(results);
+    }
+  );
+});
+
+module.exports = router;

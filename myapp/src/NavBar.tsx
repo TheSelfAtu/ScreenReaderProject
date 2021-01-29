@@ -21,6 +21,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { blue } from "@material-ui/core/colors";
 
+import "./css/style.css";
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {

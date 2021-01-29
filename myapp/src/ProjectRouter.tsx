@@ -22,7 +22,8 @@ export default function ProjectRouter() {
     userId: "",
     userName: "",
     session: false,
-    comment:""
+    comment:"",
+    is_superuser:0,
   });
   const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
     {
@@ -47,6 +48,7 @@ export default function ProjectRouter() {
             userName: response.data.userName,
             session: response.data.session,
             comment: response.data.comment,
+            is_superuser:response.data.is_superuser
           });
         })
         .catch((err) => {

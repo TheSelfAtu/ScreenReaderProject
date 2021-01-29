@@ -269,7 +269,7 @@ export default function TopicDetail(props: TopicDetailProps) {
 
         {responsesToTopic.map((response, index) => {
           return (
-            <div className="topic-response-wrapper">
+            <div className="topic-response-wrapper" key={response.id}>
               <div className="topic-response-side-menu"></div>
               <div className="topic-response-main">
                 <div className="topic-response-main-content">

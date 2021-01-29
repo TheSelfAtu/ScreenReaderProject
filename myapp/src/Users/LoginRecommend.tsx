@@ -67,6 +67,9 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
 
   const requestLogin = useCallback(
     (username: string, password: string): Promise<any> => {
+      if(username=="" || password==""){
+        setError("ユーザー名またはパスワードが入力されていません")
+      }
       return new Promise((resolve, reject) => {
         const urlParams = new URLSearchParams();
         urlParams.append("username", username);
@@ -138,7 +141,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
             autoComplete="current-password"
           />
           {/* エラーメッセージを表示 */}
-          <div>
+          <div role="alert">
             <span className={classes.error}>{error}</span>
           </div>
         </DialogContent>
