@@ -9,7 +9,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import "./css/style.css";
-
+import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,6 +39,7 @@ interface TopicListProps {
     userId: string;
     userName: string;
     session: boolean;
+    is_superuser: number;
   };
 
   // ログインユーザーのブックマーク情報
@@ -46,7 +47,7 @@ interface TopicListProps {
     id: string;
     topic_id: string;
     user_id: string;
-}[]
+  }[];
 
   // ブックマーク情報更新のためのフック
   setBookMarkTopicInfo: React.Dispatch<
@@ -97,7 +98,6 @@ export default function TopicList(props: TopicListProps) {
     },
   ]);
 
-
   const [filter, setFilter] = useState("all");
 
   const topicStatus = (topic: any) => {
@@ -131,6 +131,22 @@ export default function TopicList(props: TopicListProps) {
         </div>
       </div>
     );
+  };
+
+  const DeletePostDataButton = (topic_id: string) => {
+    if (props.userStatus.is_superuser == 1) {
+      return (
+        <Button
+        color="secondary"
+          onClick={(topicId) => {
+            props.requestToApiServer("/delete-topic", "", topic_id);
+          }}
+        >
+          トピックを削除する
+        </Button>
+      );
+    }
+    return null;
   };
 
   const showBookMark = (topicId: string) => {
@@ -244,6 +260,7 @@ export default function TopicList(props: TopicListProps) {
 
   return (
     <div id="topic-list-wrapper">
+      <title>トピック一覧</title>
       <div>
         <h1>トピック一覧</h1>
         <Divider variant="fullWidth" />
@@ -251,7 +268,7 @@ export default function TopicList(props: TopicListProps) {
       </div>
       {shownTopics.map((topic, index) => {
         return (
-          <div className="topic-wrapper">
+          <div className="topic-wrapper" key={topic.id}>
             <div className="topic-main">
               <div className="topic-main-content">
                 <Grid container spacing={1}>
@@ -270,6 +287,7 @@ export default function TopicList(props: TopicListProps) {
 
                     <div className="topic-list-status">
                       {showBookMark(topic.id)}
+                      {DeletePostDataButton(topic.id)}
                       <div>
                         <a className="flex-status-name">
                           投稿者 {topic.username}

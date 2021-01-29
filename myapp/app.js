@@ -8,21 +8,49 @@ const passport = require("passport"); // 追記
 const mysql = require("mysql2");
 const crypto = require("crypto");
 
-const connection = mysql.createConnection({
-  host: "mysql",
-  user: "root",
-  password: "root",
-  database: "ScreenReaderProject",
+const dbConfig = {
+  host     : 'mysql', //接続先ホスト
+  user     : 'root',      //ユーザー名
+  password : 'root',          //パスワード
+  database : 'ScreenReaderProject',      //DB名
   port: "3306",
-});
+};
 
-exports.connection = connection
+let connection;
+
+function handleDisconnect() {
+    console.log('create mysql connection');
+    connection = mysql.createConnection(dbConfig); //接続する準備
+
+    //接続
+    connection.connect(function(err) {
+        if(err) {
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000); //2秒待ってから処理
+        }
+    });
+
+    //error時の処理
+    connection.on('error', function(err) {
+        console.log('db error', err);
+        if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+            handleDisconnect();
+        } else {
+            throw err;
+        }
+    });
+
+    exports.connection = connection; //connectionを(他のファイルから)requireで呼び出せるようにする
+}
+
+handleDisconnect();
+
+
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const postTopicRouter = require("./routes/postTopic");
 const topicDetailRouter = require("./routes/topicDetail");
-const insertTopicRecordRouter = require("./routes/insertTopicRecord");
 
 var app = express();
 
@@ -112,7 +140,6 @@ app.get(`*`, (req, res) => {
 app.use(`/`, indexRouter);
 app.use("/post-topic", postTopicRouter);
 app.use("/topic-detail/", topicDetailRouter);
-app.use("/insert-topic-record", insertTopicRecordRouter);
 
 app.use("/users/", usersRouter);
 

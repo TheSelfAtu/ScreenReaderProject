@@ -19,6 +19,7 @@ CREATE TABLE user (
 INSERT INTO
     user (is_superuser, username, password)
 VALUES
+    /* (1, "Admin", SHA256("admin673")); */
     (1, "Admin", "admin673");
 
 -- トピックテーブル
