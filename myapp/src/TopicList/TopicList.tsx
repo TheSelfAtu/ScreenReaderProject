@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext,  useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -72,6 +72,7 @@ interface TopicListProps {
 
 export default function TopicList(props: TopicListProps) {
   const classes = useStyles();
+  const prevMessageRef = useRef(props.requestSuccessMessage);
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -137,9 +138,19 @@ export default function TopicList(props: TopicListProps) {
     if (props.userStatus.is_superuser == 1) {
       return (
         <Button
-        color="secondary"
-          onClick={(topicId) => {
-            props.requestToApiServer("/delete-topic", "", topic_id);
+          color="secondary"
+          onClick={async (topicId) => {
+            const deleteResult = await props.requestToApiServer(
+              "/delete-topic",
+              "",
+              topic_id
+            );
+            if (deleteResult) {
+              props.setRequestSuccessMessage(
+                prevMessageRef.current.concat(["トピックを削除しました"])
+              );
+              console.log(props.requestSuccessMessage);
+            }
           }}
         >
           トピックを削除する

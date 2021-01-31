@@ -9,6 +9,9 @@ h2 {
   padding: 5px;
 }
 
+li {
+  list-style: none;
+}
 /* .topic-main {
 
 } */

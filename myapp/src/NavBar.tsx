@@ -76,12 +76,13 @@ export default function NavBar(props: NavBarProps) {
           keepMounted
           open={Boolean(anchorEl)}
           onClose={handleClose}
+          tabIndex={0}
         >
-          <MenuItem onClick={handleClose}>
-            <Link to="/login">ログイン</Link>
+          <MenuItem onClick={handleClose} >
+            <Link to="/login" tabIndex={0} >ログイン</Link>
           </MenuItem>
           <MenuItem onClick={handleClose}>
-            <Link to="/signup">サインアップ</Link>
+            <Link to="/signup" tabIndex={0}>サインアップ</Link>
           </MenuItem>
         </Menu>
       );

@@ -6,6 +6,7 @@ const passport = require("passport");
 const app_exports = require("../app");
 const connection = app_exports.connection;
 
+
 // ユーザーのステータスを返す
 // {"session":false, "userId":string, "userName":string}
 router.post("/responseUserStatus", (req, res, next) => {
@@ -29,6 +30,7 @@ router.post("/responseUserStatus", (req, res, next) => {
           userId: results[0].id,
           userName: results[0].username,
           is_superuser: results[0].is_superuser,
+          comment:results[0].comment,
         });
       }
     );
@@ -188,5 +190,28 @@ router.post("/bookmark/drop", (req, res) => {
     }
   );
 });
+
+router.post("/update-profile", function (req, res, next) {
+console.log("updaate-profile",req.query["inputValue"],req.query["user_id"])
+if (req.query["inputValue"] =="" || req.query["user_id"]=="") {
+  return res.status(500).send({ err: "プロフィールが入力されていません" });
+}
+  connection.query(
+    {
+      sql: "UPDATE user SET comment = ?  WHERE id = ?",
+      timeout: 40000, // 40s
+      values: [req.query["inputValue"],req.query["user_id"]],
+    },
+    function responseSuccessMessage(error, results, fields) {
+      if (!error == null) {
+        console.log(error);
+        return res.status(500).send({ err: err.message });
+      }
+      console.log("results",results);
+
+      res.json({ "プロフィールを更新しました": true });
+    }
+  );
+})
 
 module.exports = router;
