@@ -42,7 +42,7 @@ export default function ProjectRouter() {
         responseType: "json",
       })
         .then((response) => {
-          console.log("userstatus navbar", response);
+          console.log("userstatus", response);
           setUserStatus({
             userId: response.data.userId,
             userName: response.data.userName,
@@ -61,7 +61,8 @@ export default function ProjectRouter() {
     (
       endpoint: string,
       user_id: string = "",
-      topic_id: string = ""
+      topic_id: string = "",
+      inputValue:string=""
     ): Promise<any> => {
       const params = new URLSearchParams();
       if (user_id != null) {
@@ -69,6 +70,10 @@ export default function ProjectRouter() {
       }
       if (topic_id != null) {
         params.append("topic_id", topic_id);
+      }
+
+      if(inputValue!=""){
+        params.append("inputValue", inputValue);
       }
 
       return new Promise((resolve, reject) => {
@@ -96,7 +101,7 @@ export default function ProjectRouter() {
       fetchUserStatus();
     };
     fetchFromDB();
-  }, []);
+  }, [requestSuccessMessage]);
 
   return (
     <Router>

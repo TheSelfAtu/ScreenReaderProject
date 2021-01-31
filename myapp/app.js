@@ -9,43 +9,43 @@ const mysql = require("mysql2");
 const crypto = require("crypto");
 
 const dbConfig = {
-  host     : 'mysql', //接続先ホスト
-  user     : 'root',      //ユーザー名
-  password : 'root',          //パスワード
-  database : 'ScreenReaderProject',      //DB名
+  host: "mysql", //接続先ホスト
+  user: "root", //ユーザー名
+  password: "root", //パスワード
+  database: "ScreenReaderProject", //DB名
   port: "3306",
 };
 
 let connection;
 
 function handleDisconnect() {
-    console.log('create mysql connection');
-    connection = mysql.createConnection(dbConfig); //接続する準備
+  console.log("create mysql connection");
+  connection = mysql.createConnection(dbConfig); //接続する準備
 
-    //接続
-    connection.connect(function(err) {
-        if(err) {
-            console.log('error when connecting to db:', err);
-            setTimeout(handleDisconnect, 2000); //2秒待ってから処理
-        }
-    });
+  //接続
+  connection.connect(function (err) {
+    if (err) {
+      console.log("error when connecting to db:", err);
+      setTimeout(handleDisconnect, 2000); //2秒待ってから処理
+    }
+  });
 
-    //error時の処理
-    connection.on('error', function(err) {
-        console.log('db error', err);
-        if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-            handleDisconnect();
-        } else {
-            throw err;
-        }
-    });
+  //error時の処理
+  connection.on("error", function (err) {
+    console.log("db error then connection will destroy", err);
+    connection.destroy();
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      handleDisconnect();
+    } else {
+      throw err;
+      
+    }
+  });
 
-    exports.connection = connection; //connectionを(他のファイルから)requireで呼び出せるようにする
+  exports.connection = connection; //connectionを(他のファイルから)requireで呼び出せるようにする
 }
 
 handleDisconnect();
-
-
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -140,7 +140,6 @@ app.get(`*`, (req, res) => {
 app.use(`/`, indexRouter);
 app.use("/post-topic", postTopicRouter);
 app.use("/topic-detail/", topicDetailRouter);
-
 app.use("/users/", usersRouter);
 
 // catch 404 and forward to error handler
@@ -159,4 +158,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-exports.app = app
+exports.app = app;

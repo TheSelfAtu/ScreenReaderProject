@@ -277,10 +277,10 @@ export default function TopicDetail(props: TopicDetailProps) {
                 </div>
                 <div className="topic-response-status">
                   <div>
-                    <span>投稿者{response.username}</span>
+                    <span>投稿者 {response.username}</span>
                   </div>
                   <div>
-                    <span>投稿{formatDateTime(response.created_at)}</span>
+                    <span>{formatDateTime(response.created_at)}</span>
                   </div>
                 </div>
               </div>

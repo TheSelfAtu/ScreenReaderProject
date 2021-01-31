@@ -61,11 +61,9 @@ export default function BookMark(props: BookMarkProps) {
           size="small"
           className={classes.button}
           onClick={async () => {
-            console.log("unbook ")
             const requestResult = await requestBookMarkAction();
             // ブックマーク解除に成功した場合にブックマークの状態を再取得
             if (requestResult) {
-              console.log("unbook success")
               props.setRequestSuccessMessage(
                 prevMessageRef.current.concat(["ブックマークを解除しました"])
               );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
@@ -8,6 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
+import { Button } from "@material-ui/core";
+import UpdateProfile from "./UpdateProfile";
 import "./css/style.css";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,7 +64,8 @@ interface MypageProps {
   requestToApiServer: (
     endpoint: string,
     user_id: string,
-    topic_id: string
+    topic_id: string,
+    inputValue?: string
   ) => Promise<any>;
 
   requestSuccessMessage: string[];
@@ -71,6 +74,8 @@ interface MypageProps {
 
 export default function Mypage(props: MypageProps) {
   const classes = useStyles();
+// マイページを表示するユーザのID　他者から閲覧可能
+  let { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -98,32 +103,7 @@ export default function Mypage(props: MypageProps) {
   ]);
 
   const [error, setError] = useState(null);
-
-  const postProfileCommentToDB = useCallback(
-    (profileComment: string): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        const params = new URLSearchParams();
-        params.append("comment", profileComment);
-        params.append("user_id", props.userStatus.userId);
-        axios({
-          method: "POST",
-          url: "/user/" + props.userStatus.userId + "/profile",
-          responseType: "json",
-          params: params,
-        })
-          .then((response) => {
-            console.log("profile rewrite", response.data);
-            resolve(true);
-          })
-          .catch((err) => {
-            console.log("err: ", err);
-            setError(err.response.data.err);
-          });
-      });
-    },
-    [props.userStatus]
-  );
-
+  
   const [filter, setFilter] = useState("mytopic");
 
   const topicStatus = (topic: any) => {
@@ -199,37 +179,37 @@ export default function Mypage(props: MypageProps) {
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
-  const filterTopics =  () => {
-    // 投稿したトピックを返す
-    if (filter == "mytopic") {
-      // ログインしているユーザーが投稿したトピックを返す
-      const filterdTopics = topicsInformation.filter((topic) => {
-        return topic.post_user_id == props.userStatus.userId;
-      });
-      setShownTopics(filterdTopics);
-    }
-    if (filter == "bookmark-topic") {
-      // ブックマークされたトピックIDの配列を返す
-      const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-        return eachTopic.topic_id;
-      });
-      // 配列の中にIDが含まれているトピックのデータを返す
-      const filterdTopics = topicsInformation.filter((topic) => {
-        return bookmarkTopicID.some((id) => id == topic.id);
-      });
-      setShownTopics(filterdTopics);
-    }
-  };
-  filterTopics();
-}, [filter,topicsInformation]);
+    const filterTopics = () => {
+      // 投稿したトピックを返す
+      if (filter == "mytopic") {
+        // ログインしているユーザーが投稿したトピックを返す
+        const filterdTopics = topicsInformation.filter((topic) => {
+          return topic.post_user_id == props.userStatus.userId;
+        });
+        setShownTopics(filterdTopics);
+      }
+      if (filter == "bookmark-topic") {
+        // ブックマークされたトピックIDの配列を返す
+        const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
+          return eachTopic.topic_id;
+        });
+        // 配列の中にIDが含まれているトピックのデータを返す
+        const filterdTopics = topicsInformation.filter((topic) => {
+          return bookmarkTopicID.some((id) => id == topic.id);
+        });
+        setShownTopics(filterdTopics);
+      }
+    };
+    filterTopics();
+  }, [filter, topicsInformation]);
 
   useEffect(() => {
     const fetchFromDB = async () => {
       const topicListInfo = await props.requestToApiServer("/", "", "");
       setTopicsInformation(topicListInfo);
       const filterdTopics = topicsInformation.filter((topic) => {
-      return topic.post_user_id == props.userStatus.userId;
-    });
+        return topic.post_user_id == props.userStatus.userId;
+      });
       setShownTopics(filterdTopics);
       const bookMarkTopic = await props.requestToApiServer(
         "/users/fetch-bookmark-topic",
@@ -254,22 +234,23 @@ export default function Mypage(props: MypageProps) {
     fetchBookmarkInfo();
   }, [props.requestSuccessMessage]);
 
-
-
   return (
     <div id="mypage-wrapper">
       <div className="profile">
-        <Grid container spacing={1}>
-          <Grid item xs={3} >
-              <div className="profile-sidemenu">
-              <h1>プロフィール</h1>
-              </div>
-          </Grid>
-          <Grid item xs={11} >
-            <h1>{props.userStatus.userName}</h1>
-            <h2>{props.userStatus.comment}</h2>
-          </Grid>
-        </Grid>
+        <div className="profile-sidemenu">
+          <h1>プロフィール</h1>
+          <ul>
+            <li>ユーザー名：{props.userStatus.userName}</li>
+            <li>コメント　：{props.userStatus.comment}</li>
+          </ul>
+        </div>
+        <UpdateProfile
+          profileUserID={userID}
+          userStatus={props.userStatus}
+          requestToApiServer={props.requestToApiServer}
+          requestSuccessMessage={props.requestSuccessMessage}
+          setRequestSuccessMessage={props.setRequestSuccessMessage}
+        ></UpdateProfile>
       </div>
       <div>
         <Divider variant="fullWidth" />
@@ -277,7 +258,7 @@ export default function Mypage(props: MypageProps) {
       </div>
       {shownTopics.map((topic, index) => {
         return (
-          <div className="topic-wrapper">
+          <div className="topic-wrapper" key={topic.id}>
             <div className="topic-main">
               <div className="topic-main-content">
                 <Grid container spacing={1}>
