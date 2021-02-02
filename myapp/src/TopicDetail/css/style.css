@@ -21,6 +21,10 @@ padding: 20px;
 .topic-content-wrapper {
   padding: 5px;
 }
+.topic-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 /* トピックの回答の件数 */
 .number-of-response {
   padding: 0px 5px;
@@ -28,6 +32,9 @@ padding: 20px;
 }
 .topic-response-main-content {
   padding-bottom: 40px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
 }
 .topic-response-status {
   display: flex;
