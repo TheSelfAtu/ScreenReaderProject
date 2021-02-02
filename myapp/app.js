@@ -47,6 +47,11 @@ function handleDisconnect() {
 
 handleDisconnect();
 
+setInterval(function () {
+  connection.query('SELECT 1');
+  console.log('接続を維持')
+}, 50000);
+
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const postTopicRouter = require("./routes/postTopic");
