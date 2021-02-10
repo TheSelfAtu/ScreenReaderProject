@@ -1,12 +1,6 @@
 import { PostFire } from "./Common";
 import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  ReactHTMLElement,
-} from "react";
+import React from "react";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
