@@ -1,3 +1,4 @@
+import {formatDateTime, formatTopicTitle} from "../Common"
 import axios from "axios";
 import React, { useState, useEffect, useContext,  useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -315,33 +316,6 @@ export default function TopicList(props: TopicListProps) {
       })}
     </div>
   );
-}
-
-function formatTopicTitle(topicTitle: string): string {
-  if (topicTitle.length < 50) {
-    return topicTitle;
-  }
-  return topicTitle.substr(0, 50) + "...";
-}
-
-function formatDateTime(datetime: string): string {
-  const separatedDateTime = datetime.match(
-    /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
-  );
-  if (separatedDateTime?.length == 6) {
-    return (
-      separatedDateTime[1] +
-      "年" +
-      separatedDateTime[2] +
-      "月" +
-      separatedDateTime[3] +
-      "日" +
-      separatedDateTime[4] +
-      ":" +
-      separatedDateTime[5]
-    );
-  }
-  return "";
 }
 
 interface FilterProps {
