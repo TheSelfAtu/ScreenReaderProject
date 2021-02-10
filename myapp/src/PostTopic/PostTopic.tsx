@@ -56,20 +56,20 @@ export default function PostTopic(props: PostTopicProps) {
         return;
       }
 
-      const postTopicResult = PostFire("/post-topic", {
-        title: inputTitle,
-        content: inputContent,
-        post_user_id: postUserID,
-      });
-
-      // トピック投稿に成功した場合はトピックリスト画面に遷移
-      if (postTopicResult) {
-        history.push("/");
+      // トピックを投稿する
+      try {
+        const postTopicResult = await PostFire("/post-topic", {
+          title: inputTitle,
+          content: inputContent,
+          post_user_id: postUserID,
+        });
+      } catch (e) {
+        // トピック投稿に失敗した場合はエラーをセット
+        setError("トピック投稿に失敗しました");
         return;
       }
-
-      // トピック投稿に失敗した場合はエラーをセット
-      setError("トピック投稿に失敗しました");
+      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      history.push("/");
     },
     []
   );

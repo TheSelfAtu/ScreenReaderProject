@@ -17,7 +17,6 @@ export function PostFire(
     Object.keys(info).forEach((key) => {
       params.append(key, info[key]);
     });
-    params.append("formToken", "true");
     axios({
       method: "POST",
       url: endpoint,

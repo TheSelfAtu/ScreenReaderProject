@@ -1,3 +1,4 @@
+import { PostFire } from "../Common";
 import axios from "axios";
 import React from "react";
 import { useHistory } from "react-router-dom";
@@ -42,33 +43,28 @@ export default function SignUp() {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
 
-  const requestSignup = (username: string, password: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      if (username == "" || password == "") {
-        setError("ユーザ名またはパスワードが入力されていません");
-        return;
-      }
+  const requestSignup = async (
+    username: string,
+    password: string
+  ): Promise<any> => {
+    // フォーム入力バリデーション
+    if (username == "" || password == "") {
+      setError("ユーザ名またはパスワードが入力されていません");
+      return;
+    }
 
-      const urlParams = new URLSearchParams();
-      urlParams.append("username", username);
-      urlParams.append("password", password);
-      axios({
-        method: "POST",
-        url: "/users/signup",
-        responseType: "json",
-        params: urlParams,
-        headers: { "content-type": "application/x-www-form-urlencoded" },
-      })
-        .then((response) => {
-          console.log("axios response data", response.data);
-          history.push("/login");
-          resolve(response.data);
-        })
-        .catch((err) => {
-          console.log("error response data", err.response.data);
-          setError(err.response.data.err);
-        });
-    });
+    // サインアップリクエストを送る
+    try {
+      const signUpResult = await PostFire("/users/signup", {
+        username: username,
+        password: password,
+      });
+    } catch (e) {
+      // トピック投稿に失敗した場合はエラーをセット
+      setError("サインアップに失敗しました");
+      return;
+    }
+    history.push("/login");
   };
 
   return (
