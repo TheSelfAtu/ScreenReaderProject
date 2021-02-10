@@ -108,7 +108,6 @@ export default function ProjectRouter() {
       <div>
         <NavBar
           userStatus={userStatus}
-          requestToAPIServer={requestToAPIServer}
           fetchUserStatus={fetchUserStatus}
         />
         <Switch>

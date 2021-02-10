@@ -1,5 +1,5 @@
-import axios from "axios";
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import {formatDateTime, formatTopicTitle} from "../Common"
+import React, { useState, useEffect} from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -8,7 +8,6 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
-import { Button } from "@material-ui/core";
 import UpdateProfile from "./UpdateProfile";
 import "./css/style.css";
 
@@ -89,6 +88,7 @@ export default function Mypage(props: MypageProps) {
     },
   ]);
 
+  //表示されるトピックのリスト
   const [shownTopics, setShownTopics] = useState([
     {
       id: "",
@@ -102,7 +102,7 @@ export default function Mypage(props: MypageProps) {
     },
   ]);
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   
   const [filter, setFilter] = useState("mytopic");
 
@@ -293,33 +293,6 @@ export default function Mypage(props: MypageProps) {
       })}
     </div>
   );
-}
-
-function formatTopicTitle(topicTitle: string): string {
-  if (topicTitle.length < 50) {
-    return topicTitle;
-  }
-  return topicTitle.substr(0, 50) + "...";
-}
-
-function formatDateTime(datetime: string): string {
-  const separatedDateTime = datetime.match(
-    /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
-  );
-  if (separatedDateTime?.length == 6) {
-    return (
-      separatedDateTime[1] +
-      "年" +
-      separatedDateTime[2] +
-      "月" +
-      separatedDateTime[3] +
-      "日" +
-      separatedDateTime[4] +
-      ":" +
-      separatedDateTime[5]
-    );
-  }
-  return "";
 }
 
 interface FilterProps {

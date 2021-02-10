@@ -1,16 +1,11 @@
-import axios from "axios";
+import { PostFire } from "../Common";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -46,48 +41,42 @@ export default function SignUp() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
-  const requestSignup = (username: string, password: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      if (username == "" || password == "") {
-        setError("ユーザ名またはパスワードが入力されていません");
-        return;
-      }
-      
-      const urlParams = new URLSearchParams();
-      urlParams.append("username", username);
-      urlParams.append("password", password);
-      axios({
-        method: "POST",
-        url: "/users/signup",
-        responseType: "json",
-        params: urlParams,
-        headers: { "content-type": "application/x-www-form-urlencoded" },
-      })
-        .then((response) => {
-          console.log("axios response data", response.data);
-          history.push("/login");
-          resolve(response.data);
-        })
-        .catch((err) => {
-          console.log("error response data", err.response.data);
-          setError(err.response.data.err);
-        });
-    });
+
+  const requestSignup = async (
+    username: string,
+    password: string
+  ): Promise<any> => {
+    // フォーム入力バリデーション
+    if (username == "" || password == "") {
+      setError("ユーザ名またはパスワードが入力されていません");
+      return;
+    }
+
+    // サインアップリクエストを送る
+    try {
+      await PostFire("/users/signup", {
+        username: username,
+        password: password,
+      });
+    } catch (e) {
+      // トピック投稿に失敗した場合はエラーをセット
+      setError("サインアップに失敗しました");
+      return;
+    }
+    history.push("/login");
   };
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
         <Typography component="h1" variant="h5">
           サインアップ
         </Typography>
         <form className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
+              {/* ユーザー名入力フォーム */}
               <TextField
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -104,6 +93,7 @@ export default function SignUp() {
               />
             </Grid>
             <Grid item xs={12}>
+              {/* パスワード入力フォーム */}
               <TextField
                 onChange={(e) => {
                   setPassword(e.target.value);

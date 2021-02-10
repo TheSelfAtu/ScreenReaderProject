@@ -40,21 +40,22 @@ router.post("/responseUserStatus", (req, res, next) => {
 // 新しいユーザーを追加する
 router.post("/signup", function (req, res, next) {
   // リクエストバリデーション
-  if (req.query.username == "" || req.query.password == "") {
+  console.log("user",req.body.username,"pass",req.body.password,"req",req)
+  if (req.body.username == "" || req.body.password == "") {
     return res.status(500).send({ err: "サインアップでエラーが発生しました" });
   }
 
-  if (req.query.username == "su" && req.query.password == "user") {
+  if (req.body.username == "su" && req.body.password == "user") {
     connection.query(
       {
         sql: "insert into user SET ?",
         timeout: 40000, // 40s
         values: {
           is_superuser: 1,
-          username: req.query.username,
+          username: req.body.username,
           password: crypto
             .createHash("sha256")
-            .update(req.query.password)
+            .update(req.body.password)
             .digest("hex"),
         },
       },
@@ -75,10 +76,10 @@ router.post("/signup", function (req, res, next) {
         sql: "insert into user SET ?",
         timeout: 40000, // 40s
         values: {
-          username: req.query.username,
+          username: req.body.username,
           password: crypto
             .createHash("sha256")
-            .update(req.query.password)
+            .update(req.body.password)
             .digest("hex"),
         },
       },

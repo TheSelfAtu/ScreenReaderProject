@@ -1,11 +1,9 @@
-import axios from "axios";
+import { PostFire } from "../Common";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
-import BookMark from "../BookMark";
-import TopicTitle from "./TopicTitle";
-import TopicContent from "./TopicContent";
+import { TextField } from "@material-ui/core";
 
 interface PostTopicProps {
   // ログインユーザーのステータス
@@ -19,7 +17,7 @@ interface PostTopicProps {
     id: string;
     topic_id: string;
     user_id: string;
-}[];
+  }[];
   // ユーザーのステータスをサーバーから取得する
   fetchUserStatus: () => Promise<any>;
 
@@ -37,7 +35,6 @@ interface PostTopicProps {
   requestSuccessMessage: string[];
   // リクエストが成功した時のメッセージを追加するフック
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
-
 }
 
 export default function PostTopic(props: PostTopicProps) {
@@ -45,78 +42,39 @@ export default function PostTopic(props: PostTopicProps) {
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
   const [error, setError] = useState("");
-  const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
-    // トピックがブックマークされている場合のJSXを返す
-    if (
-      props.userStatus.session &&
-      bookmarkTopicID.some((id) => id == topicId)
-    ) {
-      return (
-        <BookMark
-          bookmark={true}
-          userID={props.userStatus.userId}
-          topicID={topicId}
-          endpoint="drop"
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></BookMark>
-      );
-    }
 
-    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
-    if (props.userStatus.session) {
-      return (
-        <BookMark
-          bookmark={false}
-          userID={props.userStatus.userId}
-          topicID={topicId}
-          endpoint="register"
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></BookMark>
-      );
-    }
-    return null;
-  };
+  // トピックを投稿する関数
   const postTopicToDB = useCallback(
-    (
-      inputTitle: string,
-      inputContent: string,
-      postUserID: string
-    ): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        if (inputTitle == "") {
-          setError("タイトルを記入してください");
-          return;
-        }
-        if (inputContent == "") {
-          setError("内容を記入してください");
-          return;
-        }
-        const params = new URLSearchParams();
-        params.append("title", inputTitle);
-        params.append("content", inputContent);
-        params.append("post_user_id", postUserID);
+    // 入力内容が不足しているときのバリデーション
+    async (inputTitle: string, inputContent: string, postUserID: string) => {
+      if (inputTitle == "") {
+        setError("タイトルを記入してください");
+        return;
+      }
+      if (inputContent == "") {
+        setError("内容を記入してください");
+        return;
+      }
 
-        axios
-          .post("/post-topic", params, {})
-          .then((response) => {
-            console.log("postTopicResponse axios response data", response.data);
-            history.push("/");
-          })
-          .catch((err) => {
-            console.log("err: ", err);
-            setError(err.response.data.err);
-          });
-      });
+      // トピックを投稿する
+      try {
+        await PostFire("/post-topic", {
+          title: inputTitle,
+          content: inputContent,
+          post_user_id: postUserID,
+        });
+      } catch (e) {
+        // トピック投稿に失敗した場合はエラーをセット
+        setError("トピック投稿に失敗しました");
+        return;
+      }
+      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      history.push("/");
     },
     []
   );
 
+  // ログインしていなければログインボタン、そうでなければトピック送信ボタンを返す
   const LoginORSubmitButton = () => {
     if (!props.userStatus.session) {
       return (
@@ -143,6 +101,7 @@ export default function PostTopic(props: PostTopicProps) {
     );
   };
 
+  // ユーザーのステータスを更新
   useEffect(() => {
     const fetchedData = async () => {
       props.fetchUserStatus();
@@ -154,22 +113,43 @@ export default function PostTopic(props: PostTopicProps) {
     <div id="post-topic-wrapper">
       <div id="topic-title-wrapper">
         <h3>タイトル</h3>
-        <TopicTitle
-          inputTitle={inputTitle}
-          setInputTitle={setInputTitle}
-        ></TopicTitle>
+        <TextField
+          id="title-form"
+          type="textarea"
+          variant="outlined"
+          fullWidth
+          inputProps={{ step: 300 }}
+          placeholder="話し合いたいトピックのタイトルを記入してください"
+          value={inputTitle}
+          name="title"
+          required
+          onChange={(e) => {
+            setInputTitle(e.target.value);
+          }}
+        />
       </div>
       <div id="topic-content-wrapper">
         <h3>内容</h3>
-        <TopicContent
-          inputContent={inputContent}
-          setInputContent={setInputContent}
-        ></TopicContent>
+        <TextField
+          id="post-topic-content-form"
+          type="textarea"
+          variant="outlined"
+          placeholder="トピックの内容を記述してください"
+          fullWidth
+          multiline
+          rows="4"
+          inputProps={{ step: 300 }}
+          value={inputContent}
+          name="content"
+          required
+          onChange={(e) => {
+            setInputContent(e.target.value);
+          }}
+        />
       </div>
-      <div>
+      <div role="alert">
         <span>{error}</span>
       </div>
-      {/* {showBookMark()} */}
       {LoginORSubmitButton()}
     </div>
   );
