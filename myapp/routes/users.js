@@ -131,8 +131,8 @@ router.post("/bookmark/register", (req, res) => {
       sql: "insert into bookmark_topic SET ?",
       timeout: 40000, // 40s
       values: {
-        user_id: req.query.user_id,
-        topic_id: req.query.topic_id,
+        user_id: req.body.user_id,
+        topic_id: req.body.topic_id,
       },
     },
     function ResponseSignUpResult(err, results, fields) {
@@ -170,13 +170,13 @@ router.post("/fetch-bookmark-topic", (req, res) => {
 
 // トピックのブックマークを解除する
 router.post("/bookmark/drop", (req, res) => {
-  console.log("req", req.query, req.query.user_id, req.query.topic_id);
+  console.log("req", req.body, req.query.user_id, req.query.topic_id);
 
   connection.query(
     {
       sql: "DELETE FROM bookmark_topic WHERE user_id = ? AND topic_id = ?",
       timeout: 40000, // 40s
-      values: [req.query.user_id, req.query.topic_id],
+      values: [req.body.user_id, req.body.topic_id],
     },
     function ResponseDropBookMarkResult(err, results, fields) {
       if (err != null) {

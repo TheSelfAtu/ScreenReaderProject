@@ -1,5 +1,5 @@
 import { PostFire } from "../Common";
-import React, { useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -41,10 +41,10 @@ interface LoginRecommendProps {
 
 export default function LoginRecommendForm(props: LoginRecommendProps) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
