@@ -1,3 +1,4 @@
+import { PostFire } from "./Common";
 import axios from "axios";
 import React, {
   useState,
@@ -13,13 +14,10 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import AccountCircleRoundedIcon from "@material-ui/icons/AccountCircleRounded";
 import { Menu } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { blue } from "@material-ui/core/colors";
 
 import "./css/style.css";
 
@@ -48,7 +46,6 @@ interface NavBarProps {
     userName: string;
     session: boolean;
   };
-  requestToAPIServer: (endpoint: string) => Promise<any>;
   fetchUserStatus: () => Promise<any>;
 }
 
@@ -78,11 +75,15 @@ export default function NavBar(props: NavBarProps) {
           onClose={handleClose}
           tabIndex={0}
         >
-          <MenuItem onClick={handleClose} >
-            <Link to="/login" tabIndex={0} >ログイン</Link>
+          <MenuItem onClick={handleClose}>
+            <Link to="/login" tabIndex={0}>
+              ログイン
+            </Link>
           </MenuItem>
           <MenuItem onClick={handleClose}>
-            <Link to="/signup" tabIndex={0}>サインアップ</Link>
+            <Link to="/signup" tabIndex={0}>
+              サインアップ
+            </Link>
           </MenuItem>
         </Menu>
       );
@@ -97,11 +98,13 @@ export default function NavBar(props: NavBarProps) {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose}>
-          <Link to={`/mypage/${props.userStatus.userId}`}>マイページへ移動</Link>
+          <Link to={`/mypage/${props.userStatus.userId}`}>
+            マイページへ移動
+          </Link>
         </MenuItem>
         <MenuItem
           onClick={async () => {
-            await props.requestToAPIServer("/users/logout");
+            await PostFire("/users/logout", {});
             props.fetchUserStatus();
             handleClose();
           }}

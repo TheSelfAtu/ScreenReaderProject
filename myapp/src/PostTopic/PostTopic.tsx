@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
@@ -6,6 +5,7 @@ import { Button } from "@material-ui/core";
 import BookMark from "../BookMark";
 import TopicTitle from "./TopicTitle";
 import TopicContent from "./TopicContent";
+import { PostFire } from "../Common";
 
 interface PostTopicProps {
   // ログインユーザーのステータス
@@ -19,7 +19,7 @@ interface PostTopicProps {
     id: string;
     topic_id: string;
     user_id: string;
-}[];
+  }[];
   // ユーザーのステータスをサーバーから取得する
   fetchUserStatus: () => Promise<any>;
 
@@ -37,7 +37,6 @@ interface PostTopicProps {
   requestSuccessMessage: string[];
   // リクエストが成功した時のメッセージを追加するフック
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
-
 }
 
 export default function PostTopic(props: PostTopicProps) {
@@ -83,40 +82,35 @@ export default function PostTopic(props: PostTopicProps) {
     return null;
   };
   const postTopicToDB = useCallback(
-    (
-      inputTitle: string,
-      inputContent: string,
-      postUserID: string
-    ): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        if (inputTitle == "") {
-          setError("タイトルを記入してください");
-          return;
-        }
-        if (inputContent == "") {
-          setError("内容を記入してください");
-          return;
-        }
-        const params = new URLSearchParams();
-        params.append("title", inputTitle);
-        params.append("content", inputContent);
-        params.append("post_user_id", postUserID);
+// 入力内容が不足しているときのバリデーション
+    async (inputTitle: string, inputContent: string, postUserID: string) => {
+      if (inputTitle == "") {
+        setError("タイトルを記入してください");
+        return;
+      }
+      if (inputContent == "") {
+        setError("内容を記入してください");
+        return;
+      }
 
-        axios
-          .post("/post-topic", params, {})
-          .then((response) => {
-            console.log("postTopicResponse axios response data", response.data);
-            history.push("/");
-          })
-          .catch((err) => {
-            console.log("err: ", err);
-            setError(err.response.data.err);
-          });
+      const postTopicResult = PostFire("/post-topic", {
+        title: inputTitle,
+        content: inputContent,
+        post_user_id: postUserID,
       });
+    // トピック投稿に成功した場合はトピックリスト画面に遷移
+    if(postTopicResult){
+      history.push("/");
+      return;
+    }
+    
+    // トピック投稿に失敗した場合はエラーをセット
+      setError("トピック投稿に失敗しました")
     },
     []
   );
 
+  // ログインしていなければログインボタン、そうでなければトピック送信ボタンを返す
   const LoginORSubmitButton = () => {
     if (!props.userStatus.session) {
       return (
