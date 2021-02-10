@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
-
 import TopicTitle from "./TopicTitle";
 
 interface PostTopicProps {
@@ -114,29 +113,40 @@ export default function PostTopic(props: PostTopicProps) {
     <div id="post-topic-wrapper">
       <div id="topic-title-wrapper">
         <h3>タイトル</h3>
-        <TopicTitle
-          inputTitle={inputTitle}
-          setInputTitle={setInputTitle}
-        ></TopicTitle>
+        <TextField
+          id="title-form"
+          type="textarea"
+          variant="outlined"
+          fullWidth
+          inputProps={{ step: 300 }}
+          placeholder="話し合いたいトピックのタイトルを記入してください"
+          value={inputTitle}
+          name="title"
+          required
+          onChange={(e) => {
+            setInputTitle(e.target.value);
+          }}
+        />
+
       </div>
       <div id="topic-content-wrapper">
         <h3>内容</h3>
         <TextField
-      id=""
-      type="textarea"
-      variant="outlined"
-      placeholder="トピックの内容を記述してください"
-      fullWidth
-      multiline
-      rows="4"
-      inputProps={{step:300}}
-      value={inputContent}
-      name="content"
-      required
-      onChange={(e) => {
-        setInputContent(e.target.value);
-      }}
-    />
+          id="post-topic-content-form"
+          type="textarea"
+          variant="outlined"
+          placeholder="トピックの内容を記述してください"
+          fullWidth
+          multiline
+          rows="4"
+          inputProps={{ step: 300 }}
+          value={inputContent}
+          name="content"
+          required
+          onChange={(e) => {
+            setInputContent(e.target.value);
+          }}
+        />
       </div>
       <div>
         <span>{error}</span>
