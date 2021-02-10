@@ -1,11 +1,8 @@
 import { PostFire } from "./Common";
 import React, {
   useState,
-  useEffect,
-  useContext,
   useCallback,
   useRef,
-  ReactHTMLElement,
 } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
@@ -30,7 +27,7 @@ interface BookMarkProps {
 export default function BookMark(props: BookMarkProps) {
   const classes = useStyles();
   const prevMessageRef = useRef(props.requestSuccessMessage);
-  const [error, setError] = React.useState("");
+  const [error, setError] = useState("");
 
   const requestBookMarkAction = useCallback(async (): Promise<any> => {
     // endpointに応じたブックマーク操作のリクエストを送る
@@ -77,7 +74,7 @@ export default function BookMark(props: BookMarkProps) {
     );
   }
 
-  // ブックマークしていないのトピックのブックマークボタン
+  // ブックマークしていないトピックのブックマークボタン
   return (
     <div className="bookmark-wrapper">
       <Button

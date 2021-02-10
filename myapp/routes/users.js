@@ -149,11 +149,12 @@ router.post("/bookmark/register", (req, res) => {
 });
 
 router.post("/fetch-bookmark-topic", (req, res) => {
+console.log("req user",req.body)
   connection.query(
     {
       sql: "SELECT * FROM bookmark_topic WHERE user_id =  ?",
       timeout: 40000, // 40s
-      values: req.query.user_id,
+      values: req.body.user_id,
     },
     function ResponseResult(err, results, fields) {
       if (err != null) {

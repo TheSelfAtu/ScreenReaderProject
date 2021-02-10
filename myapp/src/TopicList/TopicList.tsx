@@ -38,11 +38,6 @@ interface TopicListProps {
     >
   >;
 
-  requestToApiServer: (
-    endpoint: string,
-    user_id: string,
-    topic_id: string
-  ) => Promise<any>;
 
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
@@ -175,17 +170,17 @@ export default function TopicList(props: TopicListProps) {
     return null;
   };
 
+  // ユーザーの状態が変化した際にトピックリストとブックマークを更新
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await props.requestToApiServer("/", "", "");
-      setTopicsInformation(topicListInfo);
-      setShownTopics(topicListInfo);
-      const bookMarkTopic = await props.requestToApiServer(
+      const topicListInfo = await PostFire("/", {});
+      setTopicsInformation(topicListInfo.data);
+      setShownTopics(topicListInfo.data);
+      const bookMarkTopic = await PostFire(
         "/users/fetch-bookmark-topic",
-        props.userStatus.userId,
-        ""
+        {user_id:props.userStatus.userId},
       );
-      props.setBookMarkTopicInfo(bookMarkTopic);
+      props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchFromDB();
   }, [props.userStatus]);
@@ -197,7 +192,7 @@ export default function TopicList(props: TopicListProps) {
         const bookMarkTopic = await PostFire("/users/fetch-bookmark-topic", {
           user_id: props.userStatus.userId,
         });
-        props.setBookMarkTopicInfo(bookMarkTopic);
+        props.setBookMarkTopicInfo(bookMarkTopic.data);
       } catch (e) {
         // ブックマークの変更に失敗した場合
         if(props.userStatus.session){
