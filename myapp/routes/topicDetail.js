@@ -34,9 +34,9 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       sql: "insert into response_to_topic SET ?",
       timeout: 40000, // 40s
       values: {
-        content: req.query["inputValue"],
+        content: req.body["inputValue"],
         topic_id: req.params["topicID"],
-        response_user_id: req.query["response_user_id"],
+        response_user_id: req.body["response_user_id"],
       },
     },
     function responseInsertResponseToTopic(err, results, fields) {

@@ -1,14 +1,16 @@
-import axios from "axios";
-import React, { useState, useEffect, useContext, useCallback } from "react";
-import { useRouteMatch, useParams } from "react-router-dom";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import { PostFire, formatDateTime } from "../Common";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef,
+} from "react";
+import { useParams } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
 import PostResponseFormDialog from "./PostResponseFormDialog";
-import BookmarkIcon from "@material-ui/icons/Bookmark";
 import BookMark from "../BookMark";
 
 import "./css/style.css";
@@ -19,7 +21,7 @@ interface TopicDetailProps {
     userId: string;
     userName: string;
     session: boolean;
-    comment:string;
+    comment: string;
   };
   fetchUserStatus: () => Promise<any>;
   // ログインユーザーのブックマーク情報
@@ -40,18 +42,13 @@ interface TopicDetailProps {
     >
   >;
 
-  requestToApiServer: (
-    endpoint: string,
-    user_id: string,
-    topic_id: string
-  ) => Promise<any>;
-
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function TopicDetail(props: TopicDetailProps) {
   let { topicID }: any = useParams();
+  const prevMessageRef = useRef(props.requestSuccessMessage);
 
   const [topicInformation, setTopicInformation] = useState({
     id: "",
@@ -72,34 +69,32 @@ export default function TopicDetail(props: TopicDetailProps) {
     },
   ]);
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const postResponseToDB = useCallback(
-    (inputValue: string): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        const params = new URLSearchParams();
-        params.append("inputValue", inputValue);
-        params.append("response_user_id", props.userStatus.userId);
-        axios({
-          method: "POST",
-          url: "/topic-detail/" + topicID + "/postResponse",
-          responseType: "json",
-          params: params,
-        })
-          .then((response) => {
-            console.log("postResponse axios response data", response.data);
-            const fetchedResponseData = props.requestToApiServer(
-              "/topic-detail/" + topicID + "/topic",
-              "",
-              ""
-            );
-            resolve(true);
-          })
-          .catch((err) => {
-            console.log("err: ", err);
-            setError(err.response.data.err);
-          });
-      });
+    async (inputValue: string): Promise<any> => {
+      // 入力内容が不足しているときのバリデーション
+      if (inputValue == "") {
+        setError("回答を記入してください");
+        return;
+      }
+
+      // トピックへの回答を投稿する
+      try {
+        await PostFire("/topic-detail/" + topicID + "/postResponse", {
+          inputValue: inputValue,
+          response_user_id: props.userStatus.userId,
+        });
+      } catch (e) {
+        // 回答の投稿に失敗した場合はエラーをセット
+        setError("回答の投稿に失敗しました");
+        return;
+      }
+      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      props.setRequestSuccessMessage(
+        prevMessageRef.current.concat(["回答を送信しました"])
+      );
+
     },
     [props.userStatus]
   );
@@ -144,31 +139,28 @@ export default function TopicDetail(props: TopicDetailProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicData = await props.requestToApiServer(
+      const topicData = await PostFire(
         "/topic-detail/" + topicID + "/topic",
-        "",
-        ""
+        {}
       );
-
-      const responseData = await props.requestToApiServer(
+      const responseData = await PostFire(
         "/topic-detail/" + topicID + "/getAllResponseToTopic",
-        "",
-        ""
+        {}
       );
-      const bookMarkTopic = await props.requestToApiServer(
-        "/users/fetch-bookmark-topic",
-        props.userStatus.userId,
-        ""
-      );
-      props.setBookMarkTopicInfo(bookMarkTopic);
+      const bookMarkTopic = await PostFire("/users/fetch-bookmark-topic", {
+        user_id: props.userStatus.userId,
+      });
+      props.setBookMarkTopicInfo(bookMarkTopic.data);
 
-      setTopicInformation(topicData);
-      setResponsesToTopic(responseData);
-      props.setBookMarkTopicInfo(bookMarkTopic);
+      // 取得したデータをセット
+      setTopicInformation(topicData.data);
+      setResponsesToTopic(responseData.data);
+      props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchFromDB();
   }, [props.userStatus, props.requestSuccessMessage]);
 
+  // 各トピックの状態を返す
   const topicStatus = () => {
     const datetime = formatDateTime(topicInformation.created_at);
     if (topicInformation.is_topic_active) {
@@ -217,6 +209,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     );
   };
 
+  // ログインしていない場合はログインボタン、そうでなければ送信ボタンとダイアログを返す
   const DialogButton = () => {
     if (topicInformation.is_topic_active == 0) {
       return "";
@@ -294,30 +287,10 @@ export default function TopicDetail(props: TopicDetailProps) {
           {SetTopicNotActiveDialog()}
           {DialogButton()}
         </div>
-        <div>
+        <div role="alert">
           <span>{error}</span>
         </div>
       </div>
     </div>
   );
-}
-
-function formatDateTime(datetime: string): string {
-  const separatedDateTime = datetime.match(
-    /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/
-  );
-  if (separatedDateTime?.length == 6) {
-    return (
-      separatedDateTime[1] +
-      "年" +
-      separatedDateTime[2] +
-      "月" +
-      separatedDateTime[3] +
-      "日" +
-      separatedDateTime[4] +
-      ":" +
-      separatedDateTime[5]
-    );
-  }
-  return "";
 }

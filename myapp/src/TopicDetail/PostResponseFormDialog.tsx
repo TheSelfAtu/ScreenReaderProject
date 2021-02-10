@@ -2,10 +2,7 @@ import axios from "axios";
 import React, {
   useState,
   useEffect,
-  useContext,
-  useCallback,
-  useRef,
-  ReactHTMLElement,
+
 } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -23,9 +20,8 @@ interface FormDialogProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export default function PostResponseFormDialog(props: FormDialogProps) {
-  const prevMessageRef = useRef(props.requestSuccessMessage);
-  const [open, setOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -74,14 +70,8 @@ export default function PostResponseFormDialog(props: FormDialogProps) {
               const postResponseSuccess = await props.postResopnseToDB(
                 inputValue
               );
-              if (postResponseSuccess) {
-                setInputValue("");
-                props.setRequestSuccessMessage(
-                  prevMessageRef.current.concat(["回答を送信しました"])
-                );
-
-                handleClose();
-              }
+              setInputValue("");
+              handleClose();
             }}
             color="primary"
           >
