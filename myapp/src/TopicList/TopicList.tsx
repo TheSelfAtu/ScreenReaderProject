@@ -1,12 +1,6 @@
 import { PostFire } from "../Common";
 import { formatDateTime, formatTopicTitle } from "../Common";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -196,15 +190,20 @@ export default function TopicList(props: TopicListProps) {
     fetchFromDB();
   }, [props.userStatus]);
 
-  // ブックマークの状態が変化した際に実行
+  // ブックマークの状態が変化した際にブックマーク情報を再取得
   useEffect(() => {
     const fetchBookmarkInfo = async () => {
-      const bookMarkTopic = await props.requestToApiServer(
-        "/users/fetch-bookmark-topic",
-        props.userStatus.userId,
-        ""
-      );
-      props.setBookMarkTopicInfo(bookMarkTopic);
+      try {
+        const bookMarkTopic = await PostFire("/users/fetch-bookmark-topic", {
+          user_id: props.userStatus.userId,
+        });
+        props.setBookMarkTopicInfo(bookMarkTopic);
+      } catch (e) {
+        // ブックマークの変更に失敗した場合
+        if(props.userStatus.session){
+          // setError("ブックマークの変更に失敗しました");
+        }
+      }
     };
     fetchBookmarkInfo();
   }, [props.requestSuccessMessage]);
@@ -251,6 +250,13 @@ export default function TopicList(props: TopicListProps) {
     };
     filterTopics();
   }, [filter]);
+
+  // エラーが発生した際にアラートを表示
+  useEffect(() => {
+    if (error) {
+      alert(error);
+    }
+  }, [error]);
 
   return (
     <div id="topic-list-wrapper">
