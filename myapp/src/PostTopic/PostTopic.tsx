@@ -1,11 +1,11 @@
+import { PostFire } from "../Common";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
-import BookMark from "../BookMark";
+import { TextField } from "@material-ui/core";
+
 import TopicTitle from "./TopicTitle";
-import TopicContent from "./TopicContent";
-import { PostFire } from "../Common";
 
 interface PostTopicProps {
   // ログインユーザーのステータス
@@ -44,45 +44,9 @@ export default function PostTopic(props: PostTopicProps) {
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
   const [error, setError] = useState("");
-  const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
-    // トピックがブックマークされている場合のJSXを返す
-    if (
-      props.userStatus.session &&
-      bookmarkTopicID.some((id) => id == topicId)
-    ) {
-      return (
-        <BookMark
-          bookmark={true}
-          userID={props.userStatus.userId}
-          topicID={topicId}
-          endpoint="drop"
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></BookMark>
-      );
-    }
 
-    // ログイン済みでトピックがブックマークされていない場合のJSXを返す
-    if (props.userStatus.session) {
-      return (
-        <BookMark
-          bookmark={false}
-          userID={props.userStatus.userId}
-          topicID={topicId}
-          endpoint="register"
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></BookMark>
-      );
-    }
-    return null;
-  };
   const postTopicToDB = useCallback(
-// 入力内容が不足しているときのバリデーション
+    // 入力内容が不足しているときのバリデーション
     async (inputTitle: string, inputContent: string, postUserID: string) => {
       if (inputTitle == "") {
         setError("タイトルを記入してください");
@@ -98,14 +62,15 @@ export default function PostTopic(props: PostTopicProps) {
         content: inputContent,
         post_user_id: postUserID,
       });
-    // トピック投稿に成功した場合はトピックリスト画面に遷移
-    if(postTopicResult){
-      history.push("/");
-      return;
-    }
-    
-    // トピック投稿に失敗した場合はエラーをセット
-      setError("トピック投稿に失敗しました")
+
+      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      if (postTopicResult) {
+        history.push("/");
+        return;
+      }
+
+      // トピック投稿に失敗した場合はエラーをセット
+      setError("トピック投稿に失敗しました");
     },
     []
   );
@@ -137,6 +102,7 @@ export default function PostTopic(props: PostTopicProps) {
     );
   };
 
+  // ユーザーのステータスを更新
   useEffect(() => {
     const fetchedData = async () => {
       props.fetchUserStatus();
@@ -155,15 +121,26 @@ export default function PostTopic(props: PostTopicProps) {
       </div>
       <div id="topic-content-wrapper">
         <h3>内容</h3>
-        <TopicContent
-          inputContent={inputContent}
-          setInputContent={setInputContent}
-        ></TopicContent>
+        <TextField
+      id=""
+      type="textarea"
+      variant="outlined"
+      placeholder="トピックの内容を記述してください"
+      fullWidth
+      multiline
+      rows="4"
+      inputProps={{step:300}}
+      value={inputContent}
+      name="content"
+      required
+      onChange={(e) => {
+        setInputContent(e.target.value);
+      }}
+    />
       </div>
       <div>
         <span>{error}</span>
       </div>
-      {/* {showBookMark()} */}
       {LoginORSubmitButton()}
     </div>
   );
