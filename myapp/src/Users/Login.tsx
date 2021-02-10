@@ -1,11 +1,8 @@
 import axios from "axios";
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from 'react-router-dom';
@@ -79,13 +76,11 @@ export default function Login(props:LoginProps) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
         <Typography component="h1" variant="h5">
           ログイン
         </Typography>
         <form className={classes.form} >
+        {/* ユーザー名入力フォーム */}
         <TextField
           onChange={(e) => {
             setUsername(e.target.value);
@@ -104,6 +99,7 @@ export default function Login(props:LoginProps) {
           aria-describedby="login-error"
 
         />
+        {/* パスワード入力フォーム */}
         <TextField
           onChange={(e) => {
             setPassword(e.target.value);
@@ -125,6 +121,7 @@ export default function Login(props:LoginProps) {
         <div role="alert">
           <span id="login-error" className={classes.error}>{error}</span>
         </div>
+        {/* ログインボタン */}
         <Button
           onClick={() => {
             requestLogin(username, password);
@@ -133,8 +130,7 @@ export default function Login(props:LoginProps) {
           fullWidth
           variant="contained"
           color="primary"
-          className={classes.submit}
-          
+          className={classes.submit}          
         >
           ログイン
         </Button>

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import { Button } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
-import TopicTitle from "./TopicTitle";
 
 interface PostTopicProps {
   // ログインユーザーのステータス
@@ -44,6 +43,7 @@ export default function PostTopic(props: PostTopicProps) {
   const [inputContent, setInputContent] = useState("");
   const [error, setError] = useState("");
 
+  // トピックを投稿する関数
   const postTopicToDB = useCallback(
     // 入力内容が不足しているときのバリデーション
     async (inputTitle: string, inputContent: string, postUserID: string) => {
@@ -127,7 +127,6 @@ export default function PostTopic(props: PostTopicProps) {
             setInputTitle(e.target.value);
           }}
         />
-
       </div>
       <div id="topic-content-wrapper">
         <h3>内容</h3>
@@ -148,7 +147,7 @@ export default function PostTopic(props: PostTopicProps) {
           }}
         />
       </div>
-      <div>
+      <div role="alert">
         <span>{error}</span>
       </div>
       {LoginORSubmitButton()}
