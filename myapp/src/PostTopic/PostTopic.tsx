@@ -58,7 +58,7 @@ export default function PostTopic(props: PostTopicProps) {
 
       // トピックを投稿する
       try {
-        const postTopicResult = await PostFire("/post-topic", {
+        await PostFire("/post-topic", {
           title: inputTitle,
           content: inputContent,
           post_user_id: postUserID,
