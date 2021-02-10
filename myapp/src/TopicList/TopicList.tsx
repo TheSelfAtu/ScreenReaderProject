@@ -1,6 +1,12 @@
-import {formatDateTime, formatTopicTitle} from "../Common"
-import axios from "axios";
-import React, { useState, useEffect, useContext,  useRef, useCallback } from "react";
+import { PostFire } from "../Common";
+import { formatDateTime, formatTopicTitle } from "../Common";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -11,29 +17,6 @@ import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import "./css/style.css";
 import { Button } from "@material-ui/core";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    flex: {
-      flexGrow: 1,
-    },
-    paper: {
-      height: 140,
-      width: 100,
-    },
-    control: {
-      padding: theme.spacing(2),
-    },
-    root: {
-      width: "100%",
-      maxWidth: "100%",
-      backgroundColor: theme.palette.background.paper,
-    },
-    inline: {
-      display: "inline",
-    },
-  })
-);
 
 interface TopicListProps {
   userStatus: {
@@ -72,7 +55,6 @@ interface TopicListProps {
 }
 
 export default function TopicList(props: TopicListProps) {
-  const classes = useStyles();
   const prevMessageRef = useRef(props.requestSuccessMessage);
   const [topicsInformation, setTopicsInformation] = useState([
     {
@@ -101,7 +83,7 @@ export default function TopicList(props: TopicListProps) {
   ]);
 
   const [filter, setFilter] = useState("all");
-
+  const [error, setError] = useState("");
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
       return (
@@ -136,21 +118,21 @@ export default function TopicList(props: TopicListProps) {
   };
 
   const DeletePostDataButton = (topic_id: string) => {
+    // 管理者のみ操作できる記事削除ボタンを返す
     if (props.userStatus.is_superuser == 1) {
       return (
         <Button
           color="secondary"
-          onClick={async (topicId) => {
-            const deleteResult = await props.requestToApiServer(
-              "/delete-topic",
-              "",
-              topic_id
-            );
-            if (deleteResult) {
+          onClick={async () => {
+            try {
+              await PostFire("/delete-topic", { topic_id: topic_id });
               props.setRequestSuccessMessage(
                 prevMessageRef.current.concat(["トピックを削除しました"])
               );
-              console.log(props.requestSuccessMessage);
+            } catch (e) {
+              // トピックの削除に失敗した場合
+              setError("トピックの削除に失敗しました");
+              return;
             }
           }}
         >

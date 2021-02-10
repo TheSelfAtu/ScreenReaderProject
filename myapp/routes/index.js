@@ -42,7 +42,7 @@ router.post("/delete-topic", (req, res, next) => {
     {
       sql: "Delete  FROM bookmark_topic WHERE topic_id = ?",
       timeout: 40000, // 40s,
-      values: req.query.topic_id,
+      values: req.body.topic_id,
     },
     (error, results, fields) => {
       if (error != null) {
@@ -59,7 +59,7 @@ router.post("/delete-topic", (req, res, next) => {
     {
       sql: "Delete FROM response_to_topic WHERE topic_id = ?",
       timeout: 40000, // 40s,
-      values: req.query.topic_id,
+      values: req.body.topic_id,
     },
     (error, results, fields) => {
       if (error != null) {
@@ -76,7 +76,7 @@ router.post("/delete-topic", (req, res, next) => {
     {
       sql: "Delete FROM topic WHERE id = ?",
       timeout: 40000, // 40s,
-      values: req.query.topic_id,
+      values: req.body.topic_id,
     },
     function responseTopic(error, results, fields) {
       if (error != null) {

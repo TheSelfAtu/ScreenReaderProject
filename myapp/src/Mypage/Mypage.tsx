@@ -102,7 +102,7 @@ export default function Mypage(props: MypageProps) {
     },
   ]);
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   
   const [filter, setFilter] = useState("mytopic");
 

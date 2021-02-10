@@ -28,7 +28,7 @@ export function PostFire(
       })
       .catch((err) => {
         console.error("err: ", err);
-        reject(false);
+        reject(err);
       });
   });
 }
