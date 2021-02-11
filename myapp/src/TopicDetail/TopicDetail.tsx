@@ -12,7 +12,6 @@ import SetTopicNotActiveButton from "./SetTopicNotActive";
 import PostResponseFormDialog from "./PostResponseFormDialog";
 import BookMark from "../BookMark";
 
-import "./css/style.css";
 
 interface TopicDetailProps {
   // ユーザーの状態

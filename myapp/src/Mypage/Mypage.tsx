@@ -9,7 +9,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import UpdateProfile from "./UpdateProfile";
-import "./css/style.css";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
