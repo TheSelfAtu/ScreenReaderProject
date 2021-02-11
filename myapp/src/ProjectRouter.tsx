@@ -42,7 +42,6 @@ export default function ProjectRouter() {
         responseType: "json",
       })
         .then((response) => {
-          console.log("userstatus", response);
           setUserStatus({
             userId: response.data.userId,
             userName: response.data.userName,
