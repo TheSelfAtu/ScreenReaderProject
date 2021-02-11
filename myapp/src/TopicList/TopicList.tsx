@@ -10,7 +10,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import { Button } from "@material-ui/core";
-import "./css/style.css";
 
 interface TopicListProps {
   userStatus: {
