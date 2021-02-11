@@ -85,7 +85,7 @@ router.post("/set-topic-not-active", function (req, res, next) {
     {
       sql: "UPDATE topic SET is_topic_active = 0 WHERE id = ?",
       timeout: 40000, // 40s
-      values: req.query["topic_id"],
+      values: req.body["topic_id"],
     },
     function responseSuccessMessage(error, results, fields) {
       if (!error == null) {

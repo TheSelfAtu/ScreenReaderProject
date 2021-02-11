@@ -1,11 +1,5 @@
 import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -23,7 +17,6 @@ interface UpdateProfileProps {
     session: boolean;
     comment: string;
   };
-
 
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
@@ -96,6 +89,11 @@ export default function UpdateProfile(props: UpdateProfileProps) {
               setInputValue(e.target.value);
             }}
           />
+
+          {/* エラーメッセージを表示 */}
+          <div role="alert">
+            <span id="update-profile-error">{error}</span>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

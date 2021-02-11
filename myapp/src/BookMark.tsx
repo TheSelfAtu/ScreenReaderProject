@@ -63,7 +63,6 @@ export default function BookMark(props: BookMarkProps) {
               props.setRequestSuccessMessage(
                 prevMessageRef.current.concat(["ブックマークを解除しました"])
               );
-              console.log(props.requestSuccessMessage);
             }
           }}
           startIcon={<BookmarkIcon />}

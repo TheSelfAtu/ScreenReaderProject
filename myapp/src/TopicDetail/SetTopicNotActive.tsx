@@ -1,11 +1,11 @@
-import axios from "axios";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
+import { PostFire } from "../Common";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,8 +40,8 @@ export default function SetTopicNotActiveButton(
   props: SetTopicNotActiveButtonProps
 ) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [error, setError] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,28 +51,23 @@ export default function SetTopicNotActiveButton(
     setOpen(false);
   };
 
-  const setTopicNotActive = useCallback((topicId: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      const urlParams = new URLSearchParams();
-      urlParams.append("topic_id", topicId);
-      urlParams.append("is_topic_active", "0");
-      axios({
-        method: "POST",
-        url: "/topic-detail/set-topic-not-active",
-        responseType: "json",
-        params: urlParams,
-      })
-        .then((response) => {
-          console.log("axios is_topic_active set 0", response.data);
-          resolve(true);
-          //   return true;
-        })
-        .catch((err) => {
-          console.log("error response data", err.response.data);
-          setError(err.response.data.err);
-        });
-    });
-  }, []);
+  // 投稿の受付を締め切る機能
+  const setTopicNotActive = useCallback(async (): Promise<any> => {
+    try {
+      await PostFire("/topic-detail/set-topic-not-active", {
+        topic_id: props.topicId,
+        is_topic_active: "0",
+      });
+    } catch (e) {
+      // 投稿締め切りに失敗した場合はエラーをセット
+      setError("投稿締め切りに失敗しました");
+      return;
+    }
+
+    // 投稿締め切りに成功した場合にダイアログを閉じる
+    handleClose();
+    location.replace(location.href);
+  }, [props.topicId]);
 
   return (
     <div>
@@ -101,13 +96,7 @@ export default function SetTopicNotActiveButton(
           </Button>
           <Button
             onClick={async () => {
-              const isSetTopicNotActiveSuccess = await setTopicNotActive(
-                props.topicId
-              );
-              if (isSetTopicNotActiveSuccess) {
-                handleClose();
-                location.replace(location.href);
-              }
+              setTopicNotActive();
             }}
             color="primary"
           >

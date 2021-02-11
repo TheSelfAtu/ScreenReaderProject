@@ -66,7 +66,6 @@ interface MypageProps {
 }
 
 export default function Mypage(props: MypageProps) {
-  const classes = useStyles();
 // マイページを表示するユーザのID　他者から閲覧可能
   let { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
@@ -98,8 +97,10 @@ export default function Mypage(props: MypageProps) {
 
   const [error, setError] = useState("");
   
+  // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
 
+  // トピックの受付状態などを表示するJSXを返す
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
       return (

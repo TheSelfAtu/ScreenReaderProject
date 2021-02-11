@@ -147,6 +147,7 @@ export default function PostTopic(props: PostTopicProps) {
           }}
         />
       </div>
+      {/* エラーメッセージを表示 */}
       <div role="alert">
         <span>{error}</span>
       </div>

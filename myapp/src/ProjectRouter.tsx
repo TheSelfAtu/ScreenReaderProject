@@ -1,14 +1,6 @@
-import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  ReactHTMLElement,
-} from "react";
-
+import { PostFire } from "./Common";
+import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-
 import NavBar from "./NavBar";
 import TopicList from "./TopicList/TopicList";
 import PostTopic from "./PostTopic/PostTopic";
@@ -22,8 +14,8 @@ export default function ProjectRouter() {
     userId: "",
     userName: "",
     session: false,
-    comment:"",
-    is_superuser:0,
+    comment: "",
+    is_superuser: 0,
   });
   const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
     {
@@ -33,32 +25,21 @@ export default function ProjectRouter() {
     },
   ]);
   const [requestSuccessMessage, setReqestSuccessMessage] = useState([""]);
+  const [error, setError] = useState("");
 
-  const fetchUserStatus = useCallback((): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: "/users/responseUserStatus",
-        responseType: "json",
-      })
-        .then((response) => {
-          setUserStatus({
-            userId: response.data.userId,
-            userName: response.data.userName,
-            session: response.data.session,
-            comment: response.data.comment,
-            is_superuser:response.data.is_superuser
-          });
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
+  // ユーザーの情報を取得
+  const fetchUserStatus = useCallback(async (): Promise<any> => {
+    try {
+      const fetchedResult = await PostFire("/users/responseUserStatus", {});
+      setUserStatus(fetchedResult.data);
+    } catch (e) {
+      // ユーザー情報取得に失敗した場合はエラーをセット
+      setError("回答の投稿に失敗しました");
+      return;
+    }
   }, []);
 
-
-
-  // アプリロード時にユーザーのステータスを取得
+  // アプリロード,ログイン時にユーザーのステータスを取得
   useEffect(() => {
     const fetchFromDB = async () => {
       fetchUserStatus();
@@ -69,10 +50,7 @@ export default function ProjectRouter() {
   return (
     <Router>
       <div>
-        <NavBar
-          userStatus={userStatus}
-          fetchUserStatus={fetchUserStatus}
-        />
+        <NavBar userStatus={userStatus} fetchUserStatus={fetchUserStatus} />
         <Switch>
           <Route path="/post-topic">
             <PostTopic

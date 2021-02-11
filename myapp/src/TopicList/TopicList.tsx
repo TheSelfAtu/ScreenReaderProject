@@ -9,8 +9,8 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
-import "./css/style.css";
 import { Button } from "@material-ui/core";
+import "./css/style.css";
 
 interface TopicListProps {
   userStatus: {
