@@ -57,43 +57,7 @@ export default function ProjectRouter() {
     });
   }, []);
 
-  const requestToAPIServer = useCallback(
-    (
-      endpoint: string,
-      user_id: string = "",
-      topic_id: string = "",
-      inputValue:string=""
-    ): Promise<any> => {
-      const params = new URLSearchParams();
-      if (user_id != null) {
-        params.append("user_id", user_id);
-      }
-      if (topic_id != null) {
-        params.append("topic_id", topic_id);
-      }
 
-      if(inputValue!=""){
-        params.append("inputValue", inputValue);
-      }
-
-      return new Promise((resolve, reject) => {
-        axios({
-          method: "POST",
-          url: endpoint,
-          responseType: "json",
-          params: params,
-        })
-          .then((response) => {
-            console.log("request result", response);
-            resolve(response.data);
-          })
-          .catch((err) => {
-            console.log("err: ", err);
-          });
-      });
-    },
-    []
-  );
 
   // アプリロード時にユーザーのステータスを取得
   useEffect(() => {
@@ -125,7 +89,6 @@ export default function ProjectRouter() {
             <TopicDetail
               userStatus={userStatus}
               fetchUserStatus={fetchUserStatus}
-              requestToApiServer={requestToAPIServer}
               requestSuccessMessage={requestSuccessMessage}
               setRequestSuccessMessage={setReqestSuccessMessage}
               bookmarkTopicInfo={bookmarkTopicInfo}
@@ -135,7 +98,6 @@ export default function ProjectRouter() {
           <Route path={`/mypage/:userID`}>
             <Mypage
               userStatus={userStatus}
-              requestToApiServer={requestToAPIServer}
               requestSuccessMessage={requestSuccessMessage}
               setRequestSuccessMessage={setReqestSuccessMessage}
               bookmarkTopicInfo={bookmarkTopicInfo}
@@ -151,7 +113,6 @@ export default function ProjectRouter() {
           <Route path="/">
             <TopicList
               userStatus={userStatus}
-              requestToApiServer={requestToAPIServer}
               requestSuccessMessage={requestSuccessMessage}
               setRequestSuccessMessage={setReqestSuccessMessage}
               bookmarkTopicInfo={bookmarkTopicInfo}

@@ -24,7 +24,6 @@ router.post("/responseUserStatus", (req, res, next) => {
         if (err) {
           return res.json(err);
         }
-        console.log("results", results);
         return res.json({
           session: true,
           userId: results[0].id,
@@ -40,7 +39,6 @@ router.post("/responseUserStatus", (req, res, next) => {
 // 新しいユーザーを追加する
 router.post("/signup", function (req, res, next) {
   // リクエストバリデーション
-  console.log("user",req.body.username,"pass",req.body.password,"req",req)
   if (req.body.username == "" || req.body.password == "") {
     return res.status(500).send({ err: "サインアップでエラーが発生しました" });
   }
@@ -66,7 +64,6 @@ router.post("/signup", function (req, res, next) {
             .status(500)
             .send({ err: "サインアップでエラーが発生しました" });
         }
-        console.log("results", results);
         return res.json({ サインアップに成功しました: true });
       }
     );
@@ -90,7 +87,6 @@ router.post("/signup", function (req, res, next) {
             .status(500)
             .send({ err: "サインアップでエラーが発生しました" });
         }
-        console.log("results", results);
         return res.json({ サインアップに成功しました: true });
       }
     );
@@ -148,6 +144,7 @@ router.post("/bookmark/register", (req, res) => {
   );
 });
 
+// ブックマーク情報を取得
 router.post("/fetch-bookmark-topic", (req, res) => {
 console.log("req user",req.body)
   connection.query(
@@ -171,7 +168,7 @@ console.log("req user",req.body)
 
 // トピックのブックマークを解除する
 router.post("/bookmark/drop", (req, res) => {
-  console.log("req", req.body, req.query.user_id, req.query.topic_id);
+  console.log("book mark fetch", req.body, );
 
   connection.query(
     {
@@ -195,22 +192,20 @@ router.post("/bookmark/drop", (req, res) => {
 
 router.post("/update-profile", function (req, res, next) {
 console.log("updaate-profile",req.query["inputValue"],req.query["user_id"])
-if (req.query["inputValue"] =="" || req.query["user_id"]=="") {
+if (req.body["inputValue"] =="" || req.body["user_id"]=="") {
   return res.status(500).send({ err: "プロフィールが入力されていません" });
 }
   connection.query(
     {
       sql: "UPDATE user SET comment = ?  WHERE id = ?",
       timeout: 40000, // 40s
-      values: [req.query["inputValue"],req.query["user_id"]],
+      values: [req.body["inputValue"],req.body["user_id"]],
     },
     function responseSuccessMessage(error, results, fields) {
       if (!error == null) {
         console.log(error);
         return res.status(500).send({ err: err.message });
       }
-      console.log("results",results);
-
       res.json({ "プロフィールを更新しました": true });
     }
   );
