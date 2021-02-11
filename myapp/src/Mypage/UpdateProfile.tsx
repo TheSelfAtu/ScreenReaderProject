@@ -1,12 +1,5 @@
 import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  useRef,
-  ReactHTMLElement,
-} from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -14,21 +7,16 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { PostFire } from "../Common";
 
 interface UpdateProfileProps {
-profileUserID:string
-    userStatus: {
+  profileUserID: string;
+  userStatus: {
     userId: string;
     userName: string;
     session: boolean;
     comment: string;
   };
-  requestToApiServer: (
-    endpoint: string,
-    user_id: string,
-    topic_id: string,
-    inputValue: string
-  ) => Promise<any>;
 
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
@@ -36,8 +24,9 @@ profileUserID:string
 export default function UpdateProfile(props: UpdateProfileProps) {
   const prevProfileRef = useRef(props.userStatus.comment);
   const prevMessageRef = useRef(props.requestSuccessMessage);
-  const [open, setOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState(props.userStatus.comment);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(props.userStatus.comment);
+  const [error, setError] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -47,10 +36,28 @@ export default function UpdateProfile(props: UpdateProfileProps) {
     setOpen(false);
   };
 
-  console.log("user id",props.userStatus.userId,"pro",props.profileUserID)
-  if(props.userStatus.userId!=props.profileUserID){
-      return null
-  }
+  const updateUserProfile = useCallback(
+    async (inputValue: string): Promise<any> => {
+      // プロフィールを変更します
+      try {
+        await PostFire("/users/update-profile", {
+          inputValue: inputValue,
+          user_id: props.userStatus.userId,
+        });
+      } catch (e) {
+        // プロフィール変更に失敗した場合はエラーをセット
+        setError("プロフィール変更に失敗しました");
+        return;
+      }
+      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      props.setRequestSuccessMessage(
+        prevMessageRef.current.concat(["プロフィールを変更しました"])
+      );
+
+      handleClose();
+    },
+    [props.userStatus]
+  );
 
   return (
     <div>
@@ -82,6 +89,11 @@ export default function UpdateProfile(props: UpdateProfileProps) {
               setInputValue(e.target.value);
             }}
           />
+
+          {/* エラーメッセージを表示 */}
+          <div role="alert">
+            <span id="update-profile-error">{error}</span>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -90,22 +102,7 @@ export default function UpdateProfile(props: UpdateProfileProps) {
 
           <Button
             onClick={async () => {
-              const postResponseSuccess = await props.requestToApiServer(
-                "/users/update-profile",
-                props.userStatus.userId,
-                "",
-                inputValue
-              );
-              console.log("update profile", postResponseSuccess);
-              if (postResponseSuccess) {
-                console.log("update profile daze");
-                setInputValue("");
-                props.setRequestSuccessMessage(
-                  prevMessageRef.current.concat(["プロフィールを更新しました"])
-                );
-
-                handleClose();
-              }
+              updateUserProfile(inputValue);
             }}
             color="primary"
           >

@@ -1,22 +1,12 @@
-import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  ReactHTMLElement,
-  useMemo,
-  useCallback,
-} from "react";
+import { PostFire } from "../Common";
+import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -51,11 +41,10 @@ interface LoginRecommendProps {
 
 export default function LoginRecommendForm(props: LoginRecommendProps) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -66,34 +55,27 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
   };
 
   const requestLogin = useCallback(
-    (username: string, password: string): Promise<any> => {
-      if(username=="" || password==""){
-        setError("ユーザー名またはパスワードが入力されていません")
+    async (username: string, password: string): Promise<any> => {
+      // フォーム入力バリデーション
+      if (username == "" || password == "") {
+        setError("ユーザ名またはパスワードが入力されていません");
+        return;
       }
-      return new Promise((resolve, reject) => {
-        const urlParams = new URLSearchParams();
-        urlParams.append("username", username);
-        urlParams.append("password", password);
-        axios({
-          method: "POST",
-          url: "/users/login",
-          responseType: "json",
-          params: urlParams,
-        })
-          .then((response) => {
-            console.log(
-              "axios LoginRecommend Button pushed login succedd",
-              response.data
-            );
-            props.fetchUserStatus();
-            resolve(response.data);
-          })
-          .catch((err) => {
-            console.log("error response data", err.response.data);
-            setError(err.response.data.err);
-            return false
-          });
-      });
+      // ログインリクエストを送る
+      try {
+        await PostFire("/users/login", {
+          username: username,
+          password: password,
+        });
+      } catch (e) {
+        // ログインに失敗した場合はエラーをセット
+        setError("ログインに失敗しました");
+        return;
+      }
+      // ユーザー情報を再取得
+      props.fetchUserStatus();
+      // ダイアログを閉じる
+      handleClose();
     },
     []
   );
@@ -146,16 +128,13 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
           </div>
         </DialogContent>
         <DialogActions>
+          {/* 戻るボタン */}
           <Button onClick={handleClose} color="primary">
             戻る
           </Button>
           <Button
-            value={inputValue}
-            onClick={async() => {
-              const isLoginSuccess = await requestLogin(username, password);
-              if(isLoginSuccess){
-                handleClose();
-              }
+            onClick={async () => {
+              requestLogin(username, password);
             }}
             color="primary"
           >

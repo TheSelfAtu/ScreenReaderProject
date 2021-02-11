@@ -1,11 +1,8 @@
-import axios from "axios";
+import { PostFire } from "./Common";
 import React, {
   useState,
-  useEffect,
-  useContext,
   useCallback,
   useRef,
-  ReactHTMLElement,
 } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
@@ -30,28 +27,27 @@ interface BookMarkProps {
 export default function BookMark(props: BookMarkProps) {
   const classes = useStyles();
   const prevMessageRef = useRef(props.requestSuccessMessage);
+  const [error, setError] = useState("");
 
-  const requestBookMarkAction = useCallback((): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      const params = new URLSearchParams();
-      params.append("user_id", props.userID);
-      params.append("topic_id", props.topicID);
-      axios({
-        method: "POST",
-        url: "/users/bookmark/" + props.endpoint,
-        responseType: "json",
-        params: params,
-      })
-        .then((response) => {
-          console.log("bookmark", response);
-          resolve(response.data);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    });
+  const requestBookMarkAction = useCallback(async (): Promise<any> => {
+    // endpointに応じたブックマーク操作のリクエストを送る
+    try {
+      await PostFire("/users/bookmark/" + props.endpoint, {
+        user_id: props.userID,
+        topic_id: props.topicID,
+      });
+    } catch (e) {
+      // ブックマークの変更に失敗した場合はエラーをセット
+      setError("ブックマークの変更に失敗しました");
+      return;
+    }
+    // ブックマークに成功した場合にブックマークの状態を再取得
+    props.setRequestSuccessMessage(
+      prevMessageRef.current.concat(["ブックマークしました"])
+    );
   }, [props.userID, props.topicID, props.bookmark]);
 
+  // ブックマーク済みのトピックのブックマークボタン
   if (props.bookmark) {
     return (
       <div className="bookmark-wrapper">
@@ -67,7 +63,6 @@ export default function BookMark(props: BookMarkProps) {
               props.setRequestSuccessMessage(
                 prevMessageRef.current.concat(["ブックマークを解除しました"])
               );
-              console.log(props.requestSuccessMessage);
             }
           }}
           startIcon={<BookmarkIcon />}
@@ -78,6 +73,7 @@ export default function BookMark(props: BookMarkProps) {
     );
   }
 
+  // ブックマークしていないトピックのブックマークボタン
   return (
     <div className="bookmark-wrapper">
       <Button
@@ -86,15 +82,7 @@ export default function BookMark(props: BookMarkProps) {
         size="small"
         className={classes.button}
         onClick={async () => {
-          console.log('async')
-          const requestResult = await requestBookMarkAction();
-          // ブックマークに成功した場合にブックマークの状態を再取得
-          if (requestResult) {
-            console.log("request success book")
-            props.setRequestSuccessMessage(
-              prevMessageRef.current.concat(["ブックマークしました"])
-            );
-          }
+          requestBookMarkAction();
         }}
         startIcon={<BookmarkIcon />}
       >

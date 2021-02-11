@@ -1,4 +1,4 @@
-import {formatDateTime, formatTopicTitle} from "../Common"
+import {formatDateTime, formatTopicTitle, PostFire} from "../Common"
 import React, { useState, useEffect} from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
@@ -60,19 +60,12 @@ interface MypageProps {
     >
   >;
 
-  requestToApiServer: (
-    endpoint: string,
-    user_id: string,
-    topic_id: string,
-    inputValue?: string
-  ) => Promise<any>;
 
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function Mypage(props: MypageProps) {
-  const classes = useStyles();
 // マイページを表示するユーザのID　他者から閲覧可能
   let { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
@@ -104,8 +97,10 @@ export default function Mypage(props: MypageProps) {
 
   const [error, setError] = useState("");
   
+  // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
 
+  // トピックの受付状態などを表示するJSXを返す
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
       return (
@@ -203,20 +198,23 @@ export default function Mypage(props: MypageProps) {
     filterTopics();
   }, [filter, topicsInformation]);
 
+
+// トピックとブックマーク情報を登録
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await props.requestToApiServer("/", "", "");
-      setTopicsInformation(topicListInfo);
+      const topicListInfo = await PostFire("/", {});
+
+      setTopicsInformation(topicListInfo.data);
       const filterdTopics = topicsInformation.filter((topic) => {
         return topic.post_user_id == props.userStatus.userId;
       });
       setShownTopics(filterdTopics);
-      const bookMarkTopic = await props.requestToApiServer(
+      const bookMarkTopic = await PostFire(
         "/users/fetch-bookmark-topic",
-        props.userStatus.userId,
-        ""
+        {user_id:props.userStatus.userId},
       );
-      props.setBookMarkTopicInfo(bookMarkTopic);
+
+      props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchFromDB();
   }, [props.userStatus]);
@@ -224,12 +222,11 @@ export default function Mypage(props: MypageProps) {
   // ブックマークの状態が変化した際に実行
   useEffect(() => {
     const fetchBookmarkInfo = async () => {
-      const bookMarkTopic = await props.requestToApiServer(
+      const bookMarkTopic = await PostFire(
         "/users/fetch-bookmark-topic",
-        props.userStatus.userId,
-        ""
+        {user_id:props.userStatus.userId},
       );
-      props.setBookMarkTopicInfo(bookMarkTopic);
+      props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchBookmarkInfo();
   }, [props.requestSuccessMessage]);
@@ -247,7 +244,6 @@ export default function Mypage(props: MypageProps) {
         <UpdateProfile
           profileUserID={userID}
           userStatus={props.userStatus}
-          requestToApiServer={props.requestToApiServer}
           requestSuccessMessage={props.requestSuccessMessage}
           setRequestSuccessMessage={props.setRequestSuccessMessage}
         ></UpdateProfile>

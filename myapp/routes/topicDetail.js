@@ -34,9 +34,9 @@ router.post("/:topicID/postResponse", function (req, res, next) {
       sql: "insert into response_to_topic SET ?",
       timeout: 40000, // 40s
       values: {
-        content: req.query["inputValue"],
+        content: req.body["inputValue"],
         topic_id: req.params["topicID"],
-        response_user_id: req.query["response_user_id"],
+        response_user_id: req.body["response_user_id"],
       },
     },
     function responseInsertResponseToTopic(err, results, fields) {
@@ -85,7 +85,7 @@ router.post("/set-topic-not-active", function (req, res, next) {
     {
       sql: "UPDATE topic SET is_topic_active = 0 WHERE id = ?",
       timeout: 40000, // 40s
-      values: req.query["topic_id"],
+      values: req.body["topic_id"],
     },
     function responseSuccessMessage(error, results, fields) {
       if (!error == null) {

@@ -4,7 +4,6 @@ import axios from "axios";
 export function PostFire(
   endpoint: string,
   info: { [key: string]: string },
-  //   errorMessage?: string,
   isContentTypeMultiPart?: boolean
 ): Promise<any> {
   return new Promise((resolve, reject) => {

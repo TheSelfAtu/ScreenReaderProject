@@ -1,15 +1,6 @@
 import { PostFire } from "./Common";
-import axios from "axios";
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  ReactHTMLElement,
-} from "react";
-
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-
+import React from "react";
+import { BrowserRouter as Router,  Link } from "react-router-dom";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
