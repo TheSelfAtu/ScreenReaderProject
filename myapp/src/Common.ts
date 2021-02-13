@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // エンドポイントとパラメータを指定してPostリクエストをだす
-export function PostFire(
+export function postFire(
   endpoint: string,
   info: { [key: string]: string },
   isContentTypeMultiPart?: boolean
@@ -53,6 +53,7 @@ export function formatDateTime(datetime: string): string {
       "月" +
       separatedDateTime[3] +
       "日" +
+      " " +
       separatedDateTime[4] +
       ":" +
       separatedDateTime[5]

@@ -1,51 +1,82 @@
-.topic-title-wrapper {
-    background-color: whitesmoke;
-  padding: 20px;
+#topic-detail-wrapper {
+  background-color: #eee;
+  // テキストの改行を反映する
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  .topic-detail-main {
+    max-width: 720px;
+    margin: 5px auto;
   }
-  /* トピック：回答受付中もしくは回答締め切り */
-  .topic-status {
-    padding: 10px 0px 20px 0px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+  .topic-wrapper {
+    background-color: white;
+    padding-bottom: 20px;
+    .topic-info {
+      .topic-status {
+        padding: 15px 10px 10px 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        /* トピック：回答受付中もしくは回答締め切り */
+        .topic-is-active {
+          padding: 0 3px px 0;
+          margin-right: 10px;
+          border: 1px solid black;
+        }
+        .topic-post-username {
+          margin-right: 5px;
+        }
+      }
+    }
+    .topic-title-wrapper {
+      padding: 20px;
+    }
+    .topic-content-wrapper {
+      margin: 5px auto;
+      .topic-content {
+        margin: 10px;
+      }
+      .bookmark {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
   }
-  .topic-post-username {
-    padding-right: 5px;
-  }
-  .topic-is-active {
-    outline: solid 0.5px black;
-    padding: 0px 5px;
-    margin-right: 10px;
-  }
-  
-  .topic-content-wrapper {
-    padding: 5px;
-  }
-  .topic-content {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  /* トピックの回答の件数 */
-  .number-of-response {
-    padding: 0px 5px;
-    color: violet;
-  }
-  .topic-response-main-content {
-    padding-bottom: 40px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  
-  }
-  .topic-response-status {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .topic-response-status  span {
-    padding-right: 5px;
-  }
-  
-  .dialog-buttons {
+
+  // トピックへの回答に関するスタイル
+  .topic-response-wrapper {
+    background-color: #fff;
+    padding: 10px 10px 0 10px;
+    margin: 30px 0 10px 0;
+    .topic-response-info {
+      padding: 0px 10px;
+
+      .number-of-response {
+        padding: 0px 10px;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+    #response-main-wrapper {
+      margin: 10px;
+      .each-response-wrapper {
+        margin: 5px;
+        padding: 10px;
+        .content {
+          margin-bottom: 10px;
+        }
+        .response-username {
+          margin-right: 5px;
+        }
+        .response-info {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    }
+    .dialog-buttons {
       display: flex;
       justify-content: flex-end;
-  margin: 5px 0px;
+      margin: 5px 0px;
+    }
   }
+}

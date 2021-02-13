@@ -1,5 +1,5 @@
-import {formatDateTime, formatTopicTitle, PostFire} from "../Common"
-import React, { useState, useEffect} from "react";
+import { formatDateTime, formatTopicTitle, postFire } from "../Common";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
@@ -59,13 +59,12 @@ interface MypageProps {
     >
   >;
 
-
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function Mypage(props: MypageProps) {
-// マイページを表示するユーザのID　他者から閲覧可能
+  // マイページを表示するユーザのID　他者から閲覧可能
   let { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
     {
@@ -95,7 +94,7 @@ export default function Mypage(props: MypageProps) {
   ]);
 
   const [error, setError] = useState("");
-  
+
   // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
 
@@ -197,21 +196,19 @@ export default function Mypage(props: MypageProps) {
     filterTopics();
   }, [filter, topicsInformation]);
 
-
-// トピックとブックマーク情報を登録
+  // トピックとブックマーク情報を登録
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await PostFire("/", {});
+      const topicListInfo = await postFire("/", {});
 
       setTopicsInformation(topicListInfo.data);
       const filterdTopics = topicsInformation.filter((topic) => {
         return topic.post_user_id == props.userStatus.userId;
       });
       setShownTopics(filterdTopics);
-      const bookMarkTopic = await PostFire(
-        "/users/fetch-bookmark-topic",
-        {user_id:props.userStatus.userId},
-      );
+      const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
+        user_id: props.userStatus.userId,
+      });
 
       props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
@@ -221,10 +218,9 @@ export default function Mypage(props: MypageProps) {
   // ブックマークの状態が変化した際に実行
   useEffect(() => {
     const fetchBookmarkInfo = async () => {
-      const bookMarkTopic = await PostFire(
-        "/users/fetch-bookmark-topic",
-        {user_id:props.userStatus.userId},
-      );
+      const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
+        user_id: props.userStatus.userId,
+      });
       props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchBookmarkInfo();
@@ -234,7 +230,6 @@ export default function Mypage(props: MypageProps) {
     <div id="mypage-wrapper">
       <div className="profile">
         <div className="profile-sidemenu">
-          <h1>プロフィール</h1>
           <ul>
             <li>ユーザー名：{props.userStatus.userName}</li>
             <li>コメント　：{props.userStatus.comment}</li>
@@ -248,39 +243,31 @@ export default function Mypage(props: MypageProps) {
         ></UpdateProfile>
       </div>
       <div>
-        <Divider variant="fullWidth" />
         <Filter setFilter={setFilter}></Filter>
       </div>
+      <hr></hr>
       {shownTopics.map((topic, index) => {
         return (
           <div className="topic-wrapper" key={topic.id}>
+            <div className="topic-side-menu">{topicStatus(topic)}</div>
             <div className="topic-main">
-              <div className="topic-main-content">
-                <Grid container spacing={1}>
-                  <Grid item xs={2} className="topic-side-menu">
-                    {topicStatus(topic)}
-                  </Grid>
+              <h2 className="topic-title">
+                <Link to={"/topic-detail/" + topic.id}>
+                  {formatTopicTitle(topic.title)}
+                </Link>
+              </h2>
 
-                  <Grid item xs={10}>
-                    <div>
-                      <h2 className="topic-list-title">
-                        <Link to={"/topic-detail/" + topic.id}>
-                          {formatTopicTitle(topic.title)}
-                        </Link>
-                      </h2>
-                    </div>
-
-                    <div className="topic-list-status">
-                      {showBookMark(topic.id)}
-                      <div>
-                        <a className="flex-status-name">
-                          投稿者 {topic.username}
-                        </a>
-                        <span>{formatDateTime(topic.created_at)}</span>
-                      </div>
-                    </div>
-                  </Grid>
-                </Grid>
+              <div className="topic-main-bottom">
+                <div className="topic-change-button">
+                  <div className="topic-bookmark">{showBookMark(topic.id)}</div>
+                  <div className="topic-delete-post"></div>
+                </div>
+                <div className="topic-info">
+                  <a className="sender-name">投稿者 {topic.username}</a>
+                  <span className="post-date">
+                    {formatDateTime(topic.created_at)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -299,13 +286,13 @@ function Filter(props: FilterProps) {
       root: {
         flexGrow: 1,
         boxShadow: "none",
-        paddingBottom: "30px",
       },
     })
   );
 
   const classes = useStyles();
 
+  // 最初は投稿したトピックを表示する
   const [filter, setFilter] = useState("mytopic");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setFilter(newValue);

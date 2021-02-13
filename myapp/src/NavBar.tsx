@@ -1,4 +1,4 @@
-import { PostFire } from "./Common";
+import { postFire } from "./Common";
 import React from "react";
 import { BrowserRouter as Router,  Link } from "react-router-dom";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -94,7 +94,7 @@ export default function NavBar(props: NavBarProps) {
         </MenuItem>
         <MenuItem
           onClick={async () => {
-            await PostFire("/users/logout", {});
+            await postFire("/users/logout", {});
             props.fetchUserStatus();
             handleClose();
           }}
@@ -128,6 +128,9 @@ export default function NavBar(props: NavBarProps) {
           </Link>
           <Link to="/post-topic" className={classes.navList}>
             トピック投稿
+          </Link>
+          <Link to="/usage" className={classes.navList}>
+            使い方
           </Link>
         </Toolbar>
       </AppBar>

@@ -1,0 +1,23 @@
+.usage-wrapper {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+  max-width: 100%;
+  .usage-wrapper-main {
+    max-width: 720px;
+    padding-top: 5px;
+    padding-bottom: 40px;
+    background-color: white;
+    margin: 0 auto;
+    .usage-each-function {
+      margin: 10px 20px;
+      a {
+        text-decoration: none;
+      }
+      .usage-content {
+          padding-left: 20px;
+      }
+      
+    }
+  }
+}

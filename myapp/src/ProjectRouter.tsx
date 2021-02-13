@@ -1,4 +1,4 @@
-import { PostFire } from "./Common";
+import { postFire } from "./Common";
 import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import NavBar from "./NavBar";
@@ -8,6 +8,7 @@ import TopicDetail from "./TopicDetail/TopicDetail";
 import Login from "./Users/Login";
 import Signup from "./Users/Signup";
 import Mypage from "./Mypage/Mypage";
+import Usage from "./Usage/Usage";
 
 export default function ProjectRouter() {
   const [userStatus, setUserStatus] = useState({
@@ -30,7 +31,7 @@ export default function ProjectRouter() {
   // ユーザーの情報を取得
   const fetchUserStatus = useCallback(async (): Promise<any> => {
     try {
-      const fetchedResult = await PostFire("/users/responseUserStatus", {});
+      const fetchedResult = await postFire("/users/responseUserStatus", {});
       setUserStatus(fetchedResult.data);
     } catch (e) {
       // ユーザー情報取得に失敗した場合はエラーをセット
@@ -86,6 +87,9 @@ export default function ProjectRouter() {
           </Route>
           <Route path="/signup">
             <Signup />
+          </Route>
+          <Route path="/usage">
+            <Usage />
           </Route>
           <Route path="/">
             <TopicList

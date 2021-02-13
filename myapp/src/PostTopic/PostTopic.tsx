@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
@@ -58,7 +58,7 @@ export default function PostTopic(props: PostTopicProps) {
 
       // トピックを投稿する
       try {
-        await PostFire("/post-topic", {
+        await postFire("/post-topic", {
           title: inputTitle,
           content: inputContent,
           post_user_id: postUserID,
@@ -111,47 +111,49 @@ export default function PostTopic(props: PostTopicProps) {
 
   return (
     <div id="post-topic-wrapper">
-      <div id="topic-title-wrapper">
-        <h3>タイトル</h3>
-        <TextField
-          id="title-form"
-          type="textarea"
-          variant="outlined"
-          fullWidth
-          inputProps={{ step: 300 }}
-          placeholder="話し合いたいトピックのタイトルを記入してください"
-          value={inputTitle}
-          name="title"
-          required
-          onChange={(e) => {
-            setInputTitle(e.target.value);
-          }}
-        />
+      <div className="post-topic-main">
+        <div id="topic-title-wrapper">
+          <h3 className="form-name">タイトルを記入してください</h3>
+          <TextField
+            id="title-form"
+            type="textarea"
+            variant="outlined"
+            fullWidth
+            inputProps={{ step: 300 }}
+            placeholder="話し合いたいトピックのタイトルを記入してください"
+            value={inputTitle}
+            name="title"
+            required
+            onChange={(e) => {
+              setInputTitle(e.target.value);
+            }}
+          />
+        </div>
+        <div id="topic-content-wrapper">
+          <h3 className="form-name">話し合いたいことを記入してください</h3>
+          <TextField
+            id="post-topic-content-form"
+            type="textarea"
+            variant="outlined"
+            placeholder="トピックの内容を記述してください"
+            fullWidth
+            multiline
+            rows="6"
+            inputProps={{ step: 300 }}
+            value={inputContent}
+            name="content"
+            required
+            onChange={(e) => {
+              setInputContent(e.target.value);
+            }}
+          />
+        </div>
+        {/* エラーメッセージを表示 */}
+        <div role="alert">
+          <span>{error}</span>
+        </div>
+        {LoginORSubmitButton()}
       </div>
-      <div id="topic-content-wrapper">
-        <h3>内容</h3>
-        <TextField
-          id="post-topic-content-form"
-          type="textarea"
-          variant="outlined"
-          placeholder="トピックの内容を記述してください"
-          fullWidth
-          multiline
-          rows="4"
-          inputProps={{ step: 300 }}
-          value={inputContent}
-          name="content"
-          required
-          onChange={(e) => {
-            setInputContent(e.target.value);
-          }}
-        />
-      </div>
-      {/* エラーメッセージを表示 */}
-      <div role="alert">
-        <span>{error}</span>
-      </div>
-      {LoginORSubmitButton()}
     </div>
   );
 }

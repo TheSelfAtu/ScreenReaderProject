@@ -1,9 +1,5 @@
-import { PostFire } from "./Common";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import { postFire } from "./Common";
+import React, { useState, useCallback, useRef } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
 import Button from "@material-ui/core/Button";
@@ -32,7 +28,7 @@ export default function BookMark(props: BookMarkProps) {
   const requestBookMarkAction = useCallback(async (): Promise<any> => {
     // endpointに応じたブックマーク操作のリクエストを送る
     try {
-      await PostFire("/users/bookmark/" + props.endpoint, {
+      await postFire("/users/bookmark/" + props.endpoint, {
         user_id: props.userID,
         topic_id: props.topicID,
       });

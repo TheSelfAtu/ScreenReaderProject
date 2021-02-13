@@ -1,0 +1,17 @@
+#post-topic-wrapper {
+  background-color: #eee;
+  padding-bottom: 50px;
+  .post-topic-main {
+    background-color: #fff;
+    padding: 50px;
+    margin: 5px auto;
+    max-width: 720px;
+  }
+  .form-name {
+    padding: 0.25em 0 0 0;
+    border-bottom: 6px solid #ccc;
+  }
+  #topic-content-wrapper {
+      margin-bottom: 5px;
+  }
+}

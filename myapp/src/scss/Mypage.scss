@@ -1,56 +1,80 @@
-h1 {
-    margin: 0px;
-    padding: 5px;
-    font-size: 1.2rem;
-  }
-  h2 {
-    font-size: 1rem;
-    margin: 0px;
-    padding: 5px;
-  }
-  
-  li {
-    list-style: none;
-  }
-  /* .topic-main {
-  
-  } */
-  
-  .topic-side-menu {
-    background-color: whitesmoke;
-    text-align: center;
-  }
-  
-  .topic-is-active-true span {
-    display: inline;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .topic-is-active-false span {
-    display: inline;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .topic-list-title {
-    padding-bottom: 20px;
-  }
-  .topic-list-status {
+#mypage-wrapper {
+  max-width: 100%;
+
+  .update-profile-button {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    justify-content: flex-end;
   }
-  .flex-status-name {
-    flex-basis: 200px;
-    padding-right: 20px;
-  }
-  .number-of-response {
-    padding: 0px 5px;
-    color: violet;
-  }
-  
   .topic-wrapper {
-    margin-bottom: 5px;
-    border-bottom: solid 0.1px black;
+    display: flex;
+    border-bottom: 1px solid black;
+    align-items: center;
+
+    // トピックリストの左側にあるサイドメニュー
+    .topic-side-menu {
+      flex-shrink: 2;
+      height: 100%;
+      text-align: center;
+      width: 200px;
+      .number-of-response {
+        padding: 0px 5px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .topic-is-active-false span {
+        display: inline-block;
+        // 締め切りのラベル
+        padding: 1px 5px;
+        margin-bottom: 5px;
+        background-color: rgb(255, 212, 212);
+        font-weight: bold;
+        border-radius: 3px;
+        color: rgb(231, 77, 77);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .topic-is-active-true span {
+        display: inline-block;
+        // 受付中のラベル
+        padding: 1px 5px;
+        margin-bottom: 5px;
+        background-color: rgb(215, 223, 250);
+        border-radius: 3px;
+        color: rgb(56, 75, 247);
+        font-weight: bold;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+    // トピックリストの右側にあるメインメニュー
+    .topic-main {
+      flex-grow: 3;
+      padding: 5px;
+      background-color: white;
+      // メインメニューの下に位置する部分
+      .topic-main-bottom {
+        // flex-wrap: wrap;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        .topic-change-button {
+          display: flex;
+          justify-content: space-between;
+        }
+        button {
+          margin: 0 20px 0 0px;
+        }
+        .topic-info {
+          .sender-name {
+            margin-right: 20px;
+          }
+          .post-date {
+            display: inline-block;
+            margin-right: 5px;
+          }
+        }
+      }
+    }
   }
-  
+}
