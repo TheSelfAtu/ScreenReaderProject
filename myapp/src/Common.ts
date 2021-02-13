@@ -53,6 +53,7 @@ export function formatDateTime(datetime: string): string {
       "月" +
       separatedDateTime[3] +
       "日" +
+      " " +
       separatedDateTime[4] +
       ":" +
       separatedDateTime[5]

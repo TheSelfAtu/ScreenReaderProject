@@ -3,8 +3,6 @@ import { formatDateTime, formatTopicTitle } from "../Common";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -36,7 +34,6 @@ interface TopicListProps {
       }[]
     >
   >;
-
 
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
@@ -175,10 +172,9 @@ export default function TopicList(props: TopicListProps) {
       const topicListInfo = await postFire("/", {});
       setTopicsInformation(topicListInfo.data);
       setShownTopics(topicListInfo.data);
-      const bookMarkTopic = await postFire(
-        "/users/fetch-bookmark-topic",
-        {user_id:props.userStatus.userId},
-      );
+      const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
+        user_id: props.userStatus.userId,
+      });
       props.setBookMarkTopicInfo(bookMarkTopic.data);
     };
     fetchFromDB();
@@ -194,7 +190,7 @@ export default function TopicList(props: TopicListProps) {
         props.setBookMarkTopicInfo(bookMarkTopic.data);
       } catch (e) {
         // ブックマークの変更に失敗した場合
-        if(props.userStatus.session){
+        if (props.userStatus.session) {
           // setError("ブックマークの変更に失敗しました");
         }
       }
@@ -253,44 +249,34 @@ export default function TopicList(props: TopicListProps) {
   }, [error]);
 
   return (
-    <div id="topic-list-wrapper">
-      <title>トピック一覧</title>
-      <div>
-        <h1>トピック一覧</h1>
-        <Divider variant="fullWidth" />
+    <div className="topic-list-wrapper">
+      {/* トピックのフィルター部分 */}
+      <div className="topic-filter">
         <Filter setFilter={setFilter}></Filter>
       </div>
+      <hr></hr>
+      {/* 各トピックを表示 */}
       {shownTopics.map((topic, index) => {
         return (
           <div className="topic-wrapper" key={topic.id}>
+            <div className="topic-side-menu">{topicStatus(topic)}</div>
             <div className="topic-main">
-              <div className="topic-main-content">
-                <Grid container spacing={1}>
-                  <Grid item xs={2} className="topic-side-menu">
-                    {topicStatus(topic)}
-                  </Grid>
+              <h2 className="topic-title">
+                <Link to={"/topic-detail/" + topic.id}>
+                  {formatTopicTitle(topic.title)}
+                </Link>
+              </h2>
 
-                  <Grid item xs={10}>
-                    <div>
-                      <h2 className="topic-list-title">
-                        <Link to={"/topic-detail/" + topic.id}>
-                          {formatTopicTitle(topic.title)}
-                        </Link>
-                      </h2>
-                    </div>
-
-                    <div className="topic-list-status">
-                      {showBookMark(topic.id)}
-                      {DeletePostDataButton(topic.id)}
-                      <div>
-                        <a className="flex-status-name">
-                          投稿者 {topic.username}
-                        </a>
-                        <span>{formatDateTime(topic.created_at)}</span>
-                      </div>
-                    </div>
-                  </Grid>
-                </Grid>
+              <div className="topic-main-bottom">
+                <div className="topic-change-button">
+                  <div className="topic-bookmark">{showBookMark(topic.id)}</div>
+                  <div className="topic-delete-post"></div>
+                  {DeletePostDataButton(topic.id)}
+                </div>
+                <div className="topic-info">
+                  <a className="sender-name">投稿者 {topic.username}</a>
+                  <span className="post-date">{formatDateTime(topic.created_at)}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -309,7 +295,6 @@ function Filter(props: FilterProps) {
       root: {
         flexGrow: 1,
         boxShadow: "none",
-        paddingBottom: "30px",
       },
     })
   );
