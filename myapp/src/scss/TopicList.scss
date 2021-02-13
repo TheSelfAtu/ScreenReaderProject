@@ -2,7 +2,6 @@
   max-width: 100%;
 
   .topic-wrapper {
-    // background-color: whitesmoke;
     display: flex;
     border-bottom: 1px solid black;
     align-items: center;
@@ -11,7 +10,6 @@
     .topic-side-menu {
       flex-shrink: 2;
       height: 100%;
-      // background-color: whitesmoke;
       text-align: center;
       width: 200px;
       .number-of-response {
