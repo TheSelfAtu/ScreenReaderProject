@@ -1,9 +1,5 @@
 import { postFire } from "./Common";
-import React, {
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
 import Button from "@material-ui/core/Button";

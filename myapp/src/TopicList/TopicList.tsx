@@ -107,6 +107,7 @@ export default function TopicList(props: TopicListProps) {
     if (props.userStatus.is_superuser == 1) {
       return (
         <Button
+        size="small"
           color="secondary"
           onClick={async () => {
             try {
