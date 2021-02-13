@@ -1,14 +1,6 @@
-import { postFire } from "../Common";
 import React from "react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import { Menu } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+
 
 export default function Usage() {
   // アプリ使い方説明
@@ -32,6 +24,8 @@ export default function Usage() {
               </p>
             </div>
           </div>
+        </div>
+        <div className="usage-each-function">
           <div className="usage-post-topic">
             <div className="usage-title">
               <Link to={`post-topic`}>
@@ -44,6 +38,20 @@ export default function Usage() {
           </div>
         </div>
         <div className="usage-each-function">
+          <div className="usage-close-topic">
+            <div className="usage-title">
+              <h2>■ トピック締め切り</h2>
+            </div>
+            <div className="usage-content">
+              <p>
+                自分が投稿したトピックに対する回答を締め切ることができます。
+                <br></br>
+                回答を締め切った後は他のユーザーがトピックに回答できなくなるので注意しましょう。
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="usage-each-function">
           <div className="usage-topic-detail">
             <div className="usage-title">
               <h2>■ 投稿されたトピックに回答する</h2>
@@ -51,7 +59,8 @@ export default function Usage() {
             <div className="usage-content">
               <p>
                 トピック一覧画面から投稿されたそれぞれのトピックのページに移動できます。
-                それぞれのトピックページにてメッセージを送ることができます。
+                <br></br>
+                それぞれのトピックページから回答を送ることができます。
               </p>
             </div>
           </div>
@@ -62,8 +71,9 @@ export default function Usage() {
               <h2>■ ブックマーク</h2>
               <div className="usage-content">
                 <p>
-                  ログインしてトピックをブックマークしましょう。ブックマークしたトピックは後から
-                  読み返しやすくなります。
+                  ログインしてトピックをブックマークしましょう。
+                  <br></br>
+                  ブックマークしたトピックは後から 読み返しやすくなります。
                 </p>
               </div>
             </div>
