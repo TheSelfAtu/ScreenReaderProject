@@ -129,6 +129,9 @@ export default function NavBar(props: NavBarProps) {
           <Link to="/post-topic" className={classes.navList}>
             トピック投稿
           </Link>
+          <Link to="/usage" className={classes.navList}>
+            使い方
+          </Link>
         </Toolbar>
       </AppBar>
     </div>

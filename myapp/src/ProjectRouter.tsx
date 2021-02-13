@@ -8,6 +8,7 @@ import TopicDetail from "./TopicDetail/TopicDetail";
 import Login from "./Users/Login";
 import Signup from "./Users/Signup";
 import Mypage from "./Mypage/Mypage";
+import Usage from "./Usage/Usage";
 
 export default function ProjectRouter() {
   const [userStatus, setUserStatus] = useState({
@@ -86,6 +87,9 @@ export default function ProjectRouter() {
           </Route>
           <Route path="/signup">
             <Signup />
+          </Route>
+          <Route path="/usage">
+            <Usage />
           </Route>
           <Route path="/">
             <TopicList
