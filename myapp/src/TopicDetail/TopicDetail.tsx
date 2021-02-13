@@ -1,17 +1,11 @@
 import { postFire, formatDateTime } from "../Common";
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
 import PostResponseFormDialog from "./PostResponseFormDialog";
 import BookMark from "../BookMark";
-
 
 interface TopicDetailProps {
   // ユーザーの状態
@@ -92,7 +86,6 @@ export default function TopicDetail(props: TopicDetailProps) {
       props.setRequestSuccessMessage(
         prevMessageRef.current.concat(["回答を送信しました"])
       );
-
     },
     [props.userStatus]
   );
@@ -214,7 +207,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     }
     if (!props.userStatus.session) {
       return (
-        <div id="login-wrapper">
+        <div id="login-button">
           <LoginRecommendForm
             fetchUserStatus={props.fetchUserStatus}
             dialogTitle="ログインすることで回答を投稿できます"
@@ -224,7 +217,7 @@ export default function TopicDetail(props: TopicDetailProps) {
       );
     }
     return (
-      <div id="response-post-wrapper">
+      <div id="response-post-button">
         <PostResponseFormDialog
           topicTitle={topicInformation.title}
           topicContent={topicInformation.content}
@@ -238,55 +231,58 @@ export default function TopicDetail(props: TopicDetailProps) {
 
   return (
     <div id="topic-detail-wrapper">
-      <div className="topic-title-wrapper">
-        {topicStatus()}
-        <h1>{topicInformation.title}</h1>
-      </div>
-      <div className="topic-content-wrapper">
-        <div className="topic-content">
-          <h4>{topicInformation.content}</h4>
-        </div>
-        {showBookMark(topicID)}
-      </div>
-
-      <Divider variant="fullWidth" />
-      <div id="response-content-wrapper">
-        <h3>
-          <span>回答</span>
-          <span className="number-of-response">{responsesToTopic.length}</span>
-          <span>件</span>
-        </h3>
-        <Divider variant="fullWidth" />
-
-        {responsesToTopic.map((response, index) => {
-          return (
-            <div className="topic-response-wrapper" key={response.id}>
-              <div className="topic-response-side-menu"></div>
-              <div className="topic-response-main">
-                <div className="topic-response-main-content">
-                  {response.content}
-                </div>
-                <div className="topic-response-status">
-                  <div>
-                    <span>投稿者 {response.username}</span>
-                  </div>
-                  <div>
-                    <span>{formatDateTime(response.created_at)}</span>
-                  </div>
-                </div>
-              </div>
-              <Divider variant="fullWidth" />
+      <div className="topic-detail-main">
+        <div className="topic-wrapper">
+          <div className="topic-info">{topicStatus()}</div>
+          <div className="topic-title-wrapper">
+            <h1>{topicInformation.title}</h1>
+          </div>
+          <div className="topic-content-wrapper">
+            <div className="topic-content">
+              <h4>{topicInformation.content}</h4>
             </div>
-          );
-        })}
-      </div>
-      <div id="post-response-form">
-        <div className="dialog-buttons">
-          {SetTopicNotActiveDialog()}
-          {DialogButton()}
+            <div className="bookmark">{showBookMark(topicID)}</div>
+          </div>
         </div>
-        <div role="alert">
-          <span>{error}</span>
+
+        <div className="topic-response-wrapper">
+          <div className="topic-response-info">
+            <h3>
+              <span>回答</span>
+              <span className="number-of-response">
+                {responsesToTopic.length}
+              </span>
+              <span>件</span>
+            </h3>
+          </div>
+          <div id="response-main-wrapper">
+            <hr></hr>
+            {responsesToTopic.map((response, index) => {
+              return (
+                <div className="each-response-wrapper" key={response.id}>
+                  <div className="content">{response.content}</div>
+                  <div className="response-info">
+                    <div className="response-username">
+                      <span>投稿者 {response.username}</span>
+                    </div>
+                    <div>
+                      <span>{formatDateTime(response.created_at)}</span>
+                    </div>
+                  </div>
+                  <hr></hr>
+                </div>
+              );
+            })}
+            <div id="response-form">
+              <div className="dialog-buttons">
+                {SetTopicNotActiveDialog()}
+                {DialogButton()}
+              </div>
+              <div role="alert">
+                <span>{error}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

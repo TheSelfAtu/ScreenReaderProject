@@ -46,8 +46,10 @@
     // トピックリストの右側にあるメインメニュー
     .topic-main {
       flex-grow: 3;
-      padding: 5px;
       background-color: white;
+      .topic-title {
+        padding-bottom: 5px;
+      }
       // メインメニューの下に位置する部分
       .topic-main-bottom {
         // flex-wrap: wrap;

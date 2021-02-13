@@ -82,7 +82,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      <Button variant="contained" color="primary" onClick={handleClickOpen}>
         {props.buttonExplanation}
       </Button>
       <Dialog
