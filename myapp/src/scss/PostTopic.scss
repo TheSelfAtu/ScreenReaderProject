@@ -12,6 +12,21 @@
     border-bottom: 6px solid #ccc;
   }
   #topic-content-wrapper {
-      margin-bottom: 5px;
+    margin-bottom: 20px;
+  }
+  .login-or-submit {
+    width: 100%;
+
+    button {
+      width: 100%;
+      background-color: rgb(62, 62, 255);
+      border-radius: 10px;
+    }
+  }
+  .error {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    color: red;
   }
 }
