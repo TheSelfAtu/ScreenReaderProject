@@ -242,37 +242,41 @@ export default function Mypage(props: MypageProps) {
           setRequestSuccessMessage={props.setRequestSuccessMessage}
         ></UpdateProfile>
       </div>
-      <div>
-        <Filter setFilter={setFilter}></Filter>
-      </div>
-      <hr></hr>
-      {shownTopics.map((topic, index) => {
-        return (
-          <div className="topic-wrapper" key={topic.id}>
-            <div className="topic-side-menu">{topicStatus(topic)}</div>
-            <div className="topic-main">
-              <h2 className="topic-title">
-                <Link to={"/topic-detail/" + topic.id}>
-                  {formatTopicTitle(topic.title)}
-                </Link>
-              </h2>
+      <div className="topic-list-wrapper">
+        <div className="topic-filter">
+          <Filter setFilter={setFilter}></Filter>
+        </div>
+        <hr></hr>
+        {shownTopics.map((topic, index) => {
+          return (
+            <div className="topic-wrapper" key={topic.id}>
+              <div className="topic-side-menu">{topicStatus(topic)}</div>
+              <div className="topic-main">
+                <h2 className="topic-title">
+                  <Link to={"/topic-detail/" + topic.id}>
+                    {formatTopicTitle(topic.title)}
+                  </Link>
+                </h2>
 
-              <div className="topic-main-bottom">
-                <div className="topic-change-button">
-                  <div className="topic-bookmark">{showBookMark(topic.id)}</div>
-                  <div className="topic-delete-post"></div>
-                </div>
-                <div className="topic-info">
-                  <a className="sender-name">投稿者 {topic.username}</a>
-                  <span className="post-date">
-                    {formatDateTime(topic.created_at)}
-                  </span>
+                <div className="topic-main-bottom">
+                  <div className="topic-change-button">
+                    <div className="topic-bookmark">
+                      {showBookMark(topic.id)}
+                    </div>
+                    <div className="topic-delete-post"></div>
+                  </div>
+                  <div className="topic-info">
+                    <a className="sender-name">投稿者 {topic.username}</a>
+                    <span className="post-date">
+                      {formatDateTime(topic.created_at)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

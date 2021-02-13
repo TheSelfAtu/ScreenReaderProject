@@ -149,10 +149,10 @@ export default function PostTopic(props: PostTopicProps) {
           />
         </div>
         {/* エラーメッセージを表示 */}
-        <div role="alert">
+        <div className="error" role="alert">
           <span>{error}</span>
         </div>
-        {LoginORSubmitButton()}
+        <div className="login-or-submit">{LoginORSubmitButton()}</div>
       </div>
     </div>
   );

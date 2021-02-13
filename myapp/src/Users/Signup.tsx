@@ -126,9 +126,9 @@ export default function SignUp() {
             サインアップ
           </Button>
         </form>
-              <Link href="/login" variant="body2">
-                アカウントがある場合はログイン画面へ
-              </Link>
+        <Link href="/login" variant="body2">
+          アカウントがある場合はログイン画面へ
+        </Link>
       </div>
     </Container>
   );

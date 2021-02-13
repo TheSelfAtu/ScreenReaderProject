@@ -1,11 +1,14 @@
 .topic-list-wrapper {
   max-width: 100%;
-
+  padding-bottom: 20px;
+  background-color: #eee;
   .topic-wrapper {
+    max-width: 1080px;
+    margin: 10px auto;
     display: flex;
     border-bottom: 1px solid black;
     align-items: center;
-
+    background-color: #fff;
     // トピックリストの左側にあるサイドメニュー
     .topic-side-menu {
       flex-shrink: 2;
@@ -69,7 +72,7 @@
           }
           .post-date {
             display: inline-block;
-            margin-right: 5px;
+            margin-right: 10px;
           }
         }
       }
