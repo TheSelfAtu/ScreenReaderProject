@@ -1,5 +1,6 @@
 import { postFire } from "../Common";
 import React from "react";
+import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -44,7 +45,10 @@ export default function Login(props: LoginProps) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
-  const requestLogin = async(username: string, password: string): Promise<any> => {
+  const requestLogin = async (
+    username: string,
+    password: string
+  ): Promise<any> => {
     // フォーム入力バリデーション
     if (username == "" || password == "") {
       setError("ユーザ名またはパスワードが入力されていません");
@@ -62,7 +66,7 @@ export default function Login(props: LoginProps) {
       return;
     }
     // ユーザー情報を再取得
-    props.fetchUserStatus()
+    props.fetchUserStatus();
     history.push("/");
   };
 
@@ -130,6 +134,10 @@ export default function Login(props: LoginProps) {
             ログイン
           </Button>
         </form>
+
+        <Link href="/signup" variant="body2">
+          アカウントがない場合はサインアップ画面へ移動
+        </Link>
       </div>
     </Container>
   );
