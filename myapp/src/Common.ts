@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // エンドポイントとパラメータを指定してPostリクエストをだす
-export function PostFire(
+export function postFire(
   endpoint: string,
   info: { [key: string]: string },
   isContentTypeMultiPart?: boolean

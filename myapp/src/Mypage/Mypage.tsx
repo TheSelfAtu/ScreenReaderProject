@@ -1,4 +1,4 @@
-import {formatDateTime, formatTopicTitle, PostFire} from "../Common"
+import {formatDateTime, formatTopicTitle, postFire} from "../Common"
 import React, { useState, useEffect} from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
@@ -201,14 +201,14 @@ export default function Mypage(props: MypageProps) {
 // トピックとブックマーク情報を登録
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await PostFire("/", {});
+      const topicListInfo = await postFire("/", {});
 
       setTopicsInformation(topicListInfo.data);
       const filterdTopics = topicsInformation.filter((topic) => {
         return topic.post_user_id == props.userStatus.userId;
       });
       setShownTopics(filterdTopics);
-      const bookMarkTopic = await PostFire(
+      const bookMarkTopic = await postFire(
         "/users/fetch-bookmark-topic",
         {user_id:props.userStatus.userId},
       );
@@ -221,7 +221,7 @@ export default function Mypage(props: MypageProps) {
   // ブックマークの状態が変化した際に実行
   useEffect(() => {
     const fetchBookmarkInfo = async () => {
-      const bookMarkTopic = await PostFire(
+      const bookMarkTopic = await postFire(
         "/users/fetch-bookmark-topic",
         {user_id:props.userStatus.userId},
       );
@@ -306,6 +306,7 @@ function Filter(props: FilterProps) {
 
   const classes = useStyles();
 
+  // 最初は投稿したトピックを表示する
   const [filter, setFilter] = useState("mytopic");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setFilter(newValue);

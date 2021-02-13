@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";
@@ -58,7 +58,7 @@ export default function PostTopic(props: PostTopicProps) {
 
       // トピックを投稿する
       try {
-        await PostFire("/post-topic", {
+        await postFire("/post-topic", {
           title: inputTitle,
           content: inputContent,
           post_user_id: postUserID,

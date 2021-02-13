@@ -5,7 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -54,7 +54,7 @@ export default function SetTopicNotActiveButton(
   // 投稿の受付を締め切る機能
   const setTopicNotActive = useCallback(async (): Promise<any> => {
     try {
-      await PostFire("/topic-detail/set-topic-not-active", {
+      await postFire("/topic-detail/set-topic-not-active", {
         topic_id: props.topicId,
         is_topic_active: "0",
       });

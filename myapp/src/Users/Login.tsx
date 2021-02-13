@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -52,7 +52,7 @@ export default function Login(props: LoginProps) {
     }
     // ログインリクエストを送る
     try {
-      await PostFire("/users/login", {
+      await postFire("/users/login", {
         username: username,
         password: password,
       });

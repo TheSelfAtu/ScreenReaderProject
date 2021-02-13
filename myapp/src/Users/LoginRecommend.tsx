@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -63,7 +63,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
       }
       // ログインリクエストを送る
       try {
-        await PostFire("/users/login", {
+        await postFire("/users/login", {
           username: username,
           password: password,
         });

@@ -1,4 +1,4 @@
-import { PostFire, formatDateTime } from "../Common";
+import { postFire, formatDateTime } from "../Common";
 import React, {
   useState,
   useEffect,
@@ -79,7 +79,7 @@ export default function TopicDetail(props: TopicDetailProps) {
 
       // トピックへの回答を投稿する
       try {
-        await PostFire("/topic-detail/" + topicID + "/postResponse", {
+        await postFire("/topic-detail/" + topicID + "/postResponse", {
           inputValue: inputValue,
           response_user_id: props.userStatus.userId,
         });
@@ -137,15 +137,15 @@ export default function TopicDetail(props: TopicDetailProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicData = await PostFire(
+      const topicData = await postFire(
         "/topic-detail/" + topicID + "/topic",
         {}
       );
-      const responseData = await PostFire(
+      const responseData = await postFire(
         "/topic-detail/" + topicID + "/getAllResponseToTopic",
         {}
       );
-      const bookMarkTopic = await PostFire("/users/fetch-bookmark-topic", {
+      const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
         user_id: props.userStatus.userId,
       });
       props.setBookMarkTopicInfo(bookMarkTopic.data);

@@ -1,4 +1,4 @@
-import { PostFire } from "./Common";
+import { postFire } from "./Common";
 import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import NavBar from "./NavBar";
@@ -30,7 +30,7 @@ export default function ProjectRouter() {
   // ユーザーの情報を取得
   const fetchUserStatus = useCallback(async (): Promise<any> => {
     try {
-      const fetchedResult = await PostFire("/users/responseUserStatus", {});
+      const fetchedResult = await postFire("/users/responseUserStatus", {});
       setUserStatus(fetchedResult.data);
     } catch (e) {
       // ユーザー情報取得に失敗した場合はエラーをセット

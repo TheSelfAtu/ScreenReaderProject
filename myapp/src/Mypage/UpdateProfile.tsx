@@ -7,7 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 
 interface UpdateProfileProps {
   profileUserID: string;
@@ -22,7 +22,6 @@ interface UpdateProfileProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export default function UpdateProfile(props: UpdateProfileProps) {
-  const prevProfileRef = useRef(props.userStatus.comment);
   const prevMessageRef = useRef(props.requestSuccessMessage);
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(props.userStatus.comment);
@@ -40,7 +39,7 @@ export default function UpdateProfile(props: UpdateProfileProps) {
     async (inputValue: string): Promise<any> => {
       // プロフィールを変更します
       try {
-        await PostFire("/users/update-profile", {
+        await postFire("/users/update-profile", {
           inputValue: inputValue,
           user_id: props.userStatus.userId,
         });
@@ -61,9 +60,11 @@ export default function UpdateProfile(props: UpdateProfileProps) {
 
   return (
     <div>
-      <Button variant="outlined" color="default" onClick={handleClickOpen}>
-        プロフィールを更新
-      </Button>
+      <div className="update-profile-button">
+        <Button variant="outlined" color="default" onClick={handleClickOpen}>
+          プロフィールを更新
+        </Button>
+      </div>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -75,6 +76,7 @@ export default function UpdateProfile(props: UpdateProfileProps) {
           <DialogContentText>
             公開するプロフィールを記述してください
           </DialogContentText>
+          {/* プロフィール記入フォーム */}
           <TextField
             autoFocus
             margin="dense"

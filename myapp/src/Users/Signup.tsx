@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -54,7 +54,7 @@ export default function SignUp() {
 
     // サインアップリクエストを送る
     try {
-      await PostFire("/users/signup", {
+      await postFire("/users/signup", {
         username: username,
         password: password,
       });

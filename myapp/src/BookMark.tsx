@@ -1,4 +1,4 @@
-import { PostFire } from "./Common";
+import { postFire } from "./Common";
 import React, {
   useState,
   useCallback,
@@ -32,7 +32,7 @@ export default function BookMark(props: BookMarkProps) {
   const requestBookMarkAction = useCallback(async (): Promise<any> => {
     // endpointに応じたブックマーク操作のリクエストを送る
     try {
-      await PostFire("/users/bookmark/" + props.endpoint, {
+      await postFire("/users/bookmark/" + props.endpoint, {
         user_id: props.userID,
         topic_id: props.topicID,
       });

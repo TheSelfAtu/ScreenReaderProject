@@ -1,4 +1,4 @@
-import { PostFire } from "../Common";
+import { postFire } from "../Common";
 import { formatDateTime, formatTopicTitle } from "../Common";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -113,7 +113,7 @@ export default function TopicList(props: TopicListProps) {
           color="secondary"
           onClick={async () => {
             try {
-              await PostFire("/delete-topic", { topic_id: topic_id });
+              await postFire("/delete-topic", { topic_id: topic_id });
               props.setRequestSuccessMessage(
                 prevMessageRef.current.concat(["トピックを削除しました"])
               );
@@ -172,10 +172,10 @@ export default function TopicList(props: TopicListProps) {
   // ユーザーの状態が変化した際にトピックリストとブックマークを更新
   useEffect(() => {
     const fetchFromDB = async () => {
-      const topicListInfo = await PostFire("/", {});
+      const topicListInfo = await postFire("/", {});
       setTopicsInformation(topicListInfo.data);
       setShownTopics(topicListInfo.data);
-      const bookMarkTopic = await PostFire(
+      const bookMarkTopic = await postFire(
         "/users/fetch-bookmark-topic",
         {user_id:props.userStatus.userId},
       );
@@ -188,7 +188,7 @@ export default function TopicList(props: TopicListProps) {
   useEffect(() => {
     const fetchBookmarkInfo = async () => {
       try {
-        const bookMarkTopic = await PostFire("/users/fetch-bookmark-topic", {
+        const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
           user_id: props.userStatus.userId,
         });
         props.setBookMarkTopicInfo(bookMarkTopic.data);
