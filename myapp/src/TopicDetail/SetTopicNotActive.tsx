@@ -5,7 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
-import { postFire } from "../Common";
+import { postFire } from "../common";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

@@ -1,5 +1,5 @@
-import { postFire } from "../Common";
-import { formatDateTime, formatTopicTitle } from "../Common";
+import { postFire } from "../common";
+import { formatDateTime, formatTopicTitle } from "../common";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";

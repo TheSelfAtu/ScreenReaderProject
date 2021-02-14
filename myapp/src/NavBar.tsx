@@ -1,4 +1,4 @@
-import { postFire } from "./Common";
+import { postFire } from "./common";
 import React from "react";
 import { BrowserRouter as Router,  Link } from "react-router-dom";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";

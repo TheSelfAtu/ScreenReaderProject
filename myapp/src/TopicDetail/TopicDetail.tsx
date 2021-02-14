@@ -1,4 +1,4 @@
-import { postFire, formatDateTime } from "../Common";
+import { postFire, formatDateTime } from "../common";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";

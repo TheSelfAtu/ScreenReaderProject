@@ -1,4 +1,4 @@
-import { postFire } from "../Common";
+import { postFire } from "../common";
 import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
