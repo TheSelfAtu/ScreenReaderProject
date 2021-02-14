@@ -1,4 +1,4 @@
-import { postFire } from "../Common";
+import { postFire } from "../common";
 import React from "react";
 import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";

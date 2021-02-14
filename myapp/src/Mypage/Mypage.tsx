@@ -1,4 +1,4 @@
-import { formatDateTime, formatTopicTitle, postFire } from "../Common";
+import { formatDateTime, formatTopicTitle, postFire } from "../common";
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";

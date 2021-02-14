@@ -1,12 +1,22 @@
 #mypage-wrapper {
   max-width: 100%;
+  background-color: #fff;
+  ul {
+    margin-top: 0;
+    padding: 5px 0 5px 20px;
+  }
   .update-profile-button {
     display: flex;
     justify-content: flex-end;
   }
   .topic-list-wrapper {
+    height: 100vh;
     background-color: #eee;
     padding-bottom: 20px;
+    // ブックマークボタン
+    button {
+      margin-bottom: 1px;
+    }
     .topic-wrapper {
       background-color: #fff;
       margin: 10px auto;

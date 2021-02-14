@@ -1,4 +1,4 @@
-import { postFire } from "../Common";
+import { postFire } from "../common";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";

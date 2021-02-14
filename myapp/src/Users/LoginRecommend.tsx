@@ -1,4 +1,4 @@
-import { postFire } from "../Common";
+import { postFire } from "../common";
 import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -86,6 +86,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
         {props.buttonExplanation}
       </Button>
       <Dialog
+      className="login-dialog"
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"

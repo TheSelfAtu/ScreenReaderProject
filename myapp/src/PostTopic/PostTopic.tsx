@@ -1,4 +1,4 @@
-import { postFire } from "../Common";
+import { postFire } from "../common";
 import { useHistory } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import LoginRecommendForm from "../Users/LoginRecommend";

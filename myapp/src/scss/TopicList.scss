@@ -1,7 +1,13 @@
 .topic-list-wrapper {
+  height: 100%;
   max-width: 100%;
   padding-bottom: 20px;
   background-color: #eee;
+  // ブックマークボタン
+  button {
+    margin-bottom: 1px;
+  }
+
   .topic-wrapper {
     max-width: 1080px;
     margin: 10px auto;
