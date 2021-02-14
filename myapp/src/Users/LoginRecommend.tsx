@@ -86,6 +86,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
         {props.buttonExplanation}
       </Button>
       <Dialog
+      className="login-dialog"
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"

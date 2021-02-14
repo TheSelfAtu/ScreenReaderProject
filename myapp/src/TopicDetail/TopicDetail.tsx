@@ -157,7 +157,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     if (topicInformation.is_topic_active) {
       return (
         <div className="topic-status">
-          <div className="topic-is-active">
+          <div className="topic-active">
             <span>回答受付中</span>
           </div>
           <div className="topic-post-username">
@@ -171,7 +171,7 @@ export default function TopicDetail(props: TopicDetailProps) {
     }
     return (
       <div className="topic-status">
-        <div className="topic-is-active">
+        <div className="topic-not-active">
           <span>回答締め切り </span>
         </div>
         <div className="topic-post-username">
