@@ -39,7 +39,8 @@ interface TopicDetailProps {
 }
 
 export default function TopicDetail(props: TopicDetailProps) {
-  let { topicID }: any = useParams();
+  // 表示しているトピックのID
+  const { topicID }: any = useParams();
   const prevMessageRef = useRef(props.requestSuccessMessage);
 
   const [topicInformation, setTopicInformation] = useState({

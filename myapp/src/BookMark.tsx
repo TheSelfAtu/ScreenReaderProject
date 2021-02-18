@@ -1,16 +1,7 @@
 import { postFire } from "./common";
-import React, { useState, useCallback, useRef } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import React, { useCallback, useRef } from "react";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
 import Button from "@material-ui/core/Button";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    button: {
-      margin: theme.spacing(1),
-    },
-  })
-);
 
 interface BookMarkProps {
   bookmark: boolean;
@@ -21,9 +12,7 @@ interface BookMarkProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export default function BookMark(props: BookMarkProps) {
-  const classes = useStyles();
   const prevMessageRef = useRef(props.requestSuccessMessage);
-  const [error, setError] = useState("");
 
   const requestBookMarkAction = useCallback(async (): Promise<any> => {
     // endpointに応じたブックマーク操作のリクエストを送る
@@ -33,8 +22,8 @@ export default function BookMark(props: BookMarkProps) {
         topic_id: props.topicID,
       });
     } catch (e) {
-      // ブックマークの変更に失敗した場合はエラーをセット
-      setError("ブックマークの変更に失敗しました");
+      // ブックマークの変更に失敗した場合はアラートをだす
+      alert("ブックマークの変更に失敗しました");
       return;
     }
     // ブックマークに成功した場合にブックマークの状態を再取得
@@ -51,7 +40,6 @@ export default function BookMark(props: BookMarkProps) {
           variant="contained"
           color="default"
           size="small"
-          className={classes.button}
           onClick={async () => {
             const requestResult = await requestBookMarkAction();
             // ブックマーク解除に成功した場合にブックマークの状態を再取得
@@ -76,7 +64,6 @@ export default function BookMark(props: BookMarkProps) {
         variant="contained"
         color="primary"
         size="small"
-        className={classes.button}
         onClick={async () => {
           requestBookMarkAction();
         }}

@@ -2,36 +2,12 @@ import { formatDateTime, formatTopicTitle, postFire } from "../common";
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import UpdateProfile from "./UpdateProfile";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    flex: {
-      flexGrow: 1,
-    },
-    paper: {
-      height: 140,
-      width: 100,
-    },
-    control: {
-      padding: theme.spacing(2),
-    },
-    root: {
-      width: "100%",
-      maxWidth: "100%",
-      backgroundColor: theme.palette.background.paper,
-    },
-    inline: {
-      display: "inline",
-    },
-  })
-);
 
 interface MypageProps {
   userStatus: {
@@ -64,8 +40,8 @@ interface MypageProps {
 }
 
 export default function Mypage(props: MypageProps) {
-  // マイページを表示するユーザのID　他者から閲覧可能
-  let { userID }: any = useParams();
+  // マイページを表示するユーザのID 他者から閲覧可能
+  const { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -93,7 +69,6 @@ export default function Mypage(props: MypageProps) {
     },
   ]);
 
-  const [error, setError] = useState("");
 
   // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
@@ -232,7 +207,7 @@ export default function Mypage(props: MypageProps) {
         <div className="profile-sidemenu">
           <ul>
             <li>ユーザー名：{props.userStatus.userName}</li>
-            <li>コメント　：{props.userStatus.comment}</li>
+            <li>コメント：{props.userStatus.comment}</li>
           </ul>
         </div>
         <UpdateProfile
@@ -247,7 +222,7 @@ export default function Mypage(props: MypageProps) {
           <Filter setFilter={setFilter}></Filter>
         </div>
         <hr></hr>
-        {shownTopics.map((topic, index) => {
+        {shownTopics.map((topic) => {
           return (
             <div className="topic-wrapper" key={topic.id}>
               <div className="topic-side-menu">{topicStatus(topic)}</div>
@@ -285,7 +260,7 @@ interface FilterProps {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 function Filter(props: FilterProps) {
-  const useStyles = makeStyles((theme: Theme) =>
+  const useStyles = makeStyles(() =>
     createStyles({
       root: {
         flexGrow: 1,
