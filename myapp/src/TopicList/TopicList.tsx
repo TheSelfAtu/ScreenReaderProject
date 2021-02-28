@@ -76,6 +76,7 @@ export default function TopicList(props: TopicListProps) {
 
   // 表示するトピックを制限するフィルター
   const [filter, setFilter] = useState("all");
+  console.log(filter,"state")
   const [error, setError] = useState("");
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
@@ -176,7 +177,6 @@ export default function TopicList(props: TopicListProps) {
     const fetchFromDB = async () => {
       const topicListInfo = await postFire("/", {});
       setTopicsInformation(topicListInfo.data);
-      setShownTopics(topicListInfo.data);
       const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
         user_id: props.userStatus.userId,
       });
@@ -193,6 +193,7 @@ export default function TopicList(props: TopicListProps) {
           user_id: props.userStatus.userId,
         });
         props.setBookMarkTopicInfo(bookMarkTopic.data);
+
       } catch (e) {
         // ブックマークの変更に失敗した場合
         if (props.userStatus.session) {
@@ -205,6 +206,7 @@ export default function TopicList(props: TopicListProps) {
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
+    console.log("fil",filter)
     const filterTopics = async () => {
       // すべてのトピックを返す
       if (filter == "all") {
@@ -244,7 +246,7 @@ export default function TopicList(props: TopicListProps) {
       }
     };
     filterTopics();
-  }, [filter]);
+  }, [filter,props.bookmarkTopicInfo]);
 
   // エラーが発生した際にアラートを表示
   useEffect(() => {
@@ -263,7 +265,7 @@ export default function TopicList(props: TopicListProps) {
           filterTabs={[
             { label: "すべて表示", value: "all" },
             { label: "受付中", value: "open" },
-            { label: "締め切り", value: "close" },
+            { label: "締め切り", value: "closed" },
             { label: "投稿したトピック", value: "mytopic" },
             { label: "ブックマークしたトピック", value: "bookmark-topic" },
           ]}

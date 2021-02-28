@@ -1,5 +1,5 @@
 import { formatDateTime, formatTopicTitle, postFire } from "../common";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { TopicFilter } from "../TopicFilter";
 import BookMark from "../BookMark";
@@ -110,8 +110,9 @@ export default function Mypage(props: MypageProps) {
     );
   };
 
-  const showBookMark = (topicId: string) => {
-    // トピックがブックマークされている場合のJSXを返す
+
+  const showBookMarkButton = useCallback((topicId: string) => {
+    // ログイン済みでトピックがブックマークされている場合のJSXを返す
     if (
       props.userStatus.session &&
       bookmarkTopicID.some((id) => id == topicId)
@@ -142,7 +143,7 @@ export default function Mypage(props: MypageProps) {
       );
     }
     return null;
-  };
+  }, [props.userStatus,props.requestSuccessMessage]);
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
@@ -214,21 +215,18 @@ export default function Mypage(props: MypageProps) {
             <button tabIndex={-1}>設定</button>
           </Link>
         </div>
-
         <div className="user-comment">{props.userStatus.comment}</div>
-
-        {props.userStatus.yearsOfProgramming}
       </div>
       <div className="topic-list-wrapper">
         <div className="topic-filter">
-        <TopicFilter
-          filter={filter}
-          setFilter={setFilter}
-          filterTabs={[
-            { label: "投稿したトピック", value: "mytopic" },
-            { label: "ブックマークしたトピック", value: "bookmark-topic" },
-          ]}
-        ></TopicFilter>
+          <TopicFilter
+            filter={filter}
+            setFilter={setFilter}
+            filterTabs={[
+              { label: "投稿したトピック", value: "mytopic" },
+              { label: "ブックマークしたトピック", value: "bookmark-topic" },
+            ]}
+          ></TopicFilter>
         </div>
         <hr></hr>
         {shownTopics.map((topic) => {
@@ -245,7 +243,7 @@ export default function Mypage(props: MypageProps) {
                 <div className="topic-main-bottom">
                   <div className="topic-change-button">
                     <div className="topic-bookmark">
-                      {showBookMark(topic.id)}
+                      {showBookMarkButton(topic.id)}
                     </div>
                     <div className="topic-delete-post"></div>
                   </div>
