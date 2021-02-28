@@ -1,19 +1,12 @@
 import { formatDateTime, formatTopicTitle, postFire } from "../common";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import {
-  makeStyles,
-  createStyles,
-  createMuiTheme,
-  ThemeProvider,
-} from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
-import { Button } from "@material-ui/core";
-import AccountBoxIcon from "@material-ui/icons/AccountBox";
 interface MypageProps {
   userStatus: {
     userId: string;
@@ -46,6 +39,15 @@ interface MypageProps {
 }
 
 export default function Mypage(props: MypageProps) {
+  // ブックマークしているトピックIDを返す
+  const bookmarkTopicID = useMemo(
+    () =>
+      props.bookmarkTopicInfo.map((eachTopic) => {
+        return eachTopic.topic_id;
+      }),
+    [props.bookmarkTopicInfo]
+  );
+
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -55,6 +57,7 @@ export default function Mypage(props: MypageProps) {
       post_user_id: "",
       username: "",
       created_at: "",
+      // トピックに対する回答の数
       "COUNT(response.id)": "",
     },
   ]);
@@ -112,10 +115,6 @@ export default function Mypage(props: MypageProps) {
   };
 
   const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
     // トピックがブックマークされている場合のJSXを返す
     if (
       props.userStatus.session &&

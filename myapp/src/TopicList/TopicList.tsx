@@ -1,6 +1,6 @@
 import { postFire } from "../common";
 import { formatDateTime, formatTopicTitle } from "../common";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -41,6 +41,16 @@ interface TopicListProps {
 
 export default function TopicList(props: TopicListProps) {
   const prevMessageRef = useRef(props.requestSuccessMessage);
+
+  // ブックマークしているトピックIDを返す
+  const bookmarkTopicID = useMemo(
+    () =>
+      props.bookmarkTopicInfo.map((eachTopic) => {
+        return eachTopic.topic_id;
+      }),
+    [props.bookmarkTopicInfo]
+  );
+
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -107,7 +117,7 @@ export default function TopicList(props: TopicListProps) {
     if (props.userStatus.is_superuser == 1) {
       return (
         <Button
-        size="small"
+          size="small"
           color="secondary"
           onClick={async () => {
             try {
@@ -130,10 +140,6 @@ export default function TopicList(props: TopicListProps) {
   };
 
   const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
     // トピックがブックマークされている場合のJSXを返す
     if (
       props.userStatus.session &&
@@ -276,7 +282,9 @@ export default function TopicList(props: TopicListProps) {
                 </div>
                 <div className="topic-info">
                   <a className="sender-name">投稿者 {topic.username}</a>
-                  <span className="post-date">{formatDateTime(topic.created_at)}</span>
+                  <span className="post-date">
+                    {formatDateTime(topic.created_at)}
+                  </span>
                 </div>
               </div>
             </div>
