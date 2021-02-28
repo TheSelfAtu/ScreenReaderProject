@@ -1,9 +1,45 @@
 #mypage-wrapper {
   max-width: 100%;
   background-color: #fff;
-  ul {
-    margin-top: 0;
-    padding: 5px 0 5px 20px;
+  .profile {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    a {
+      text-decoration: none;
+    }
+    h3 {
+      margin: 5px 0;
+    }
+    .user-status {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+  
+    }
+    .user-icon {
+      margin-top: 50px;
+
+      img {
+        width: 80px;
+        height: 80px;
+        padding: 5px;
+        background-color: rgb(219, 219, 219);
+        border-radius: 100%;
+        margin-right: 50px;
+      }
+    }
+    // .user-name {
+    //   display: flex;
+    //   justify-content: center;
+    //   align-items: center;
+    // }
+    .user-comment {
+      max-width: 500px;
+      margin: 0 5px 10px 5px;
+    }
   }
   .update-profile-button {
     display: flex;

@@ -1,6 +1,6 @@
 import { postFire } from "./common";
 import React, { useState, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavBar from "./NavBar";
 import TopicList from "./TopicList/TopicList";
 import PostTopic from "./PostTopic/PostTopic";
@@ -9,6 +9,7 @@ import Login from "./Users/Login";
 import Signup from "./Users/Signup";
 import Mypage from "./Mypage/Mypage";
 import Usage from "./Usage/Usage";
+import UpdateProfile from "./Mypage/UpdateProfile";
 
 export default function ProjectRouter() {
   const [userStatus, setUserStatus] = useState({
@@ -17,6 +18,7 @@ export default function ProjectRouter() {
     session: false,
     comment: "",
     is_superuser: 0,
+    yearsOfProgramming:""
   });
   const [bookmarkTopicInfo, setBookMarkTopicInfo] = useState([
     {
@@ -35,14 +37,14 @@ export default function ProjectRouter() {
       setUserStatus(fetchedResult.data);
     } catch (e) {
       // ユーザー情報取得に失敗した場合はエラーをセット
-      setError("回答の投稿に失敗しました");
+      setError("ユーザー情報取得に失敗しました");
       return;
     }
   }, []);
 
   // アプリロード,ログイン時にユーザーのステータスを取得
   useEffect(() => {
-    const fetchFromDB = async () => {
+    const fetchFromDB = () => {
       fetchUserStatus();
     };
     fetchFromDB();
@@ -87,6 +89,14 @@ export default function ProjectRouter() {
           </Route>
           <Route path="/signup">
             <Signup />
+          </Route>
+          <Route path="/updateProfile/:userID">
+            <UpdateProfile 
+            profileUserID={userStatus.userId}
+            userStatus ={userStatus}
+            requestSuccessMessage={requestSuccessMessage}
+            setRequestSuccessMessage={setReqestSuccessMessage}
+            />
           </Route>
           <Route path="/usage">
             <Usage />

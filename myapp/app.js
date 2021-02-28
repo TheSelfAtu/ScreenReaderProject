@@ -137,6 +137,7 @@ passport.deserializeUser((username, done) => {
 
 // 静的ファイル bundleされたjsを読み込めるようにする
 app.use("/bundle", express.static("./bundle/"));
+app.use("/icons", express.static("./icons/"));
 
 app.get(`*`, (req, res) => {
   res.sendFile(__dirname + "/public/index.html");

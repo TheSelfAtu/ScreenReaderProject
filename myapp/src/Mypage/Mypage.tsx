@@ -1,20 +1,26 @@
 import { formatDateTime, formatTopicTitle, postFire } from "../common";
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import {
+  makeStyles,
+  createStyles,
+  createMuiTheme,
+  ThemeProvider,
+} from "@material-ui/core/styles";
+
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
-import UpdateProfile from "./UpdateProfile";
-
-
+import { Button } from "@material-ui/core";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 interface MypageProps {
   userStatus: {
     userId: string;
     userName: string;
     session: boolean;
     comment: string;
+    yearsOfProgramming: string;
   };
 
   // ログインユーザーのブックマーク情報
@@ -24,7 +30,7 @@ interface MypageProps {
     user_id: string;
   }[];
 
-  // ブックマーク情報更新のためのフック
+  // ブックマーク情報更新のための関数
   setBookMarkTopicInfo: React.Dispatch<
     React.SetStateAction<
       {
@@ -40,8 +46,6 @@ interface MypageProps {
 }
 
 export default function Mypage(props: MypageProps) {
-  // マイページを表示するユーザのID 他者から閲覧可能
-  const { userID }: any = useParams();
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -65,10 +69,10 @@ export default function Mypage(props: MypageProps) {
       post_user_id: "",
       username: "",
       created_at: "",
+      // トピックに対する回答の数
       "COUNT(response.id)": "",
     },
   ]);
-
 
   // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
@@ -204,18 +208,23 @@ export default function Mypage(props: MypageProps) {
   return (
     <div id="mypage-wrapper">
       <div className="profile">
-        <div className="profile-sidemenu">
-          <ul>
-            <li>ユーザー名：{props.userStatus.userName}</li>
-            <li>コメント：{props.userStatus.comment}</li>
-          </ul>
+        <div className="user-status">
+          <div className="user-icon">
+            <img src="../icons/person.svg" alt="usericon"></img>
+          </div>
+          <div className="user-name">
+            <h3>{props.userStatus.userName}</h3>
+          </div>
+          <Link to={`/updateProfile/${props.userStatus.userId}`}>
+            {/* <Button variant="contained" tabIndex="-1">
+          </Button> */}
+            <button tabIndex={-1}>設定</button>
+          </Link>
         </div>
-        <UpdateProfile
-          profileUserID={userID}
-          userStatus={props.userStatus}
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></UpdateProfile>
+
+        <div className="user-comment">{props.userStatus.comment}</div>
+
+        {props.userStatus.yearsOfProgramming}
       </div>
       <div className="topic-list-wrapper">
         <div className="topic-filter">

@@ -1,12 +1,12 @@
+import { postFire } from "../common";
 import React, { useState, useCallback, useRef } from "react";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+import useReactRouter from "use-react-router";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { postFire } from "../common";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
 
 interface UpdateProfileProps {
   profileUserID: string;
@@ -20,26 +20,31 @@ interface UpdateProfileProps {
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
+
 export default function UpdateProfile(props: UpdateProfileProps) {
   const prevMessageRef = useRef(props.requestSuccessMessage);
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(props.userStatus.comment);
+  const { history, location, match } = useReactRouter();
+  const [yearsOfProgramming, setYearsOfProgramming] = React.useState("");
+  // プログラミング歴選択
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setYearsOfProgramming(event.target.value as string);
+  };
+
+  const [inputUserComment, setInputUserComment] = useState(
+    props.userStatus.comment
+  );
   const [error, setError] = useState("");
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const updateUserProfile = useCallback(
-    async (inputValue: string): Promise<any> => {
+    async (
+      inputUserComment: string,
+      yearsOfProgramming: string
+    ): Promise<any> => {
       // プロフィールを変更します
       try {
         await postFire("/users/update-profile", {
-          inputValue: inputValue,
+          inputUserComment: inputUserComment,
+          years_of_programming: yearsOfProgramming,
           user_id: props.userStatus.userId,
         });
       } catch (e) {
@@ -47,70 +52,81 @@ export default function UpdateProfile(props: UpdateProfileProps) {
         setError("プロフィール変更に失敗しました");
         return;
       }
-      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      // プロフィールの変更に成功した場合はマイページ画面に遷移
       props.setRequestSuccessMessage(
         prevMessageRef.current.concat(["プロフィールを変更しました"])
       );
 
-      handleClose();
+      history.push(`/mypage/${props.userStatus.userId}`);
     },
     [props.userStatus]
   );
 
   return (
-    <div>
-      <div className="update-profile-button">
-        <Button variant="outlined" color="default" onClick={handleClickOpen}>
-          プロフィールを更新
-        </Button>
-      </div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-        fullScreen
-      >
-        <DialogTitle id="form-dialog-title">プロフィールを更新</DialogTitle>
-        <DialogContent aria-describedby="profile-form">
-          <DialogContentText>
-            公開するプロフィールを記述してください
-          </DialogContentText>
-          {/* プロフィール記入フォーム */}
+    <div id="update-profile-wrapper">
+      <div className="update-profile-main">
+        {/* プロフィールコメント記入フォーム */}
+        <div id="user-comment-wrapper">
+          <h3 className="form-comment">コメント</h3>
           <TextField
-            autoFocus
             margin="dense"
             id="profile-form"
             type="textarea"
             fullWidth
-            placeholder="プロフィールを記入"
+            placeholder="公開するコメントを記入してください"
+            variant="outlined"
             multiline
-            required
-            value={inputValue}
+            rows="6"
+            value={inputUserComment}
             onChange={(e) => {
-              setInputValue(e.target.value);
+              setInputUserComment(e.target.value);
             }}
           />
-
-          {/* エラーメッセージを表示 */}
-          <div role="alert">
-            <span id="update-profile-error">{error}</span>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            戻る
-          </Button>
-
+        </div>
+        <div id="user-programming-year-wrapper">
+          <label htmlFor="years-of-programming">
+            <h3 className="form-programming-year">プログラミング歴</h3>
+            <Select
+              native
+              value={yearsOfProgramming}
+              onChange={handleChange}
+              inputProps={{
+                name: "years-of-programming",
+                id: "years-of-programming",
+              }}
+            >
+              <option aria-label="None" value="" />
+              <option value={"0"}>1年未満</option>
+              <option value={"1"}>1年 ~ 3年</option>
+              <option value={"2"}>3年以上</option>
+            </Select>
+          </label>
+        </div>
+        {/* エラーメッセージを表示 */}
+        <div role="alert">
+          <span id="update-profile-error">{error}</span>
+        </div>
+        <div className="buttons">
+          <Link
+            className="back-to-mypage-button"
+            to={`/mypage/${props.userStatus.userId}`}
+          >
+            <Button variant="contained" color="default" tabIndex="-1">
+              マイページへ戻る
+            </Button>
+          </Link>
           <Button
             onClick={async () => {
-              updateUserProfile(inputValue);
+              updateUserProfile(inputUserComment, yearsOfProgramming);
             }}
+            className="update-profile-button"
             color="primary"
+            variant="contained"
           >
-            送信
+            プロフィール更新
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </div>
     </div>
   );
 }

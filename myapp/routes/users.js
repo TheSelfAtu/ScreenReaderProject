@@ -30,6 +30,7 @@ router.post("/responseUserStatus", (req, res, next) => {
           userName: results[0].username,
           is_superuser: results[0].is_superuser,
           comment:results[0].comment,
+          years_of_programming:results[0].years_of_programming
         });
       }
     );
@@ -191,20 +192,36 @@ router.post("/bookmark/drop", (req, res) => {
 });
 
 router.post("/update-profile", function (req, res, next) {
-console.log("updaate-profile",req.query["inputValue"],req.query["user_id"])
-if (req.body["inputValue"] =="" || req.body["user_id"]=="") {
-  return res.status(500).send({ err: "プロフィールが入力されていません" });
+console.log("updaate-profile",req.query["inputUserName"],req.query["inputUserComment"])
+if (req.body["user_id"]=="") {
+  return res.status(500).send({ err: "プロフィールを変更できませんでした" });
 }
+// ユーザーのコメントを変更
   connection.query(
     {
       sql: "UPDATE user SET comment = ?  WHERE id = ?",
       timeout: 40000, // 40s
-      values: [req.body["inputValue"],req.body["user_id"]],
+      values: [req.body["inputUserComment"],req.body["user_id"]],
     },
     function responseSuccessMessage(error, results, fields) {
       if (!error == null) {
         console.log(error);
-        return res.status(500).send({ err: err.message });
+        return res.status(500).send({ err: "プロフィールを変更できませんでした" });
+      }
+    }
+  );
+
+// ユーザーのプログラミング歴を変更
+  connection.query(
+    {
+      sql: "UPDATE user SET years_of_programming = ?  WHERE id = ?",
+      timeout: 40000, // 40s
+      values: [req.body["years_of_programming"],req.body["user_id"]],
+    },
+    function responseSuccessMessage(error, results, fields) {
+      if (!error == null) {
+        console.log(error);
+        return res.status(500).send({ err: "プロフィールを変更できませんでした" });
       }
       res.json({ "プロフィールを更新しました": true });
     }
