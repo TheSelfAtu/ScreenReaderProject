@@ -2,42 +2,45 @@
   max-width: 100%;
   background-color: #fff;
   .profile {
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    max-width: 80%;
+    margin: 0 auto;
+    grid-template-rows: 50px 50p 80px;
+    grid-template-columns: 120px 1fr 100px;
     a {
       text-decoration: none;
     }
     h3 {
-      margin: 5px 0;
+      margin: 0;
     }
-    .user-status {
-      display: flex;
-      flex-flow: column;
-      justify-content: center;
-      align-items: center;
-  
-    }
+
     .user-icon {
-      margin-top: 50px;
+      grid-row: 1 / 4;
+      grid-column: 1 / 2;
 
       img {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         padding: 5px;
         background-color: rgb(219, 219, 219);
         border-radius: 100%;
-        margin-right: 50px;
+        margin: 20px 0 0 0;
       }
     }
-    // .user-name {
-    //   display: flex;
-    //   justify-content: center;
-    //   align-items: center;
-    // }
+    .user-name {
+      margin: 25px 5px 10px 10px;
+      grid-row: 1 / 2;
+      grid-column: 2 / 3;
+    }
+    .edit {
+      margin: 20px auto ;
+      grid-row: 1 / 2;
+      grid-column: 3 / 4;
+    }
     .user-comment {
-      max-width: 500px;
+      grid-row: 2 / 3;
+      grid-column: 2 / 4;
+      max-width: 100%;
       margin: 0 5px 10px 5px;
     }
   }

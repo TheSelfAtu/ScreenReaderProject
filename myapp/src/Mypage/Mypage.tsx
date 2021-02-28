@@ -208,16 +208,14 @@ export default function Mypage(props: MypageProps) {
   return (
     <div id="mypage-wrapper">
       <div className="profile">
-        <div className="user-status">
-          <div className="user-icon">
-            <img src="../icons/person.svg" alt="usericon"></img>
-          </div>
-          <div className="user-name">
-            <h3>{props.userStatus.userName}</h3>
-          </div>
+        <div className="user-icon">
+          <img src="../icons/person.svg" alt="usericon"></img>
+        </div>
+        <div className="user-name">
+          <h3>{props.userStatus.userName}</h3>
+        </div>
+        <div className="edit">
           <Link to={`/updateProfile/${props.userStatus.userId}`}>
-            {/* <Button variant="contained" tabIndex="-1">
-          </Button> */}
             <button tabIndex={-1}>設定</button>
           </Link>
         </div>
