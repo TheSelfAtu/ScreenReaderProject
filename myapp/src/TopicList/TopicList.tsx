@@ -1,11 +1,8 @@
 import { postFire } from "../common";
 import { formatDateTime, formatTopicTitle } from "../common";
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { TopicFilter } from "../TopicFilter";
 import { Link } from "react-router-dom";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import { Button } from "@material-ui/core";
 
@@ -77,6 +74,7 @@ export default function TopicList(props: TopicListProps) {
     },
   ]);
 
+  // 表示するトピックを制限するフィルター
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
   const topicStatus = (topic: any) => {
@@ -259,7 +257,17 @@ export default function TopicList(props: TopicListProps) {
     <div className="topic-list-wrapper">
       {/* トピックのフィルター部分 */}
       <div className="topic-filter">
-        <Filter setFilter={setFilter}></Filter>
+        <TopicFilter
+          filter={filter}
+          setFilter={setFilter}
+          filterTabs={[
+            { label: "すべて表示", value: "all" },
+            { label: "受付中", value: "open" },
+            { label: "締め切り", value: "close" },
+            { label: "投稿したトピック", value: "mytopic" },
+            { label: "ブックマークしたトピック", value: "bookmark-topic" },
+          ]}
+        ></TopicFilter>
       </div>
       <hr></hr>
       {/* 各トピックを表示 */}
@@ -292,45 +300,5 @@ export default function TopicList(props: TopicListProps) {
         );
       })}
     </div>
-  );
-}
-
-interface FilterProps {
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-function Filter(props: FilterProps) {
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      root: {
-        flexGrow: 1,
-        boxShadow: "none",
-      },
-    })
-  );
-
-  const classes = useStyles();
-
-  const [filter, setFilter] = useState("all");
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setFilter(newValue);
-    props.setFilter(newValue);
-  };
-
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={filter}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        aria-label="simple tabs example"
-      >
-        <Tab label="すべて表示" value="all" />
-        <Tab label="受付中" value="open" />
-        <Tab label="締め切り" value="closed" />
-        <Tab label="投稿したトピック" value="mytopic" />
-        <Tab label="ブックマークしたトピック" value="bookmark-topic" />
-      </Tabs>
-    </Paper>
   );
 }

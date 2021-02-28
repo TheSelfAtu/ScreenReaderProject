@@ -1,11 +1,7 @@
 import { formatDateTime, formatTopicTitle, postFire } from "../common";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import { TopicFilter } from "../TopicFilter";
 import BookMark from "../BookMark";
 interface MypageProps {
   userStatus: {
@@ -225,7 +221,14 @@ export default function Mypage(props: MypageProps) {
       </div>
       <div className="topic-list-wrapper">
         <div className="topic-filter">
-          <Filter setFilter={setFilter}></Filter>
+        <TopicFilter
+          filter={filter}
+          setFilter={setFilter}
+          filterTabs={[
+            { label: "投稿したトピック", value: "mytopic" },
+            { label: "ブックマークしたトピック", value: "bookmark-topic" },
+          ]}
+        ></TopicFilter>
         </div>
         <hr></hr>
         {shownTopics.map((topic) => {
@@ -259,43 +262,5 @@ export default function Mypage(props: MypageProps) {
         })}
       </div>
     </div>
-  );
-}
-
-interface FilterProps {
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-function Filter(props: FilterProps) {
-  const useStyles = makeStyles(() =>
-    createStyles({
-      root: {
-        flexGrow: 1,
-        boxShadow: "none",
-      },
-    })
-  );
-
-  const classes = useStyles();
-
-  // 最初は投稿したトピックを表示する
-  const [filter, setFilter] = useState("mytopic");
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setFilter(newValue);
-    props.setFilter(newValue);
-  };
-
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={filter}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        aria-label="simple tabs example"
-      >
-        <Tab label="投稿したトピック" value="mytopic" />
-        <Tab label="ブックマークしたトピック" value="bookmark-topic" />
-      </Tabs>
-    </Paper>
   );
 }
