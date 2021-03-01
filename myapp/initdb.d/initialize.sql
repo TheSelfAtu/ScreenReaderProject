@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS user;
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     is_superuser INT NOT NULL DEFAULT 0,
+    years_of_programming INT ,
     username VARCHAR(40) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     comment TEXT ,

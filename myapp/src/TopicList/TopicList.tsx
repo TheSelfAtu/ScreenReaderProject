@@ -1,11 +1,8 @@
 import { postFire } from "../common";
 import { formatDateTime, formatTopicTitle } from "../common";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { TopicFilter } from "../TopicFilter";
 import { Link } from "react-router-dom";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import BookMark from "../BookMark";
 import { Button } from "@material-ui/core";
 
@@ -41,6 +38,16 @@ interface TopicListProps {
 
 export default function TopicList(props: TopicListProps) {
   const prevMessageRef = useRef(props.requestSuccessMessage);
+
+  // ブックマークしているトピックIDを返す
+  const bookmarkTopicID = useMemo(
+    () =>
+      props.bookmarkTopicInfo.map((eachTopic) => {
+        return eachTopic.topic_id;
+      }),
+    [props.bookmarkTopicInfo]
+  );
+
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -67,6 +74,7 @@ export default function TopicList(props: TopicListProps) {
     },
   ]);
 
+  // 表示するトピックを制限するフィルター
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
   const topicStatus = (topic: any) => {
@@ -107,7 +115,7 @@ export default function TopicList(props: TopicListProps) {
     if (props.userStatus.is_superuser == 1) {
       return (
         <Button
-        size="small"
+          size="small"
           color="secondary"
           onClick={async () => {
             try {
@@ -130,10 +138,6 @@ export default function TopicList(props: TopicListProps) {
   };
 
   const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
     // トピックがブックマークされている場合のJSXを返す
     if (
       props.userStatus.session &&
@@ -172,7 +176,6 @@ export default function TopicList(props: TopicListProps) {
     const fetchFromDB = async () => {
       const topicListInfo = await postFire("/", {});
       setTopicsInformation(topicListInfo.data);
-      setShownTopics(topicListInfo.data);
       const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
         user_id: props.userStatus.userId,
       });
@@ -189,6 +192,7 @@ export default function TopicList(props: TopicListProps) {
           user_id: props.userStatus.userId,
         });
         props.setBookMarkTopicInfo(bookMarkTopic.data);
+
       } catch (e) {
         // ブックマークの変更に失敗した場合
         if (props.userStatus.session) {
@@ -240,7 +244,7 @@ export default function TopicList(props: TopicListProps) {
       }
     };
     filterTopics();
-  }, [filter]);
+  }, [filter,props.bookmarkTopicInfo]);
 
   // エラーが発生した際にアラートを表示
   useEffect(() => {
@@ -253,7 +257,17 @@ export default function TopicList(props: TopicListProps) {
     <div className="topic-list-wrapper">
       {/* トピックのフィルター部分 */}
       <div className="topic-filter">
-        <Filter setFilter={setFilter}></Filter>
+        <TopicFilter
+          filter={filter}
+          setFilter={setFilter}
+          filterTabs={[
+            { label: "すべて表示", value: "all" },
+            { label: "受付中", value: "open" },
+            { label: "締め切り", value: "closed" },
+            { label: "投稿したトピック", value: "mytopic" },
+            { label: "ブックマークしたトピック", value: "bookmark-topic" },
+          ]}
+        ></TopicFilter>
       </div>
       <hr></hr>
       {/* 各トピックを表示 */}
@@ -276,7 +290,9 @@ export default function TopicList(props: TopicListProps) {
                 </div>
                 <div className="topic-info">
                   <a className="sender-name">投稿者 {topic.username}</a>
-                  <span className="post-date">{formatDateTime(topic.created_at)}</span>
+                  <span className="post-date">
+                    {formatDateTime(topic.created_at)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -284,45 +300,5 @@ export default function TopicList(props: TopicListProps) {
         );
       })}
     </div>
-  );
-}
-
-interface FilterProps {
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-function Filter(props: FilterProps) {
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      root: {
-        flexGrow: 1,
-        boxShadow: "none",
-      },
-    })
-  );
-
-  const classes = useStyles();
-
-  const [filter, setFilter] = useState("all");
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setFilter(newValue);
-    props.setFilter(newValue);
-  };
-
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={filter}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        aria-label="simple tabs example"
-      >
-        <Tab label="すべて表示" value="all" />
-        <Tab label="受付中" value="open" />
-        <Tab label="締め切り" value="closed" />
-        <Tab label="投稿したトピック" value="mytopic" />
-        <Tab label="ブックマークしたトピック" value="bookmark-topic" />
-      </Tabs>
-    </Paper>
   );
 }

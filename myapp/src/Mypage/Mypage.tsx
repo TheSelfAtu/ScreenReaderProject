@@ -1,44 +1,15 @@
 import { formatDateTime, formatTopicTitle, postFire } from "../common";
-import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { TopicFilter } from "../TopicFilter";
 import BookMark from "../BookMark";
-import UpdateProfile from "./UpdateProfile";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    flex: {
-      flexGrow: 1,
-    },
-    paper: {
-      height: 140,
-      width: 100,
-    },
-    control: {
-      padding: theme.spacing(2),
-    },
-    root: {
-      width: "100%",
-      maxWidth: "100%",
-      backgroundColor: theme.palette.background.paper,
-    },
-    inline: {
-      display: "inline",
-    },
-  })
-);
-
 interface MypageProps {
   userStatus: {
     userId: string;
     userName: string;
     session: boolean;
     comment: string;
+    yearsOfProgramming: string;
   };
 
   // ログインユーザーのブックマーク情報
@@ -48,7 +19,7 @@ interface MypageProps {
     user_id: string;
   }[];
 
-  // ブックマーク情報更新のためのフック
+  // ブックマーク情報更新のための関数
   setBookMarkTopicInfo: React.Dispatch<
     React.SetStateAction<
       {
@@ -64,8 +35,15 @@ interface MypageProps {
 }
 
 export default function Mypage(props: MypageProps) {
-  // マイページを表示するユーザのID　他者から閲覧可能
-  let { userID }: any = useParams();
+  // ブックマークしているトピックIDを返す
+  const bookmarkTopicID = useMemo(
+    () =>
+      props.bookmarkTopicInfo.map((eachTopic) => {
+        return eachTopic.topic_id;
+      }),
+    [props.bookmarkTopicInfo]
+  );
+
   const [topicsInformation, setTopicsInformation] = useState([
     {
       id: "",
@@ -75,6 +53,7 @@ export default function Mypage(props: MypageProps) {
       post_user_id: "",
       username: "",
       created_at: "",
+      // トピックに対する回答の数
       "COUNT(response.id)": "",
     },
   ]);
@@ -89,11 +68,10 @@ export default function Mypage(props: MypageProps) {
       post_user_id: "",
       username: "",
       created_at: "",
+      // トピックに対する回答の数
       "COUNT(response.id)": "",
     },
   ]);
-
-  const [error, setError] = useState("");
 
   // 初期値は自分の投稿したトピックのみ表示
   const [filter, setFilter] = useState("mytopic");
@@ -132,12 +110,9 @@ export default function Mypage(props: MypageProps) {
     );
   };
 
-  const showBookMark = (topicId: string) => {
-    // ブックマークしているトピックIDを返す
-    const bookmarkTopicID = props.bookmarkTopicInfo.map((eachTopic) => {
-      return eachTopic.topic_id;
-    });
-    // トピックがブックマークされている場合のJSXを返す
+
+  const showBookMarkButton = useCallback((topicId: string) => {
+    // ログイン済みでトピックがブックマークされている場合のJSXを返す
     if (
       props.userStatus.session &&
       bookmarkTopicID.some((id) => id == topicId)
@@ -168,7 +143,7 @@ export default function Mypage(props: MypageProps) {
       );
     }
     return null;
-  };
+  }, [props.userStatus,props.requestSuccessMessage]);
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
@@ -229,25 +204,32 @@ export default function Mypage(props: MypageProps) {
   return (
     <div id="mypage-wrapper">
       <div className="profile">
-        <div className="profile-sidemenu">
-          <ul>
-            <li>ユーザー名：{props.userStatus.userName}</li>
-            <li>コメント　：{props.userStatus.comment}</li>
-          </ul>
+        <div className="user-icon">
+          <img src="../icons/person.svg" alt="usericon"></img>
         </div>
-        <UpdateProfile
-          profileUserID={userID}
-          userStatus={props.userStatus}
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></UpdateProfile>
+        <div className="user-name">
+          <h3>{props.userStatus.userName}</h3>
+        </div>
+        <div className="edit">
+          <Link to={`/updateProfile/${props.userStatus.userId}`}>
+            <button tabIndex={-1}>設定</button>
+          </Link>
+        </div>
+        <div className="user-comment">{props.userStatus.comment}</div>
       </div>
       <div className="topic-list-wrapper">
         <div className="topic-filter">
-          <Filter setFilter={setFilter}></Filter>
+          <TopicFilter
+            filter={filter}
+            setFilter={setFilter}
+            filterTabs={[
+              { label: "投稿したトピック", value: "mytopic" },
+              { label: "ブックマークしたトピック", value: "bookmark-topic" },
+            ]}
+          ></TopicFilter>
         </div>
         <hr></hr>
-        {shownTopics.map((topic, index) => {
+        {shownTopics.map((topic) => {
           return (
             <div className="topic-wrapper" key={topic.id}>
               <div className="topic-side-menu">{topicStatus(topic)}</div>
@@ -261,7 +243,7 @@ export default function Mypage(props: MypageProps) {
                 <div className="topic-main-bottom">
                   <div className="topic-change-button">
                     <div className="topic-bookmark">
-                      {showBookMark(topic.id)}
+                      {showBookMarkButton(topic.id)}
                     </div>
                     <div className="topic-delete-post"></div>
                   </div>
@@ -278,43 +260,5 @@ export default function Mypage(props: MypageProps) {
         })}
       </div>
     </div>
-  );
-}
-
-interface FilterProps {
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
-}
-function Filter(props: FilterProps) {
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      root: {
-        flexGrow: 1,
-        boxShadow: "none",
-      },
-    })
-  );
-
-  const classes = useStyles();
-
-  // 最初は投稿したトピックを表示する
-  const [filter, setFilter] = useState("mytopic");
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setFilter(newValue);
-    props.setFilter(newValue);
-  };
-
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={filter}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        aria-label="simple tabs example"
-      >
-        <Tab label="投稿したトピック" value="mytopic" />
-        <Tab label="ブックマークしたトピック" value="bookmark-topic" />
-      </Tabs>
-    </Paper>
   );
 }

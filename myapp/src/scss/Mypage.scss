@@ -1,14 +1,59 @@
 #mypage-wrapper {
   max-width: 100%;
   background-color: #fff;
-  ul {
-    margin-top: 0;
-    padding: 5px 0 5px 20px;
+  .profile {
+    display: grid;
+    max-width: 70%;
+    margin: 0 auto 20px;
+    grid-template-rows: 50px 50p 50px;
+    grid-template-columns: 120px 100px 4fr 1fr;
+    a {
+      text-decoration: none;
+    }
+    h3 {
+      margin: 0;
+    }
+
+    .user-icon {
+      grid-row: 1 / 4;
+      grid-column: 1 / 2;
+
+      img {
+        width: 100px;
+        height: 100px;
+        padding: 5px;
+        background-color: rgb(219, 219, 219);
+        border-radius: 100%;
+        margin: 20px 0 0 0;
+      }
+    }
+    .user-name {
+      margin: 25px 5px 10px 8px;
+      grid-row: 1 / 2;
+      grid-column: 2 / 3;
+    }
+    // プロフィール設定ボタン
+    .edit {
+      margin: 20px 5px 20px auto;
+      grid-row: 1 / 2;
+      grid-column: 4 / 5;
+      button {
+        width: 70px;
+        height: 35px;
+        border: 1px solid black;
+        font-weight: bold;
+        font-size: medium;
+        background-color: #fff;
+      }
+    }
+    .user-comment {
+      grid-row: 2 / 3;
+      grid-column: 2 / 5;
+      max-width: 100%;
+      margin: 0 5px 10px 5px;
+    }
   }
-  .update-profile-button {
-    display: flex;
-    justify-content: flex-end;
-  }
+
   .topic-list-wrapper {
     height: 100vh;
     background-color: #eee;
