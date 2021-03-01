@@ -16,7 +16,7 @@ export function TopicFilter(props: TopicFilterProps) {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       root: {
-        flexGrow: 1,
+        flexGrow: 2,
         boxShadow: "none",
       },
     })

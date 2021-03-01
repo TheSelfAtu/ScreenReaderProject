@@ -3,10 +3,10 @@
   background-color: #fff;
   .profile {
     display: grid;
-    max-width: 80%;
+    max-width: 70%;
     margin: 0 auto 20px;
-    grid-template-rows: 50px 50p 80px;
-    grid-template-columns: 120px 1fr 100px;
+    grid-template-rows: 50px 50p 50px;
+    grid-template-columns: 120px 100px 4fr 1fr;
     a {
       text-decoration: none;
     }
@@ -34,9 +34,9 @@
     }
     // プロフィール設定ボタン
     .edit {
-      margin: 20px auto;
+      margin: 20px 5px 20px auto;
       grid-row: 1 / 2;
-      grid-column: 3 / 4;
+      grid-column: 4 / 5;
       button {
         width: 70px;
         height: 35px;
@@ -48,7 +48,7 @@
     }
     .user-comment {
       grid-row: 2 / 3;
-      grid-column: 2 / 4;
+      grid-column: 2 / 5;
       max-width: 100%;
       margin: 0 5px 10px 5px;
     }

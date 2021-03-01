@@ -76,7 +76,6 @@ export default function TopicList(props: TopicListProps) {
 
   // 表示するトピックを制限するフィルター
   const [filter, setFilter] = useState("all");
-  console.log(filter,"state")
   const [error, setError] = useState("");
   const topicStatus = (topic: any) => {
     if (topic.is_topic_active) {
@@ -206,7 +205,6 @@ export default function TopicList(props: TopicListProps) {
 
   // フィルターにより表示するトピックを制御
   useEffect(() => {
-    console.log("fil",filter)
     const filterTopics = async () => {
       // すべてのトピックを返す
       if (filter == "all") {
