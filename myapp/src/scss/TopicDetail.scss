@@ -85,11 +85,31 @@
           justify-content: flex-end;
         }
       }
+      .login-button {
+        display: flex;
+        justify-content: flex-end;
+        padding-bottom: 5px;
+      }
     }
-    .dialog-buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin: 5px 0px;
+  }
+  .response-form {
+    background-color: #fff;
+    margin-top: 20px;
+    max-width: 100%;
+    width: 100%;
+    .response-main {
+      padding: 30px;
+      .response-textarea {
+        display: block;
+        margin: 10px auto;
+        font-size: 1.5rem;
+        width: 100%;
+      }
+      .form-button {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
     }
   }
 }

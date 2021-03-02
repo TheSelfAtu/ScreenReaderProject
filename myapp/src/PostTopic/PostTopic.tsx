@@ -19,7 +19,7 @@ interface PostTopicProps {
     user_id: string;
   }[];
   // ユーザーのステータスをサーバーから取得する
-  fetchUserStatus: () => Promise<any>;
+  fetchUserStatus: () => Promise<undefined>;
 
   // ブックマーク情報更新のためのフック
   setBookMarkTopicInfo: React.Dispatch<
@@ -37,7 +37,7 @@ interface PostTopicProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function PostTopic(props: PostTopicProps) {
+export default function PostTopic(props: PostTopicProps):JSX.Element {
   const history = useHistory();
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");

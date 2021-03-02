@@ -1,8 +1,8 @@
 import React from "react";
-import { BrowserRouter as Router, Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 
-export default function Usage() {
+export default function Usage():JSX.Element {
   // アプリ使い方説明
   return (
     <div className="usage-wrapper">

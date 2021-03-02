@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -12,8 +12,8 @@ interface TopicFilterProps {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export function TopicFilter(props: TopicFilterProps) {
-  const useStyles = makeStyles((theme: Theme) =>
+export function TopicFilter(props: TopicFilterProps):JSX.Element {
+  const useStyles = makeStyles(() =>
     createStyles({
       root: {
         flexGrow: 2,
@@ -39,7 +39,7 @@ export function TopicFilter(props: TopicFilterProps) {
       >
         {/* それぞれの場面で必要なフィルターのタブを表示する */}
         {props.filterTabs.map((filterTab) => {
-          return <Tab label={filterTab.label} value={filterTab.value} />;
+          return <Tab label={filterTab.label} value={filterTab.value} key={filterTab.label}/>;
         })}
       </Tabs>
     </Paper>

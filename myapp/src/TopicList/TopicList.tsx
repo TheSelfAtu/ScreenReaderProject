@@ -36,7 +36,7 @@ interface TopicListProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function TopicList(props: TopicListProps) {
+export default function TopicList(props: TopicListProps):JSX.Element {
   const prevMessageRef = useRef(props.requestSuccessMessage);
 
   // ブックマークしているトピックIDを返す
@@ -77,7 +77,7 @@ export default function TopicList(props: TopicListProps) {
   // 表示するトピックを制限するフィルター
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
-  const topicStatus = (topic: any) => {
+  const topicStatus = (topic: topic) => {
     if (topic.is_topic_active) {
       return (
         <div>
@@ -271,7 +271,7 @@ export default function TopicList(props: TopicListProps) {
       </div>
       <hr></hr>
       {/* 各トピックを表示 */}
-      {shownTopics.map((topic, index) => {
+      {shownTopics.map((topic) => {
         return (
           <div className="topic-wrapper" key={topic.id}>
             <div className="topic-side-menu">{topicStatus(topic)}</div>

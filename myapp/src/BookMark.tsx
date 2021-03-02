@@ -11,10 +11,10 @@ interface BookMarkProps {
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
-export default function BookMark(props: BookMarkProps) {
+export default function BookMark(props: BookMarkProps):JSX.Element {
   const prevMessageRef = useRef(props.requestSuccessMessage);
 
-  const requestBookMarkAction = useCallback(async (): Promise<any> => {
+  const requestBookMarkAction = useCallback(async (): Promise<undefined> => {
     // endpointに応じたブックマーク操作のリクエストを送る
     try {
       await postFire("/users/bookmark/" + props.endpoint, {
