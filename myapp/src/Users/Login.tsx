@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface LoginProps {
-  fetchUserStatus: () => Promise<any>;
+  fetchUserStatus: () => Promise<undefined>;
 }
 
-export default function Login(props: LoginProps) {
+export default function Login(props: LoginProps):JSX.Element {
   const classes = useStyles();
   const history = useHistory();
   const [username, setUsername] = React.useState("");
@@ -48,7 +48,7 @@ export default function Login(props: LoginProps) {
   const requestLogin = async (
     username: string,
     password: string
-  ): Promise<any> => {
+  ): Promise<undefined> => {
     // フォーム入力バリデーション
     if (username == "" || password == "") {
       setError("ユーザ名またはパスワードが入力されていません");

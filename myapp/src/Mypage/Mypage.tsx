@@ -34,7 +34,7 @@ interface MypageProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function Mypage(props: MypageProps) {
+export default function Mypage(props: MypageProps):JSX.Element {
   // ブックマークしているトピックIDを返す
   const bookmarkTopicID = useMemo(
     () =>
@@ -77,7 +77,7 @@ export default function Mypage(props: MypageProps) {
   const [filter, setFilter] = useState("mytopic");
 
   // トピックの受付状態などを表示するJSXを返す
-  const topicStatus = (topic: any) => {
+  const topicStatus = (topic: topic) => {
     if (topic.is_topic_active) {
       return (
         <div>

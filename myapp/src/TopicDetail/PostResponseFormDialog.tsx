@@ -1,6 +1,4 @@
-import React, {
-  useState,
-} from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,15 +8,19 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 interface FormDialogProps {
+  error:string;
   topicTitle: string;
   topicContent: string;
-  postResopnseToDB: (inputValue: string) => Promise<any>;
+  responseMessage:string;
+  setResponseMessage:React.Dispatch<React.SetStateAction<string>>;
+  postResopnseToDB: (inputValue: string) => Promise<undefined>;
   requestSuccessMessage: string[];
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
-export default function PostResponseFormDialog(props: FormDialogProps) {
+export default function PostResponseFormDialog(
+  props: FormDialogProps
+): JSX.Element {
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,23 +53,21 @@ export default function PostResponseFormDialog(props: FormDialogProps) {
             placeholder="トピックへの返信"
             multiline
             required
-            value={inputValue}
+            value={props.responseMessage}
             onChange={(e) => {
-              setInputValue(e.target.value);
+              props.setResponseMessage(e.target.value);
             }}
           />
+          <div role="alert">{props.error}</div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             戻る
           </Button>
           <Button
-            value={inputValue}
+            value={props.responseMessage}
             onClick={async () => {
-              const postResponseSuccess = await props.postResopnseToDB(
-                inputValue
-              );
-              setInputValue("");
+              await props.postResopnseToDB(props.responseMessage);
               handleClose();
             }}
             color="primary"

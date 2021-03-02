@@ -22,7 +22,16 @@
     ],
     "rules": {
         "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error"
+        "react/jsx-uses-vars": "error",
+        "@typescript-eslint/ban-types": [
+            "error",
+            {
+              "extendDefaults": true,
+              "types": {
+                "{}": false
+              }
+            }
+          ]
     },
     "settings": {
         "react": {

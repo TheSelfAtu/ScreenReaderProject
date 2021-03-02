@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+export default function SignUp(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
   const [username, setUsername] = React.useState("");
@@ -45,7 +45,7 @@ export default function SignUp() {
   const requestSignup = async (
     username: string,
     password: string
-  ): Promise<any> => {
+  ): Promise<undefined> => {
     // フォーム入力バリデーション
     if (username == "" || password == "") {
       setError("ユーザ名またはパスワードが入力されていません");
@@ -63,6 +63,7 @@ export default function SignUp() {
       setError("サインアップに失敗しました");
       return;
     }
+    // ログイン画面に移動
     history.push("/login");
   };
 

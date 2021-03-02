@@ -11,7 +11,7 @@ import Mypage from "./Mypage/Mypage";
 import Usage from "./Usage/Usage";
 import UpdateProfile from "./Mypage/UpdateProfile";
 
-export default function ProjectRouter() {
+export default function ProjectRouter():JSX.Element {
   const [userStatus, setUserStatus] = useState({
     userId: "",
     userName: "",
@@ -28,16 +28,15 @@ export default function ProjectRouter() {
     },
   ]);
   const [requestSuccessMessage, setReqestSuccessMessage] = useState([""]);
-  const [error, setError] = useState("");
 
   // ユーザーの情報を取得
-  const fetchUserStatus = useCallback(async (): Promise<any> => {
+  const fetchUserStatus = useCallback(async (): Promise<undefined> => {
     try {
       const fetchedResult = await postFire("/users/responseUserStatus", {});
       setUserStatus(fetchedResult.data);
     } catch (e) {
       // ユーザー情報取得に失敗した場合はエラーをセット
-      setError("ユーザー情報取得に失敗しました");
+      alert("ユーザー情報取得に失敗しました");
       return;
     }
   }, []);

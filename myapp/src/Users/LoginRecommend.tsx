@@ -1,5 +1,5 @@
 import { postFire } from "../common";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback} from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
 interface LoginRecommendProps {
   dialogTitle: string;
   buttonExplanation: string;
-  fetchUserStatus: any;
+  fetchUserStatus: () => Promise<undefined>;
 }
 
-export default function LoginRecommendForm(props: LoginRecommendProps) {
+export default function LoginRecommendForm(props: LoginRecommendProps):JSX.Element {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -55,7 +55,7 @@ export default function LoginRecommendForm(props: LoginRecommendProps) {
   };
 
   const requestLogin = useCallback(
-    async (username: string, password: string): Promise<any> => {
+    async (username: string, password: string): Promise<undefined> => {
       // フォーム入力バリデーション
       if (username == "" || password == "") {
         setError("ユーザ名またはパスワードが入力されていません");

@@ -38,7 +38,7 @@ interface SetTopicNotActiveButtonProps {
 
 export default function SetTopicNotActiveButton(
   props: SetTopicNotActiveButtonProps
-) {
+) :JSX.Element{
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -52,7 +52,7 @@ export default function SetTopicNotActiveButton(
   };
 
   // 投稿の受付を締め切る機能
-  const setTopicNotActive = useCallback(async (): Promise<any> => {
+  const setTopicNotActive = useCallback(async (): Promise<undefined> => {
     try {
       await postFire("/topic-detail/set-topic-not-active", {
         topic_id: props.topicId,

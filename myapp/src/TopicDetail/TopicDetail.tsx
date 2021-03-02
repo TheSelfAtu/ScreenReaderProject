@@ -1,11 +1,10 @@
 import { postFire, formatDateTime } from "../common";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
-import Divider from "@material-ui/core/Divider";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
-import PostResponseFormDialog from "./PostResponseFormDialog";
 import BookMark from "../BookMark";
+import { Button, TextareaAutosize } from "@material-ui/core";
 
 interface TopicDetailProps {
   // ユーザーの状態
@@ -15,7 +14,7 @@ interface TopicDetailProps {
     session: boolean;
     comment: string;
   };
-  fetchUserStatus: () => Promise<any>;
+  fetchUserStatus: () => Promise<undefined>;
   // ログインユーザーのブックマーク情報
   bookmarkTopicInfo: {
     id: string;
@@ -38,9 +37,9 @@ interface TopicDetailProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function TopicDetail(props: TopicDetailProps) {
+export default function TopicDetail(props: TopicDetailProps): JSX.Element {
   // 表示しているトピックのID
-  const { topicID }: any = useParams();
+  const { topicID }: any = useParams<string>();
   const prevMessageRef = useRef(props.requestSuccessMessage);
 
   const [topicInformation, setTopicInformation] = useState({
@@ -61,11 +60,12 @@ export default function TopicDetail(props: TopicDetailProps) {
       username: "",
     },
   ]);
+  const [responseMessage, setResponseMessage] = useState("");
 
   const [error, setError] = useState("");
 
   const postResponseToDB = useCallback(
-    async (inputValue: string): Promise<any> => {
+    async (inputValue: string): Promise<undefined> => {
       // 入力内容が不足しているときのバリデーション
       if (inputValue == "") {
         setError("回答を記入してください");
@@ -83,7 +83,9 @@ export default function TopicDetail(props: TopicDetailProps) {
         setError("回答の投稿に失敗しました");
         return;
       }
-      // トピック投稿に成功した場合はトピックリスト画面に遷移
+      // フォームとエラーの内容を初期化
+      setResponseMessage("");
+      setError("");
       props.setRequestSuccessMessage(
         prevMessageRef.current.concat(["回答を送信しました"])
       );
@@ -131,14 +133,17 @@ export default function TopicDetail(props: TopicDetailProps) {
 
   useEffect(() => {
     const fetchFromDB = async () => {
+      // トピックの情報を取得
       const topicData = await postFire(
         "/topic-detail/" + topicID + "/topic",
         {}
       );
+      // トピックに対する回答を取得
       const responseData = await postFire(
         "/topic-detail/" + topicID + "/getAllResponseToTopic",
         {}
       );
+      // ブックマークの情報を取得
       const bookMarkTopic = await postFire("/users/fetch-bookmark-topic", {
         user_id: props.userStatus.userId,
       });
@@ -201,14 +206,59 @@ export default function TopicDetail(props: TopicDetailProps) {
     );
   };
 
-  // ログインしていない場合はログインボタン、そうでなければ送信ボタンとダイアログを返す
-  const DialogButton = () => {
+  const Form = () => {
+    // トピックへの回答が締め切りの場合は何も返さない
     if (topicInformation.is_topic_active == 0) {
       return "";
     }
+    // ログインしている場合はメッセージ送信フォームを返す
+    if (props.userStatus.session) {
+      return (
+        <div className="response-form">
+          <div className="response-main">
+            <div className="content">
+              <TextareaAutosize
+                className="response-textarea"
+                rowsMin="3"
+                value={responseMessage}
+                onChange={(e) => {
+                  setResponseMessage(e.target.value);
+                }}
+                aria-label="トピックへのメッセージを送信"
+                placeholder="メッセージを送信"
+              ></TextareaAutosize>
+            </div>
+            <div role="alert">
+              <span>{error}</span>
+            </div>
+            <div className="form-button">
+              <Button
+                className="button"
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  postResponseToDB(responseMessage);
+                }}
+              >
+                メッセージを送信
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
+
+  // ログインしていない場合ログイン用フォームを表示するボタンを返す
+  const LoginDialogButton = () => {
+    // トピックへの回答が締め切りの場合は何も返さない
+    if (topicInformation.is_topic_active == 0 || props.userStatus.session) {
+      return "";
+    }
+    // ログインしていない場合ログイン用フォームを表示するボタンを返す
     if (!props.userStatus.session) {
       return (
-        <div id="login-button">
+        <div className="login-button">
           <LoginRecommendForm
             fetchUserStatus={props.fetchUserStatus}
             dialogTitle="ログインすることで回答を投稿できます"
@@ -217,17 +267,6 @@ export default function TopicDetail(props: TopicDetailProps) {
         </div>
       );
     }
-    return (
-      <div id="response-post-button">
-        <PostResponseFormDialog
-          topicTitle={topicInformation.title}
-          topicContent={topicInformation.content}
-          postResopnseToDB={postResponseToDB}
-          requestSuccessMessage={props.requestSuccessMessage}
-          setRequestSuccessMessage={props.setRequestSuccessMessage}
-        ></PostResponseFormDialog>
-      </div>
-    );
   };
 
   return (
@@ -242,7 +281,10 @@ export default function TopicDetail(props: TopicDetailProps) {
             <div className="topic-content">
               <h4>{topicInformation.content}</h4>
             </div>
-            <div className="bookmark">{showBookMark(topicID)}</div>
+            <div className="bookmark">
+              {SetTopicNotActiveDialog()}
+              {showBookMark(topicID)}
+            </div>
           </div>
         </div>
 
@@ -258,7 +300,7 @@ export default function TopicDetail(props: TopicDetailProps) {
           </div>
           <div id="response-main-wrapper">
             <hr></hr>
-            {responsesToTopic.map((response, index) => {
+            {responsesToTopic.map((response) => {
               return (
                 <div className="each-response-wrapper" key={response.id}>
                   <div className="content">{response.content}</div>
@@ -274,17 +316,12 @@ export default function TopicDetail(props: TopicDetailProps) {
                 </div>
               );
             })}
-            <div id="response-form">
-              <div className="dialog-buttons">
-                {SetTopicNotActiveDialog()}
-                {DialogButton()}
-              </div>
-              <div role="alert">
-                <span>{error}</span>
-              </div>
-            </div>
+            {/* ログインしていない場合、ログイン用フォームを表示 */}
+            {LoginDialogButton()}
           </div>
         </div>
+        {/* ログインしている場合、メッセージの投稿フォームを表示 */}
+        <div className="form">{Form()}</div>
       </div>
     </div>
   );

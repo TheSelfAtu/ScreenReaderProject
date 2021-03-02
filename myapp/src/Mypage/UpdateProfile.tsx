@@ -1,12 +1,10 @@
 import { postFire } from "../common";
 import React, { useState, useCallback, useRef } from "react";
-import { BrowserRouter as Router, Link } from "react-router-dom";
+import {Link } from "react-router-dom";
 import useReactRouter from "use-react-router";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
 
 interface UpdateProfileProps {
   profileUserID: string;
@@ -21,9 +19,9 @@ interface UpdateProfileProps {
   setRequestSuccessMessage: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function UpdateProfile(props: UpdateProfileProps) {
+export default function UpdateProfile(props: UpdateProfileProps):JSX.Element {
   const prevMessageRef = useRef(props.requestSuccessMessage);
-  const { history, location, match } = useReactRouter();
+  const { history } = useReactRouter();
   const [yearsOfProgramming, setYearsOfProgramming] = React.useState("");
   // プログラミング歴選択
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -39,7 +37,7 @@ export default function UpdateProfile(props: UpdateProfileProps) {
     async (
       inputUserComment: string,
       yearsOfProgramming: string
-    ): Promise<any> => {
+    ): Promise<undefined> => {
       // プロフィールを変更します
       try {
         await postFire("/users/update-profile", {
