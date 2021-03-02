@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import LoginRecommendForm from "../Users/LoginRecommend";
 import SetTopicNotActiveButton from "./SetTopicNotActive";
-import PostResponseFormDialog from "./PostResponseFormDialog";
 import BookMark from "../BookMark";
 import { Button, TextareaAutosize } from "@material-ui/core";
 
@@ -84,7 +83,9 @@ export default function TopicDetail(props: TopicDetailProps): JSX.Element {
         setError("回答の投稿に失敗しました");
         return;
       }
+      // フォームとエラーの内容を初期化
       setResponseMessage("");
+      setError("");
       props.setRequestSuccessMessage(
         prevMessageRef.current.concat(["回答を送信しました"])
       );
@@ -226,6 +227,9 @@ export default function TopicDetail(props: TopicDetailProps): JSX.Element {
                 aria-label="トピックへのメッセージを送信"
                 placeholder="メッセージを送信"
               ></TextareaAutosize>
+            </div>
+            <div role="alert">
+              <span>{error}</span>
             </div>
             <div className="form-button">
               <Button
